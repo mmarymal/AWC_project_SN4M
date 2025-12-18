@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN4M - Community</title>
+    <link rel="icon" type="image/png" href="logo1.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style1.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body>
+    <header class="home-header">
+        <div class="header-top">
+            <div class="logo-container">
+                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
+                <a href="home.html" class="app-name">SN4M</a>
+            </div>
+
+            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
+                <button type="submit" id="search-button">
+                    <span class="icon">
+                        <ion-icon name="search"></ion-icon>
+                    </span>
+                </button>
+            </form>
+
+            <div class="user-welcome">
+                <p>Ciao, <span id="welcomeUsername"></span>!</p>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+        <nav class="navbar"> <a href="playlist.html">Playlist</a>
+            <a href="community.html">Community</a>
+            <a href="profilo.html">Profilo</a>
+        </nav>
+    </header>
+
+    <main class="home-content">
+        <section class="community-section">
+            <h2 class="section-title">Le mie comunità</h2>
+            <div id="myCommunities"></div>
+
+            <h2 class="section-title mt-5">Altre comunità disponibili</h2>
+            <div id="communityList"></div>
+
+            <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                Crea nuova comunità
+            </button>
+        </section>
+    </main>
+
+
+
+    </main>
+
+    <template id="communityCardTemplate">
+        <div class="community-card">
+            <div class="community-header">
+                <h5 class="community-title"></h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-transparent" data-bs-toggle="dropdown"
+                        aria-expanded="false" title="Opzioni comunità">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end"></ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+
+    <footer>
+        <p>&copy; 2025 SN4M - Social Network for Music</p>
+    </footer>
+
+    <div class="modal fade" id="createCommunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="newCommunityForm" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crea nuova comunità</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="communityName" class="form-control mb-2" placeholder="Titolo comunità"
+                        required>
+                    <textarea id="communityDescription" class="form-control mb-2" placeholder="Descrizione" rows="2"
+                        required></textarea>
+                    <input type="text" id="communityTags" class="form-control mb-2"
+                        placeholder="Tag (separati da virgola)">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Crea</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editCommunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="editCommunityForm" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifica Comunità</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="editCommunityName" class="form-control mb-2" placeholder="Nome comunità"
+                        required>
+                    <textarea id="editCommunityDescription" class="form-control mb-2" placeholder="Descrizione"
+                        rows="2"></textarea>
+                    <input type="text" id="editCommunityTags" class="form-control mb-2"
+                        placeholder="Tag (separati da virgola)">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Salva modifiche</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewCommunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content community-details-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dettagli Comunità</h5>
+                </div>
+                <div class="modal-body" id="viewCommunityBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteCommunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content custom-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma eliminazione</h5>
+                </div>
+                <div class="modal-body">Vuoi davvero eliminare questa comunità?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteCommunityBtn">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="auth.js"></script>
+    <script src="community.js"></script>
+
+
+</body>
+
+</html>

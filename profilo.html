@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN4M - Profilo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="logo1.png">
+    <link rel="stylesheet" href="style1.css">
+    
+</head>
+
+<body>
+    <header class="home-header">
+        <div class="header-top">
+            <div class="logo-container">
+                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
+                <a href="home.html" class="app-name">SN4M</a>
+            </div>
+
+            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
+                <button type="submit" id="search-button">
+                    <span class="icon">
+                        <ion-icon name="search"></ion-icon>
+                    </span>
+                </button>
+            </form>
+
+            <div class="user-welcome">
+                <p>Ciao, <span id="welcomeUsername"></span>!</p>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <nav class="navbar"> <a href="playlist.html">Playlist</a>
+            <a href="community.html">Community</a>
+            <a href="profilo.html">Profilo</a>
+        </nav>
+    </header>
+
+
+    <main>
+        <div class="profile-box">
+            <h2>Modifica il tuo profilo</h2>
+            <form id="profileForm">
+                <div class="input-box">
+                    <label for="username">Nome utente</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-box">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-box">
+                    <label for="preferences">Preferenze musicali</label>
+                    <input type="text" id="preferences" name="preferences" required>
+                </div>
+                <div class="input-box">
+                    <label for="artists">Gruppi/Cantanti preferiti</label>
+                    <input type="text" id="artists" name="artists" required>
+                </div>
+                <button type="submit">Salva modifiche</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SN4M - Social Network for Music</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="auth.js"></script>
+    <script src="profilo.js"></script>
+
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="sn4mToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Modifiche salvate con successo!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Assicura che padding e border siano inclusi nella larghezza/altezza */
+    font-family: 'Poppins', sans-serif;
+    /* Un font comune e leggibile, puoi cambiarlo */
+}
+
+body {
+    background: url('back3.webp') no-repeat center center fixed;
+    background-size: cover;
+
+    color: #e0e0e0;
+    /* Testo chiaro */
+    min-height: 100vh;
+    display: flex;
+    /* Per centrare il form verticalmente */
+    flex-direction: column;
+    justify-content: center;
+    /* Centra il form verticalmente */
+    align-items: center;
+    /* Centra il form orizzontalmente */
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+a {
+    color: #8be9fd;
+    /* Colore link chiaro */
+    text-decoration: none;
+    /* Rimuove sottolineatura di default */
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #bd93f9;
+    /* Colore link al passaggio del mouse */
+}
+
+button {
+    background-color: #bd93f9;
+    /* Pulsante viola */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff79c6;
+    /* Pulsante rosa al passaggio del mouse */
+}
+
+h2 {
+    color: #50fa7b;
+    /* Colore verde per i titoli */
+}
+
+.input-row {
+    display: flex;
+    gap: 20px;
+    /* Spazio tra gli input */
+    width: 100%;
+}
+
+.input-row .input-box {
+    flex: 1;
+    margin: 20px 0;
+    /* Riduci lo spazio verticale */
+    height: 50px;
+    border-bottom: 2px solid #f8f8f2;
+    position: relative;
+}
+
+.register-box,
+.login-box {
+    position: relative;
+    /* Per posizionamento elementi interni */
+    max-width: 600px;
+    /* Larghezza massima */
+    width: 90%; /* Occupare il 90% della larghezza disponibile, fino a max-width */
+    min-height: 390px;
+    /* Altezza minima */
+    height: auto;
+    /* Si adatta al contenuto */
+
+    background-color: rgba(40, 42, 54, 0.1);
+    /* Sfondo del box, ora semitrasparente per vedere l'immagine del body */
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    display: flex;
+    flex-direction: column;
+    /* I figli diretti di .login-box (H2, input-box, button, link) si impilano */
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    margin: 20px;
+
+}
+
+.register-box form,
+.login-box form {
+    width: 100%;
+}
+
+.register-box h2,
+.login-box h2 {
+    font-size: 2em;
+    color: #f8f8f2;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.input-box {
+    position: relative;
+    margin: 30px 0;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #f8f8f2;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #f8f8f2;
+    font-size: 1em;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -5px;
+    color: #8be9fd;
+    font-size: 0.8em;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    padding: 0 35px 0 5px;
+    color: #f8f8f2;
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 8px;
+    color: #f8f8f2;
+    font-size: 1.2em;
+    line-height: 57px;
+    /* Allinea l'icona verticalmente */
+}
+
+.register-box button,
+.login-box button {
+    width: 100%;
+    height: 45px;
+    border-radius: 40px;
+    background-color: #bd93f9;
+    color: #f8f8f2;
+    font-size: 1em;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.register-link,
+.login-link {
+    font-size: 0.9em;
+    color: #f8f8f2;
+    text-align: center;
+    margin: 25px 0 10px;
+}
+
+.register-link p a,
+.login-link p a {
+    color: #8be9fd;
+    text-decoration: underline;
+    font-weight: 600;
+}

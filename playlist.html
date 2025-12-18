@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN4M - Le mie playlist</title>
+    <link rel="icon" type="image/png" href="logo1.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style1.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<div class="modal fade" id="editPlaylistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editPlaylistForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifica Playlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="editPlaylistName" class="form-control mb-2" placeholder="Nome playlist" required>
+                <textarea id="editPlaylistDescription" class="form-control mb-2" placeholder="Descrizione"
+                    rows="2"></textarea>
+                <input type="text" id="editPlaylistTags" class="form-control mb-2"
+                    placeholder="Tag (separati da virgola)">
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Salva modifiche</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addTrackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addTrackForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aggiungi brano</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="modalTrackTitle" class="form-control mb-2" placeholder="Titolo" required>
+                <input type="text" id="modalTrackArtist" class="form-control mb-2" placeholder="Artista" required>
+                <input type="text" id="modalTrackDuration" class="form-control mb-2" placeholder="Durata (es. 3:45)">
+                <input type="number" id="modalTrackYear" class="form-control mb-2" placeholder="Anno di pubblicazione">
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Aggiungi</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<body>
+    <header class="home-header">
+        <div class="header-top">
+            <div class="logo-container">
+                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
+                <a href="home.html" class="app-name">SN4M</a>
+            </div>
+            <div class="user-welcome">
+                <p>Ciao, <span id="welcomeUsername"></span>!</p>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="playlist-section container mt-5">
+            <div class="row">
+                <!--Colonna: Le mie playlist-->
+                <div class="col-md-6">
+                    <h2 class="section-title">Le mie playlist</h2>
+                    <div id="myPlaylists"></div>
+                    <!-- <h4 class="mt-4">Crea nuova playlist</h4> -->
+                    <button class="btn btn-primary btn-create-playlist" data-bs-toggle="modal"
+                        data-bs-target="#createPlaylistModal">Crea Playlist</button>
+                </div>
+                <!-- Colonna: Playlist delle community -->
+                <div class="col-md-6">
+                    <h2 class="section-title">Playlist delle Community</h2>
+                    <div id="communityPlaylists"></div>
+                </div>
+
+            </div>
+
+        </section>
+    </main>
+
+    <template id="playlistCardTemplate">
+        <div class="playlist-card">
+            <div class="playlist-header">
+                <h5 class="playlist-title"></h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false"
+                        title="Opzioni playlist">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item btn-edit" href="#">Modifica</a></li>
+                        <li><a class="dropdown-item btn-delete text-danger" href="#">Elimina</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+
+    <footer>
+        <p>&copy; 2025 SN4M - Social Network for Music</p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="playlist.js"></script>
+
+    <div class="modal fade" id="createPlaylistModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="newPlaylistForm" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuova Playlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="playlistName" class="form-control mb-2" placeholder="Nome playlist" required>
+                    <textarea id="playlistDescription" class="form-control mb-2" placeholder="Descrizione playlist"
+                        rows="2" required></textarea>
+                    <input type="text" id="playlistTags" class="form-control mb-2"
+                        placeholder="Tag (separati da virgola)" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"> Crea</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content custom-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma eliminazione</h5>
+                </div>
+                <div class="modal-body">Vuoi davvero eliminare questa playlist?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewPlaylistModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content playlist-details-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dettagli Playlist</h5>
+                </div>
+                <div class="modal-body" id="viewPlaylistBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="sn4mToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Messaggio</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

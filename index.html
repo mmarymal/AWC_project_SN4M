@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN4M - Caricamento...</title>
+    <script>
+        // Controlla se c'è un utente loggato
+        const currentUser = sessionStorage.getItem('utente');
+        if (currentUser) {
+            window.location.href = 'home.html'; // Se loggato, vai alla home
+        } else {
+            window.location.href = 'login.html'; // Altrimenti, vai al login
+        }
+    </script>
+</head>
+<body>
+    <p>Caricamento applicazione...</p>
+</body>
+</html>
