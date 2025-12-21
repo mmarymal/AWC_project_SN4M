@@ -1,11 +1,6 @@
-const SPOTIFY_CLIENT_ID = '0f460e4cafca4fe38cedb64058540320';    
-const SPOTIFY_CLIENT_SECRET = 'cc9a7729cae04024814091458d568814'; 
+const SPOTIFY_CLIENT_ID = '0f460e4cafca4fe38cedb64058540320';
+const SPOTIFY_CLIENT_SECRET = 'cc9a7729cae04024814091458d568814';
 
-/**
- * Ottiene un Access Token da Spotify usando il Client Credentials Flow.
- * Cerca di recuperarlo dalla sessione se ancora valido.
- * @returns {Promise<string|null>} Il token di accesso o null in caso di errore.
- */
 export async function getSpotifyAccessToken() {
     let accessToken = sessionStorage.getItem('spotify_access_token');
     const tokenExpiry = sessionStorage.getItem('spotify_token_expiry');
@@ -47,11 +42,7 @@ export async function getSpotifyAccessToken() {
     }
 }
 
-/**
- * Esegue una ricerca nell'API Spotify per tracce, artisti e album.
- * @param {string} query Il termine di ricerca.
- * @returns {Promise<object|null>} I dati della ricerca o null in caso di errore.
- */
+
 export async function searchSpotify(query) {
     const accessToken = await getSpotifyAccessToken();
     if (!accessToken) {
@@ -90,11 +81,16 @@ export async function searchSpotify(query) {
     }
 }
 
-/**
- * Ottiene le top track di una playlist specifica (es. Global Top 50).
- * @param {string} playlistId L'ID della playlist Spotify.
- * @returns {Promise<Array<object>|null>} Un array di oggetti traccia o null.
- */
+export async function getArtistTopTracks(artistId) {
+    const accessToken = await getSpotifyAccessToken();
+    const url = `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=IT`;
+
+    const response = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    const data = await response.json(); return data.tracks || [];
+}
+
 export async function getPlaylistTracks(playlistId = '37i9dQZEVXbMDoHDwVN2tF') { // Global Top 50 di default
     const accessToken = await getSpotifyAccessToken();
     if (!accessToken) {
@@ -133,23 +129,12 @@ export async function getPlaylistTracks(playlistId = '37i9dQZEVXbMDoHDwVN2tF') {
     }
 }
 
-/**
- * Funzione helper per formattare la durata da millisecondi a MM:SS.
- * @param {number} ms Durata in millisecondi.
- * @returns {string} Durata formattata.
- */
 export function formatDuration(ms) {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-
-/**
- * Funzione helper per ottenere l'anno di pubblicazione.
- * @param {object} track Oggetto traccia Spotify.
- * @returns {string} Anno di pubblicazione.
- */
 export function getReleaseYear(track) {
     if (track && track.album && track.album.release_date) {
         return track.album.release_date.split('-')[0]; // Prende solo l'anno
@@ -157,15 +142,47 @@ export function getReleaseYear(track) {
     return 'N/A';
 }
 
-/**
- * Funzione helper per ottenere un'immagine da un array di immagini Spotify.
- * @param {Array<object>} images Array di oggetti immagine.
- * @returns {string} URL dell'immagine o placeholder.
- */
 export function getImageOrDefault(images) {
     if (images && images.length > 0) {
         // Spotify restituisce in ordine decrescente di dimensione, prendiamo la prima
         return images[0].url;
     }
-    return 'assets/placeholder.png'; // Assicurati di avere un'immagine placeholder
+    return 'assets/placeholder.png';
+}
+
+export function normalizeGenre(input) {
+    if (!input) return null;
+
+    let g = input.toLowerCase().trim();
+
+    //rimuove accenti
+    g = g.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // Rimuove parole inutili 
+    g = g.replace(/\b(musica|anni|anno|del|degli|della|italiana|italiano)\b/g, "").trim();
+
+    // Mapping intelligente 
+    const map = [
+        { keywords: ["rock", "ital"], genre: "italian rock" },
+        { keywords: ["rock"], genre: "rock" },
+        { keywords: ["pop", "80"], genre: "pop" },
+        { keywords: ["pop"], genre: "pop" },
+        { keywords: ["indie"], genre: "indie rock" },
+        { keywords: ["trap"], genre: "trap italiana" },
+        { keywords: ["rap"], genre: "rap" },
+        { keywords: ["hip hop", "hiphop"], genre: "hip hop" },
+        { keywords: ["dance", "90"], genre: "eurodance" },
+        { keywords: ["dance"], genre: "dance pop" },
+        { keywords: ["metal"], genre: "metal" },
+        { keywords: ["sad", "triste"], genre: "sad" }
+    ];
+
+    for (const rule of map) {
+        if (rule.keywords.some(k => g.includes(k))) {
+            return rule.genre;
+        }
+    }
+
+    // fallback: restituisce la parola principale
+    return g.split(" ")[0];
 }

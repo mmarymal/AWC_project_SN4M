@@ -90,7 +90,7 @@ async function mostraSuggerimentiMusicali(query) {
 
   let allTracks = [];
 
-  // CERCO GLI ARTISTI PREFERITI
+  // 1️⃣ CERCO GLI ARTISTI PREFERITI
   for (const artistName of preferredArtists) {
     const data = await searchSpotify(artistName);
     if (data?.artists?.items?.length > 0) {
