@@ -2,7 +2,9 @@ import {
   searchSpotify,
   formatDuration,
   getReleaseYear,
-  getImageOrDefault
+  getImageOrDefault,
+  getArtistTopTracks,
+  normalizeGenre
 } from './api.js';
 
 let scrollIndex = 0;
@@ -76,21 +78,53 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 async function mostraSuggerimentiMusicali(query) {
-  const data = await searchSpotify(query);
   const resultsContainer = document.getElementById('spotifyResults');
+  const carouselContainer = document.getElementById('musicTrack');
   resultsContainer.innerHTML = '';
+  carouselContainer.innerHTML = '';
+  scrollIndex = 0;
 
-  if (!data || !data.tracks?.items?.length) {
-    resultsContainer.innerHTML = `<p>Nessun risultato trovato per "${query}".</p>`;
+  const user = JSON.parse(sessionStorage.getItem('utente'));
+  const preferredGenre = normalizeGenre(user.preferences);
+  const preferredArtists = user.artists?.map(a => a.toLowerCase()) || [];
+
+  let allTracks = [];
+
+  // CERCO GLI ARTISTI PREFERITI
+  for (const artistName of preferredArtists) {
+    const data = await searchSpotify(artistName);
+    if (data?.artists?.items?.length > 0) {
+      const artist = data.artists.items[0]; // artista più rilevante
+      const topTracks = await getArtistTopTracks(artist.id);
+      allTracks.push(...topTracks);
+    }
+  }
+
+  // 2️⃣ CERCO ARTISTI DEL GENERE PREFERITO
+  if (preferredGenre) {
+    const genreSearch = await searchSpotify(preferredGenre);
+    if (genreSearch?.artists?.items?.length > 0) {
+      const genreArtists = genreSearch.artists.items.filter(a =>
+        a.genres.some(g => g.toLowerCase().includes(preferredGenre))
+      );
+
+      for (const artist of genreArtists) {
+        const topTracks = await getArtistTopTracks(artist.id);
+        allTracks.push(...topTracks);
+      }
+    }
+  }
+
+  // 3️⃣ RIMUOVO DUPLICATI
+  const uniqueTracks = Array.from(new Map(allTracks.map(t => [t.id, t])).values());
+
+  if (!uniqueTracks.length) {
+    resultsContainer.innerHTML = `<p>Nessun suggerimento disponibile.</p>`;
     return;
   }
 
-  const carouselContainer = document.getElementById('musicTrack');
-  carouselContainer.innerHTML = '';
-  scrollIndex = 0;
-  carouselContainer.style.transform = `translateX(0px)`;
-
-  data.tracks.items.forEach(track => {
+  // 4️⃣ MOSTRO LE CARD
+  uniqueTracks.forEach(track => {
     const card = document.createElement('div');
     card.classList.add('track-card');
     card.innerHTML = `
@@ -98,20 +132,17 @@ async function mostraSuggerimentiMusicali(query) {
       <h3>${track.name}</h3>
       <p>${track.artists.map(a => a.name).join(', ')}</p>
       <button class="add-to-playlist btn btn-outline-primary btn-sm mt-2"
-        data-id="${track.id}"
-        data-name="${track.name}"
-        data-artists="${track.artists.map(a => a.name).join(',')}"
-        data-url="${track.external_urls.spotify}">
+        data-id="${track.id}">
         ➕ Aggiungi a playlist
       </button>
     `;
     carouselContainer.appendChild(card);
   });
 
+  // 5️⃣ EVENTI PER AGGIUNGERE ALLA PLAYLIST
   carouselContainer.querySelectorAll('.add-to-playlist').forEach(button => {
     button.addEventListener('click', () => {
-      const fullTrack = data.tracks.items.find(t => t.id === button.dataset.id);
-      
+      const fullTrack = uniqueTracks.find(t => t.id === button.dataset.id);
 
       const track = {
         id: fullTrack.id,
@@ -125,6 +156,8 @@ async function mostraSuggerimentiMusicali(query) {
     });
   });
 }
+
+
 
 let trackSelezionato = null;
 
@@ -149,9 +182,8 @@ document.getElementById('confirmAddBtn').addEventListener('click', () => {
   const user = JSON.parse(sessionStorage.getItem('utente'));
   const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
 
-
   const playlistId = document.getElementById('playlistSelect').value;
-  const newName = document.getElementById('newPlaylistName').value.trim();  let index = parseInt(document.getElementById('playlistSelect').value);
+  const newName = document.getElementById('newPlaylistName').value.trim(); let index = parseInt(document.getElementById('playlistSelect').value);
 
   let playlist;
 
