@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Carica tutte le playlist salvate
     const allPlaylists = JSON.parse(localStorage.getItem('playlists')) || [];
-    renderPlaylists(allPlaylists, user);
+    renderPlaylists();
 
-    // ✅ Creazione nuova playlist
+    // Creazione nuova playlist
     const newForm = document.getElementById('newPlaylistForm');
     newForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -38,7 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ✅ Funzione per mostrare tutte le playlist
+function addTrackToPlaylist() {
+    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+    const user = JSON.parse(sessionStorage.getItem('utente'));
+    const playlistId = document.getElementById('playlistSelect').value;
+    const playlist = playlists.find(p => p.id === playlistId);
+    if (!playlist || !trackSelezionato) return;
+
+    const track = {
+        id: trackSelezionato.id,
+        title: trackSelezionato.name,
+        artist: trackSelezionato.artists.map(a => a.name).join(', '),
+        genre: trackSelezionato.genres?.[0] || 'N/D',
+        duration: formatDuration(trackSelezionato.duration_ms),
+        year: getReleaseYear(trackSelezionato)
+    };
+
+    playlist.tracks.push(track);
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+
+    showToast("Brano aggiunto alla playlist!");
+    bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+    renderPlaylists();
+}
+
+// Funzione per mostrare tutte le playlist
 function renderPlaylists() {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const user = JSON.parse(sessionStorage.getItem('utente'));
@@ -62,7 +86,6 @@ function renderPlaylists() {
         communityContainer.appendChild(renderPlaylistCard(p));
     });
 }
-
 
 // Funzione card
 function renderPlaylistCard(playlist) {
@@ -100,12 +123,21 @@ function openPlaylistDetails(id) {
     <hr>
     <h5>Brani:</h5>
     <ul>
-      ${playlist.tracks?.length
-            ? playlist.tracks.map(t => `<li>${t.title} - ${t.artist}</li>`).join('')
-            : '<li>Nessun brano</li>'}
+        ${playlist.tracks?.length
+        ? playlist.tracks.map(t => `
+            <li>
+                <strong>${t.title}</strong><br>
+                <small>
+                    Cantante: ${t.artist}<br>
+                    Genere: ${t.genre || 'N/D'}<br>
+                    Durata: ${t.duration || 'N/D'}<br>
+                    Anno: ${t.year || 'N/D'}
+                </small>
+            </li>
+        `).join('')
+        : '<li>Nessun brano</li>'}
     </ul>
   `;
-
     new bootstrap.Modal(document.getElementById('viewPlaylistModal')).show();
 }
 
@@ -119,6 +151,56 @@ function editPlaylist(id) {
     document.getElementById('editPlaylistDescription').value = playlist.description || '';
     document.getElementById('editPlaylistTags').value = playlist.tags?.join(', ') || '';
 
+    //mostra brani con pulsanti per rimuoverli
+    const trackList = document.getElementById('editPlaylistTracks');
+    trackList.innerHTML = '';
+
+    if (playlist.tracks?.length) {
+        playlist.tracks.forEach(track => {
+            const li = document.createElement('li');
+            li.classList.add("list-group-item", "p-3", "rounded", "shadow-sm", "mb-2", "bg-light");
+            
+            li.innerHTML = ` 
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">${track.title}</h6> 
+                        <p class="mb-0 text-muted" style="font-size: 0.9em;">
+                            🎤 ${track.artist} &nbsp; | &nbsp; 
+                            🎧 ${track.genre || 'N/D'} &nbsp; | &nbsp; 
+                            ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp; 
+                            📅 ${track.year || 'N/D'} 
+                        </p> 
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm remove-track" data-id="${track.id}" title="Rimuovi brano"> 
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            `;
+
+            trackList.appendChild(li);
+        });
+    } else {
+        trackList.innerHTML = '<li>Nessun brano nella playlist.</li>';
+    }
+
+    //rimozione brano
+    trackList.querySelectorAll(".remove-track").forEach(button => {
+        button.addEventListener('click', () => {
+            const trackId = button.dataset.id;
+
+            //rimuovo brano dalla playlist
+            playlist.tracks = playlist.tracks.filter(t => t.id !== trackId);
+
+            //salvo
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            //aggiorno ui della modale
+            setTimeout(() => editPlaylist(id), 50);
+            
+        });
+    });
+
+    // salvataggio modifiche
     const form = document.getElementById('editPlaylistForm');
     form.onsubmit = function (e) {
         e.preventDefault();
@@ -127,9 +209,10 @@ function editPlaylist(id) {
         playlist.tags = document.getElementById('editPlaylistTags').value.split(',').map(t => t.trim()).filter(Boolean);
 
         localStorage.setItem('playlists', JSON.stringify(playlists));
+
         showToast("Playlist modificata con successo!");
         bootstrap.Modal.getInstance(document.getElementById('editPlaylistModal')).hide();
-        renderPlaylists(playlists, JSON.parse(sessionStorage.getItem('utente')));
+        renderPlaylists();
     };
 
     new bootstrap.Modal(document.getElementById('editPlaylistModal')).show();
@@ -143,7 +226,7 @@ function confirmDelete(id) {
         localStorage.setItem('playlists', JSON.stringify(playlists));
         showToast("Playlist eliminata!");
         bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal')).hide();
-        renderPlaylists(playlists, JSON.parse(sessionStorage.getItem('utente')));
+        renderPlaylists();
     };
 
     new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();

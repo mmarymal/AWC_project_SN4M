@@ -139,7 +139,7 @@ async function mostraSuggerimentiMusicali(query) {
     carouselContainer.appendChild(card);
   });
 
-  // 5️⃣ EVENTI PER AGGIUNGERE ALLA PLAYLIST
+  // EVENTI PER AGGIUNGERE ALLA PLAYLIST
   carouselContainer.querySelectorAll('.add-to-playlist').forEach(button => {
     button.addEventListener('click', () => {
       const fullTrack = uniqueTracks.find(t => t.id === button.dataset.id);
@@ -156,8 +156,6 @@ async function mostraSuggerimentiMusicali(query) {
     });
   });
 }
-
-
 
 let trackSelezionato = null;
 
