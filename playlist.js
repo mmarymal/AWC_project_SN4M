@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     const user = JSON.parse(sessionStorage.getItem('utente'));
     if (!user) return;
 
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             creator: user.username,
             community: null,
             tracks: []
+
         };
 
         playlists.push(newPlaylist);
@@ -35,7 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast("Playlist creata con successo!");
         bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
         newForm.reset();
+
+       
+
     });
+
 });
 
 function addTrackToPlaylist() {
@@ -116,28 +122,73 @@ function openPlaylistDetails(id) {
     if (!playlist) return;
 
     const body = document.getElementById('viewPlaylistBody');
-    body.innerHTML = `
-    <h4>${playlist.name}</h4>
-    <p><strong>Descrizione:</strong> ${playlist.description || 'Nessuna descrizione'}</p>
-    <p><strong>Tag:</strong> ${playlist.tags?.join(', ') || 'Nessuno'}</p>
-    <hr>
-    <h5>Brani:</h5>
-    <ul>
-        ${playlist.tracks?.length
-        ? playlist.tracks.map(t => `
-            <li>
-                <strong>${t.title}</strong><br>
-                <small>
-                    Cantante: ${t.artist}<br>
-                    Genere: ${t.genre || 'N/D'}<br>
-                    Durata: ${t.duration || 'N/D'}<br>
-                    Anno: ${t.year || 'N/D'}
-                </small>
-            </li>
-        `).join('')
-        : '<li>Nessun brano</li>'}
-    </ul>
-  `;
+    body.innerHTML = ""; // pulizia contenuto precedente
+
+    const header = document.createElement('div');
+    header.className = 'playlist-details-header';
+
+    const title = document.createElement('h2');
+    title.textContent = playlist.name;
+
+    const description = document.createElement('p');
+    description.textContent = playlist.description || 'Nessuna descrizione';
+
+    header.appendChild(title);
+    header.appendChild(description);
+
+    // tags
+    if (playlist.tags?.length) {
+        playlist.tags.forEach(tag => {
+            const badge = document.createElement('span');
+            badge.className = 'playlist-tag';
+            badge.textContent = tag;
+            header.appendChild(badge);
+        });
+    }
+
+    body.appendChild(header);
+
+    // separatore
+    const hr = document.createElement('hr');
+    body.appendChild(hr);
+
+    // titolo sezione brani
+    const trackTitle = document.createElement('h5');
+    trackTitle.textContent = "🎵 Brani nella playlist";
+    trackTitle.style.marginBottom = "1rem";
+    body.appendChild(trackTitle);
+
+    // lista brani
+    if (playlist.tracks?.length) {
+        playlist.tracks.forEach(track => {
+            const card = document.createElement('div');
+            card.className = 'track-card';
+
+            const trackName = document.createElement('h6');
+            trackName.textContent = track.title;
+
+            const info = document.createElement('p');
+            info.className = 'track-info';
+
+            info.innerHTML = `
+                🎤 ${track.artist}<br>
+                ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp;
+                📅 ${track.year || 'N/D'} &nbsp; | &nbsp;
+                🎧 ${track.genre || 'N/D'}
+            `;
+
+            card.appendChild(trackName);
+            card.appendChild(info);
+            body.appendChild(card);
+        });
+    } else {
+        const empty = document.createElement('p');
+        empty.className = 'text-muted';
+        empty.textContent = "Nessun brano nella playlist.";
+        body.appendChild(empty);
+    }
+
+    // Mostra modale
     new bootstrap.Modal(document.getElementById('viewPlaylistModal')).show();
 }
 
@@ -159,7 +210,7 @@ function editPlaylist(id) {
         playlist.tracks.forEach(track => {
             const li = document.createElement('li');
             li.classList.add("list-group-item", "p-3", "rounded", "shadow-sm", "mb-2", "bg-light");
-            
+
             li.innerHTML = ` 
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -196,7 +247,7 @@ function editPlaylist(id) {
 
             //aggiorno ui della modale
             setTimeout(() => editPlaylist(id), 50);
-            
+
         });
     });
 

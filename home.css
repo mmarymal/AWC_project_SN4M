@@ -1,0 +1,87 @@
+.home-content {
+    flex-grow: 1;
+    /* Permette al main di occupare lo spazio rimanente */
+    padding: 20px;
+    max-width: 1500px;
+    /* Larghezza massima per il contenuto */
+    margin: 20px 100px;
+    /* sopra/sotto 20px, sinistra/destra 100px */
+    background-color: #282a36;
+    /* Sfondo leggermente diverso per il main */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.home-content h2 {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #44475a;
+    /* Sottolineatura per i titoli */
+    padding-bottom: 10px;
+}
+
+.track-card {
+    min-width: 160px;
+    max-width: 160px;
+    flex-shrink: 0;
+    padding: 10px;
+    color: #f8f8f2;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    font-size: 0.85em;
+    min-height: 100px;
+}
+
+.track-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.music-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    /* Larghezza visibile del carosello */
+    margin: 0 auto;
+}
+
+.music-viewport {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.music-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 20px;
+    transition: transform 0.5s ease;
+    padding: 10px;
+    width: max-content;
+    /* Espande il contenitore in orizzontale */
+}
+
+.music-left,
+.music-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #a47bdf;
+    color: rgb(22, 21, 21);
+    border: none;
+    font-size: 2em;
+    padding: 5px 10px;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 50%;
+}
+
+.music-left {
+    left: -30px;
+}
+
+.music-right {
+    right: -30px;
+}
+

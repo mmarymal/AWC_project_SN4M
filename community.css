@@ -1,0 +1,103 @@
+.community-content {
+    flex-grow: 1;
+    /* Permette al main di occupare lo spazio rimanente */
+    padding: 20px;
+    max-width: 1500px;
+    /* Larghezza massima per il contenuto */
+    margin: 20px 100px;
+    /* sopra/sotto 20px, sinistra/destra 100px */
+    background-color: #282a36;
+    /* Sfondo leggermente diverso per il main */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.community-content h2 {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #44475a;
+    /* Sottolineatura per i titoli */
+    padding-bottom: 10px;
+}
+
+.section-title {
+    color: #50fa7b;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #44475a;
+    padding-bottom: 10px;
+}
+
+.community-section {
+    margin-top: 40px;
+}
+
+#myCommunities,
+#communityList {
+    margin-bottom: 30px;
+}
+
+.community-card {
+    background-color: #2a2a4a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.community-card h5 {
+    color: #50fa7b;
+    margin-bottom: 8px;
+}
+
+.community-card p {
+    margin-bottom: 6px;
+}
+
+.community-card button {
+    margin-top: 10px;
+}
+
+.community-title {
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+
+.community-title:hover {
+    color: #50fa7b;
+    /* verde evidenziato */
+}
+
+.community-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.community-title {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.community-header .dropdown {
+    margin-left: auto;
+}
+
+.btn-transparent {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.4rem;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.btn-transparent:hover {
+    color: #e286f5;
+    background-color: #44475a;
+    border-radius: 50%;
+}

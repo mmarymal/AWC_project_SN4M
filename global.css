@@ -1,0 +1,250 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #1a1a2e;
+    /* Sfondo scuro */
+    color: #e0e0e0;
+    /* Testo chiaro */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Per il layout header-main-footer */
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+a {
+    color: #8be9fd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #bd93f9;
+}
+
+button {
+    background-color: #bd93f9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff79c6;
+}
+
+h1,
+h2 {
+    color: #50fa7b;
+    /* Colore verde per i titoli */
+}
+
+.home-header {
+    background-color: #2a2a4a;
+    /* Sfondo più scuro per l'header */
+    padding: 15px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* Spazio tra gli elementi principali dell'header */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    /* Allinea logo a sinistra, ricerca al centro, user a destra */
+    align-items: center;
+    flex-wrap: wrap;
+    /* Permette agli elementi di andare a capo su schermi piccoli */
+    gap: 20px;
+    /* Spazio tra gli elementi nella riga superiore */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-container .image {
+    height: 40px;
+    /* Dimensione del logo */
+    width: auto;
+}
+
+.logo-container .app-name {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #f8f8f2;
+    /* Colore più chiaro per il nome dell'app */
+}
+
+/* Stili per la Navigazione (Navbar) */
+.navbar {
+    display: flex;
+    justify-content: center;
+    /* Centra gli elementi di navigazione */
+    gap: 30px;
+    /* Spazio tra i link */
+    margin-top: 10px;
+    /* Spazio sotto la riga superiore dell'header */
+}
+
+.navbar a {
+    font-size: 1.1em;
+    font-weight: 500;
+    padding: 5px 0;
+    position: relative;
+    /* Per l'effetto underline */
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background-color: #ff79c6;
+    bottom: 0;
+    left: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.navbar a:hover::after {
+    width: 100%;
+}
+
+/* Stili per la Sezione di Benvenuto Utente e Logout */
+.user-welcome {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-welcome p {
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#welcomeUsername {
+    color: #f8f8f2;
+    font-weight: bold;
+}
+
+.user-info p {
+    margin-bottom: 10px;
+}
+
+.user-info strong {
+    color: #f1fa8c;
+    /* Colore giallo per le etichette in grassetto */
+}
+
+footer {
+    background-color: #2a2a4a;
+    color: #a0a0a0;
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.icon ion-icon {
+    vertical-align: middle;
+    /* Allinea le icone al testo */
+}
+
+/* Stili per il Form di Ricerca */
+#search-form {
+    display: flex;
+    align-items: center;
+    background-color: #3b3b5b;
+    border-radius: 20px;
+    padding: 5px 15px;
+}
+
+#search-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: #f8f8f2;
+    padding: 8px 10px;
+    font-size: 1em;
+    width: 200px;
+}
+
+#search-input::placeholder {
+    color: #a0a0a0;
+}
+
+#search-button {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    /* Per centrare l'icona */
+    align-items: center;
+    justify-content: center;
+}
+
+#search-button .icon ion-icon {
+    font-size: 1.2em;
+    /* Dimensione dell'icona di ricerca */
+}
+
+.modal-dialog {
+    margin: 60px auto;
+}
+
+.modal-header .modal-title {
+    font-weight: bold;
+    color: #2a2a4a;
+}
+
+.modal-footer .btn-success {
+    background-color: #7a4de8;
+    border: none;
+}
+
+.modal-footer .btn-success:hover {
+    background-color: #5f3bbd;
+}
+
+.modal-content input[type="text"],
+.modaal.content input[type="email"],
+.modaal.content input[type="number"],
+.modal-content textarea {
+    background-color: #f3eaff;
+    border: 2px solid #a47bdf;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 1em;
+    color: #2a2a4a;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-color: #7a4de8;
+    outline: none;
+} 
+
+/* Stili per la sezione Feed (e altre future sezioni)
+.feed {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px dashed #44475a;
+    /* Separatore visivo 
+} */

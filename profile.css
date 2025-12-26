@@ -1,0 +1,49 @@
+.profile-box {
+    max-width: 600px;
+    margin: 60px auto;
+    /* Centra orizzontalmente e aggiunge spazio verticale */
+    padding: 40px;
+    background-color: rgba(40, 42, 54, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: #f8f8f2;
+}
+
+.profile-box input[type="text"],
+.profile-box input[type="email"],
+.profile-box textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #2c2c3e;
+    color: #f8f8f2;
+    font-size: 1em;
+    transition: box-shadow 0.3s ease;
+}
+
+.profile-box input:focus,
+.profile-box textarea:focus {
+    outline: none;
+    box-shadow: 0 0 8px #bd93f9;
+}
+
+/* Pulsante Salva */
+.profile-box button {
+    width: 100%;
+    padding: 12px;
+    background-color: #bd93f9;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.profile-box button:hover {
+    background-color: #ff79c6;
+}
+
