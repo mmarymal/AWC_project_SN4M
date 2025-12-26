@@ -102,12 +102,21 @@
         </div>
     </div>
  
-    <header class="home-header">
+    <header class="global-header">
         <div class="header-top">
             <div class="logo-container">
                 <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
                 <a href="home.html" class="app-name">SN4M</a>
             </div>
+
+            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
+                <button type="submit" id="search-button">
+                    <span class="icon">
+                        <ion-icon name="search"></ion-icon>
+                    </span>
+                </button>
+            </form>
+
             <div class="user-welcome">
                 <p>Ciao, <span id="welcomeUsername"></span>!</p>
                 <button id="logoutBtn">Logout</button>
