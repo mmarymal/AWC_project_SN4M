@@ -76,8 +76,7 @@ h2 {
     position: relative;
 }
 
-.register-box,
-.login-box {
+.register-box, .login-box {
     position: relative;
     /* Per posizionamento elementi interni */
     max-width: 600px;
@@ -104,13 +103,11 @@ h2 {
 
 }
 
-.register-box form,
-.login-box form {
+.register-box form, .login-box form {
     width: 100%;
 }
 
-.register-box h2,
-.login-box h2 {
+.register-box h2, .login-box h2 {
     font-size: 2em;
     color: #f8f8f2;
     text-align: center;
@@ -136,8 +133,7 @@ h2 {
     transition: 0.5s;
 }
 
-.input-box input:focus~label,
-.input-box input:valid~label {
+.input-box input:focus~label, .input-box input:valid~label {
     top: -5px;
     color: #8be9fd;
     font-size: 0.8em;
@@ -163,8 +159,7 @@ h2 {
     /* Allinea l'icona verticalmente */
 }
 
-.register-box button,
-.login-box button {
+.register-box button, .login-box button {
     width: 100%;
     height: 45px;
     border-radius: 40px;
@@ -175,16 +170,14 @@ h2 {
     margin-top: 20px;
 }
 
-.register-link,
-.login-link {
+.register-link, .login-link {
     font-size: 0.9em;
     color: #f8f8f2;
     text-align: center;
     margin: 25px 0 10px;
 }
 
-.register-link p a,
-.login-link p a {
+.register-link p a, .login-link p a {
     color: #8be9fd;
     text-decoration: underline;
     font-weight: 600;
