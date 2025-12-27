@@ -73,8 +73,15 @@
     cursor: pointer;
 }
 
-.btn-transparent:hover {
-    color: #e286f5;
-    background-color: #44475a;
-    border-radius: 50%;
+/* colore icona normale */
+.playlist-card i.bi-three-dots-vertical {
+    color: #ffffff;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
+
+/* hover sul bottone */
+.playlist-card .btn-transparent:hover i.bi-three-dots-vertical {
+    color: #e286f5 !important;
+    transform: scale(1.2);
+}
+

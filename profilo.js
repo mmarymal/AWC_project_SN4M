@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('headerLoaded', function () {
   const userDataString = sessionStorage.getItem('utente');
   if (!userDataString) {
     mostraTost("Non sei loggato. Effettua il login.");

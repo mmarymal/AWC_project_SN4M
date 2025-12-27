@@ -8,39 +8,14 @@
     <title>SN4M - Profilo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="icon" type="image/png" href="logo1.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="profile.css">
     <link rel="stylesheet" href="global.css">
     
 </head>
 
 <body>
-    <header class="global-header">
-        <div class="header-top">
-            <div class="logo-container">
-                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
-                <a href="home.html" class="app-name">SN4M</a>
-            </div>
-
-            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
-                <button type="submit" id="search-button">
-                    <span class="icon">
-                        <ion-icon name="search"></ion-icon>
-                    </span>
-                </button>
-            </form>
-
-            <div class="user-welcome">
-                <p>Ciao, <span id="welcomeUsername"></span>!</p>
-                <button id="logoutBtn">Logout</button>
-            </div>
-        </div>
-
-        <nav class="navbar"> <a href="playlist.html">Playlist</a>
-            <a href="community.html">Community</a>
-            <a href="profilo.html">Profilo</a>
-        </nav>
-    </header>
-
+    <div id="global-header"></div>
 
     <main>
         <div class="profile-box">
@@ -72,9 +47,14 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
     <script src="auth.js"></script>
     <script src="profilo.js"></script>
+    <script src="playlist.js"></script>
+    <script src="api.js"></script>
+    <script type="module" src="load-header.js"></script>
 
 
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">

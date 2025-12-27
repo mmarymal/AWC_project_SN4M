@@ -1,4 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('headerLoaded', () => {
+    const btn = document.getElementById("confirmAddBtn");
+    if (btn) {
+        btn.addEventListener("click", addTrackToPlaylist);
+    }
 
     const user = JSON.parse(sessionStorage.getItem('utente'));
     if (!user) return;
@@ -51,14 +55,22 @@ function addTrackToPlaylist() {
     const playlist = playlists.find(p => p.id === playlistId);
     if (!playlist || !trackSelezionato) return;
 
+    const alreadyInPlaylist = playlist.tracks.some(t => t.id === trackSelezionato.id);
+    if (alreadyInPlaylist) {
+        showToast("Brano già presente nella playlist!", "warning");
+        bootstrap.Modal.getInstance(document.getElementById("playlistModal")).hide();
+        return;
+    }
+
     const track = {
         id: trackSelezionato.id,
         title: trackSelezionato.name,
         artist: trackSelezionato.artists.map(a => a.name).join(', '),
-        genre: trackSelezionato.genres?.[0] || 'N/D',
-        duration: formatDuration(trackSelezionato.duration_ms),
-        year: getReleaseYear(trackSelezionato)
+        duration: trackSelezionato.duration_ms ? Math.floor(trackSelezionato.duration_ms / 1000) + " sec" : "N/D",
+        year: trackSelezionato.album?.release_date?.slice(0, 4) || "N/D",
+        genre: "N/D" // Spotify non restituisce i generi nelle search
     };
+
 
     playlist.tracks.push(track);
     localStorage.setItem('playlists', JSON.stringify(playlists));
@@ -283,11 +295,17 @@ function confirmDelete(id) {
     new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
 }
 
-function showToast(message) {
+function showToast(message, tipo = "success") {
     const toastEl = document.getElementById('sn4mToast');
     const toastMessage = document.getElementById('toastMessage');
     if (!toastEl || !toastMessage) return;
+
     toastMessage.textContent = message;
+
+    // Cambia il colore del toast
+    toastEl.className = `toast align-items-center text-white bg-${tipo} border-0`;
+
     new bootstrap.Toast(toastEl).show();
 }
+
 

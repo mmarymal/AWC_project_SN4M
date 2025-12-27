@@ -6,15 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SN4M - Le mie playlist</title>
+
     <link rel="icon" type="image/png" href="logo1.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="playlist.css">
     <link rel="stylesheet" href="global.css">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
+    <div id="global-header"></div>
 
     <!--modifica playlist -->
     <div class="modal fade" id="editPlaylistModal" tabindex="-1" aria-hidden="true">
@@ -70,60 +74,7 @@
             </form>
         </div>
     </div>
-
-    <!-- aggiungi a playlist -->
-    <div class="modal fade" id="playlistModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Aggiungi alla playlist</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <p id="modalTrackName" class="fw-bold"></p>
-
-                    <label class="form-label">Seleziona playlist</label>
-                    <select id="playlistSelect" class="form-select mb-3"></select>
-
-                    <hr>
-
-                    <label class="form-label">Oppure crea una nuova playlist</label>
-                    <input type="text" id="newPlaylistName" class="form-control" placeholder="Nome nuova playlist">
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-success" onclick="addTrackToPlaylist()">Aggiungi</button>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
  
-    <header class="global-header">
-        <div class="header-top">
-            <div class="logo-container">
-                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
-                <a href="home.html" class="app-name">SN4M</a>
-            </div>
-
-            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
-                <button type="submit" id="search-button">
-                    <span class="icon">
-                        <ion-icon name="search"></ion-icon>
-                    </span>
-                </button>
-            </form>
-
-            <div class="user-welcome">
-                <p>Ciao, <span id="welcomeUsername"></span>!</p>
-                <button id="logoutBtn">Logout</button>
-            </div>
-        </div>
-    </header>
-
     <main>
         <section class="playlist-section container mt-5">
             <div class="row">
@@ -216,17 +167,16 @@
         </div>
     </div>
 
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="sn4mToast" class="toast align-items-center text-white bg-success border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body" id="toastMessage">Messaggio</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
-    </div>
 
     <script src="auth.js"></script>
     <script src="playlist.js"></script>
+    <script src="api.js"></script>
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script type="module" src="load-header.js"></script>
+    
 
 </body>
 

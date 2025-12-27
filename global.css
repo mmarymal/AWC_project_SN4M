@@ -5,11 +5,15 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* .global-header,
+.navbar,
+main {
+    outline: 1px solid red;
+} */
+
 body {
-    background-color: #1a1a2e;
-    /* Sfondo scuro */
-    color: #e0e0e0;
-    /* Testo chiaro */
+    background-color: #1a1a2e; /* Sfondo scuro */
+    color: #e0e0e0; /* Testo chiaro */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -50,13 +54,11 @@ h2 {
 }
 
 .global-header {
-    background-color: #2a2a4a;
-    /* Sfondo più scuro per l'header */
-    padding: 15px 30px;
+    background-color: #2a2a4a; /* Sfondo più scuro per l'header */
+    padding: 6px 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    /* Spazio tra gli elementi principali dell'header */
+    gap: 4px; /* Spazio tra gli elementi principali dell'header */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -90,15 +92,14 @@ h2 {
     /* Colore più chiaro per il nome dell'app */
 }
 
+
 /* Stili per la Navigazione (Navbar) */
 .navbar {
     display: flex;
-    justify-content: center;
-    /* Centra gli elementi di navigazione */
-    gap: 30px;
-    /* Spazio tra i link */
-    margin-top: 10px;
-    /* Spazio sotto la riga superiore dell'header */
+    justify-content: center;   /* Centra gli elementi di navigazione */
+    gap: 30px;    /* Spazio tra i link */
+    margin-top: 4px;  /* Spazio sotto la riga superiore dell'header */
+    margin-bottom: 0;
 }
 
 .navbar a {
@@ -204,6 +205,10 @@ footer {
     /* Dimensione dell'icona di ricerca */
 }
 
+.modal {
+    z-index: 3000;
+}
+
 .modal-dialog {
     margin: 60px auto;
 }
@@ -241,10 +246,130 @@ footer {
     outline: none;
 } 
 
-/* Stili per la sezione Feed (e altre future sezioni)
-.feed {
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 1px dashed #44475a;
-    /* Separatore visivo 
-} */
+/* CARD RISULTATI SPOTIFY */
+.spotify-result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #1e1e2e;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    color: #fff;
+    max-width: 600px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    height: auto;
+    width: 100%;
+    flex-shrink: 0;
+    /* evita che si comprimano */
+}
+
+.spotify-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* centra verticalmente titolo e artista */
+}
+
+.spotify-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.spotify-info h4 {
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.spotify-info p {
+    margin: 2px 0 0;
+    font-size: 0.9rem;
+    color: #bd93f9;
+}
+
+#spotifyResults {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.add-track {
+    background-color: #50fa7b !important;
+    border: none;
+    color: #000;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.add-track:hover {
+    transform: scale(1.1);
+    background-color: #e286f5 !important;
+    color: #fff;
+}
+
+.toast.bg-warning {
+    background-color: #f1c40f !important;
+    color: #fff !important;
+}
+
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 120px;
+    z-index: 2000;
+}
+
+.search-box {
+    position: relative;
+    background: #1c1c1c;
+    width: 80%;
+    max-width: 800px;
+    max-height: 70vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 40px auto;
+    border: 1px solid #444;
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    background-color: #7a4de8;
+    color: white;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+
+    /* Centratura perfetta */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+
+    /* Optional: effetto hover */
+    transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: #a86cf5;
+}

@@ -4,36 +4,21 @@ import {
   getReleaseYear,
   getImageOrDefault,
   getArtistTopTracks,
-  normalizeGenre
+  normalizeGenre,
 } from './api.js';
 
 let scrollIndex = 0;
 let selectedTrack = null;
+let trackSelezionato = null;
 
-function openPlaylistModal(track) {
-  selectedTrack = track;
-  document.getElementById('modalTrackName').textContent = `Brano: ${track.title} - ${track.artist}`;
+//aspetta che header sia caricato
+document.addEventListener("headerLoaded", initHome);
 
-  const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-  const user = JSON.parse(sessionStorage.getItem('utente'));
-  const userPlaylists = playlists.filter(p => p.creator === user.username);
+//funzione principale della home
+async function initHome() {
 
-  const select = document.getElementById('playlistSelect');
-  select.innerHTML = '<option value="">Seleziona una playlist</option>';
-  userPlaylists.forEach(p => {
-    const option = document.createElement('option');
-    option.value = p.id;
-    option.textContent = p.name;
-    select.appendChild(option);
-  });
-
-  new bootstrap.Modal(document.getElementById('playlistModal')).show();
-}
-
-document.addEventListener('DOMContentLoaded', async function () {
+  /* --- Controllo login --- */
   const userDataString = sessionStorage.getItem('utente');
-  const utenti = JSON.parse(localStorage.getItem('utenti')) || [];
-
   if (!userDataString) {
     mostraToast("Non sei loggato. Effettua il login per accedere alla home.", "danger");
     window.location.href = "login.html";
@@ -43,26 +28,33 @@ document.addEventListener('DOMContentLoaded', async function () {
   let user;
   try {
     user = JSON.parse(userDataString);
-  } catch (error) {
-    mostraToast("Riprova il login.", "danger");
+  } catch {
+    mostraToast("Errore nel recupero dati utente. Rieffettua il login.", "danger");
     window.location.href = "login.html";
     return;
   }
 
+  /* --- Mostra nome utente nell’header --- */
   document.getElementById('welcomeUsername').textContent = user.username;
 
+  /* --- Gestione ricerca --- */
   document.getElementById("search-form").addEventListener("submit", async function (event) {
     event.preventDefault();
     const query = document.getElementById("search-input").value.trim();
-    if (query) {
-      await mostraSuggerimentiMusicali(query);
-    }
+    if (query) await mostraSuggerimentiMusicali(query);
   });
 
+  /* --- Suggerimenti iniziali --- */
   if (user.preferences) {
     await mostraSuggerimentiMusicali(user.preferences);
   }
 
+  /* --- Inizializza carosello --- */
+  initCarousel();
+}
+
+//carosello
+function initCarousel() {
   const cardWidth = 180;
   const visibleCards = 6;
   const track = document.getElementById('musicTrack');
@@ -75,11 +67,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   document.querySelector('.music-left').addEventListener('click', () => updateCarousel(-1));
   document.querySelector('.music-right').addEventListener('click', () => updateCarousel(1));
-});
+}
 
+//suggerimenti musicali
 async function mostraSuggerimentiMusicali(query) {
   const resultsContainer = document.getElementById('spotifyResults');
   const carouselContainer = document.getElementById('musicTrack');
+
   resultsContainer.innerHTML = '';
   carouselContainer.innerHTML = '';
   scrollIndex = 0;
@@ -90,17 +84,17 @@ async function mostraSuggerimentiMusicali(query) {
 
   let allTracks = [];
 
-  // 1️⃣ CERCO GLI ARTISTI PREFERITI
+  /* --- Artisti preferiti --- */
   for (const artistName of preferredArtists) {
     const data = await searchSpotify(artistName);
     if (data?.artists?.items?.length > 0) {
-      const artist = data.artists.items[0]; // artista più rilevante
+      const artist = data.artists.items[0];
       const topTracks = await getArtistTopTracks(artist.id);
       allTracks.push(...topTracks);
     }
   }
 
-  // 2️⃣ CERCO ARTISTI DEL GENERE PREFERITO
+  /* --- Artisti del genere preferito --- */
   if (preferredGenre) {
     const genreSearch = await searchSpotify(preferredGenre);
     if (genreSearch?.artists?.items?.length > 0) {
@@ -115,7 +109,7 @@ async function mostraSuggerimentiMusicali(query) {
     }
   }
 
-  // 3️⃣ RIMUOVO DUPLICATI
+  /* --- Rimuovi duplicati --- */
   const uniqueTracks = Array.from(new Map(allTracks.map(t => [t.id, t])).values());
 
   if (!uniqueTracks.length) {
@@ -123,7 +117,7 @@ async function mostraSuggerimentiMusicali(query) {
     return;
   }
 
-  // 4️⃣ MOSTRO LE CARD
+  /* --- Mostra card nel carosello --- */
   uniqueTracks.forEach(track => {
     const card = document.createElement('div');
     card.classList.add('track-card');
@@ -131,15 +125,14 @@ async function mostraSuggerimentiMusicali(query) {
       <img src="${getImageOrDefault(track.album.images)}" alt="${track.name}" class="track-image">
       <h3>${track.name}</h3>
       <p>${track.artists.map(a => a.name).join(', ')}</p>
-      <button class="add-to-playlist btn btn-outline-primary btn-sm mt-2"
-        data-id="${track.id}">
+      <button class="add-to-playlist btn btn-outline-primary btn-sm mt-2" data-id="${track.id}">
         ➕ Aggiungi a playlist
       </button>
     `;
     carouselContainer.appendChild(card);
   });
 
-  // EVENTI PER AGGIUNGERE ALLA PLAYLIST
+  /* --- Eventi pulsanti "Aggiungi a playlist" --- */
   carouselContainer.querySelectorAll('.add-to-playlist').forEach(button => {
     button.addEventListener('click', () => {
       const fullTrack = uniqueTracks.find(t => t.id === button.dataset.id);
@@ -157,8 +150,7 @@ async function mostraSuggerimentiMusicali(query) {
   });
 }
 
-let trackSelezionato = null;
-
+//modal playlist
 function scegliPlaylistEInserisci(track) {
   trackSelezionato = track;
 
@@ -169,19 +161,21 @@ function scegliPlaylistEInserisci(track) {
   const select = document.getElementById('playlistSelect');
   select.innerHTML = userPlaylists.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
 
-  document.getElementById('modalTrackName').textContent = `Brano: ${track.name}`;
+  document.getElementById('modalTrackName').textContent = `Brano: ${track.title}`;
   document.getElementById('newPlaylistName').value = '';
 
-  const modal = new bootstrap.Modal(document.getElementById('playlistModal'));
-  modal.show();
+  new bootstrap.Modal(document.getElementById('playlistModal')).show();
 }
 
-document.getElementById('confirmAddBtn').addEventListener('click', () => {
+//CONFERMA AGGIUNTA BRANO
+document.addEventListener("click", (e) => {
+  if (e.target.id !== "confirmAddBtn") return;
+
   const user = JSON.parse(sessionStorage.getItem('utente'));
   const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
 
   const playlistId = document.getElementById('playlistSelect').value;
-  const newName = document.getElementById('newPlaylistName').value.trim(); let index = parseInt(document.getElementById('playlistSelect').value);
+  const newName = document.getElementById('newPlaylistName').value.trim();
 
   let playlist;
 
@@ -216,11 +210,11 @@ document.getElementById('confirmAddBtn').addEventListener('click', () => {
 
   localStorage.setItem('playlists', JSON.stringify(playlists));
 
-  const modal = bootstrap.Modal.getInstance(document.getElementById('playlistModal'));
-  modal.hide();
+  //chiudi modal
+  bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
 });
 
-
+//TOAST
 function mostraToast(messaggio, tipo = 'success') {
   const toastEl = document.getElementById('sn4mToast');
   const toastBody = document.getElementById('toastMessage');
@@ -228,6 +222,5 @@ function mostraToast(messaggio, tipo = 'success') {
   toastBody.textContent = messaggio;
   toastEl.className = `toast align-items-center text-white bg-${tipo} border-0`;
 
-  const toast = new bootstrap.Toast(toastEl);
-  toast.show();
+  new bootstrap.Toast(toastEl).show();
 }

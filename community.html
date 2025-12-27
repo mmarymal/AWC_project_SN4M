@@ -16,31 +16,37 @@
 </head>
 
 <body>
-    <header class="global-header">
-        <div class="header-top">
-            <div class="logo-container">
-                <a href="home.html"><img src="logo1.png" alt="logo SN4M" class="image"></a>
-                <a href="home.html" class="app-name">SN4M</a>
-            </div>
+    <div id="global-header"></div>
 
-            <form id="search-form"> <input type="text" id="search-input" placeholder="Cerca...">
-                <button type="submit" id="search-button">
-                    <span class="icon">
-                        <ion-icon name="search"></ion-icon>
-                    </span>
-                </button>
-            </form>
+    <div class="modal fade" id="playlistModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-            <div class="user-welcome">
-                <p>Ciao, <span id="welcomeUsername"></span>!</p>
-                <button id="logoutBtn">Logout</button>
+                <div class="modal-header">
+                    <h5 class="modal-title">Aggiungi alla playlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p id="modalTrackName" class="fw-bold"></p>
+
+                    <label class="form-label">Seleziona playlist</label>
+                    <select id="playlistSelect" class="form-select mb-3"></select>
+
+                    <hr>
+
+                    <label class="form-label">Oppure crea una nuova playlist</label>
+                    <input type="text" id="newPlaylistName" class="form-control" placeholder="Nome nuova playlist">
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="addTrackToPlaylist()">Aggiungi</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                </div>
+
             </div>
         </div>
-        <nav class="navbar"> <a href="playlist.html">Playlist</a>
-            <a href="community.html">Community</a>
-            <a href="profilo.html">Profilo</a>
-        </nav>
-    </header>
+    </div>
 
     <main class="community-content">
         <section class="community-section">
@@ -56,17 +62,13 @@
         </section>
     </main>
 
-
-
-    </main>
-
     <template id="communityCardTemplate">
         <div class="community-card">
             <div class="community-header">
                 <h5 class="community-title"></h5>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-transparent" data-bs-toggle="dropdown"
-                        aria-expanded="false" title="Opzioni community">
+                    <button class="btn btn-sm btn-transparent" data-bs-toggle="dropdown" aria-expanded="false"
+                        title="Opzioni community">
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end"></ul>
@@ -74,7 +76,6 @@
             </div>
         </div>
     </template>
-
 
     <footer>
         <p>&copy; 2025 SN4M - Social Network for Music</p>
@@ -155,12 +156,16 @@
         </div>
     </div>
 
-
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
     <script src="auth.js"></script>
     <script src="community.js"></script>
+    <script src="playlist.js"></script>
+    <script src="api.js"></script>
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
+    <script type="module" src="load-header.js"></script>
 
 </body>
 

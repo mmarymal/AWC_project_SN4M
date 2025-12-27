@@ -101,3 +101,13 @@
     background-color: #44475a;
     border-radius: 50%;
 }
+
+.community-card i.bi-three-dots-vertical {
+    color: #ffffff;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.community-card .btn-transparent:hover i.bi-three-dots-vertical {
+    color: #e286f5 !important;
+    transform: scale(1.2);
+}
