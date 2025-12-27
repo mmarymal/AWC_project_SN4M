@@ -163,6 +163,7 @@ export function normalizeGenre(input) {
 
     // Mapping intelligente 
     const map = [
+        { keywords: ["kpop", "k-pop", "k pop"], genre: "k-pop" },
         { keywords: ["rock", "ital"], genre: "italian rock" },
         { keywords: ["rock"], genre: "rock" },
         { keywords: ["pop", "80"], genre: "pop" },

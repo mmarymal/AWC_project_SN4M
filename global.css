@@ -64,6 +64,7 @@ h2 {
 
 .header-top {
     display: flex;
+    margin-top: 10px;
     justify-content: space-between;
     /* Allinea logo a sinistra, ricerca al centro, user a destra */
     align-items: center;
@@ -102,12 +103,14 @@ h2 {
     margin-bottom: 0;
 }
 
+
 .navbar a {
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: 500;
     padding: 5px 0;
-    position: relative;
-    /* Per l'effetto underline */
+    position: relative; /* Per l'effetto underline */
+    margin: 0 16px;
+    transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .navbar a::after {
@@ -123,6 +126,7 @@ h2 {
 
 .navbar a:hover::after {
     width: 100%;
+    transform: scale(1.05);
 }
 
 /* Stili per la Sezione di Benvenuto Utente e Logout */

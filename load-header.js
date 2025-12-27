@@ -111,3 +111,14 @@ function showSearchOverlay(results) {
     });
 }
 
+document.addEventListener("headerLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (!logoutBtn) return;
+
+    logoutBtn.addEventListener("click", () => {
+        sessionStorage.removeItem("utente");
+        window.location.href = "login.html";
+    });
+});
+
+
