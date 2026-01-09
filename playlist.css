@@ -1,3 +1,8 @@
+.playlist-section {
+    margin-top: 40px;
+    padding: 20px;
+}
+
 .section-title {
     color: #50fa7b;
     margin-bottom: 20px;
@@ -11,8 +16,14 @@
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.playlist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .playlist-header {
@@ -28,40 +39,20 @@
     margin: 0;
     color: #fff;
     transition: color 0.3s ease;
+    flex-grow: 1;
 }
 
 .playlist-title:hover {
-    color: #e286f5;
+    color: #50fa7b;
 }
 
-.playlist-card h4 {
-    margin-bottom: 10px;
-    color: #bd93f9;
+.playlist-title .badge {
+    font-size: 0.75rem;
+    vertical-align: middle;
 }
 
-.playlist-card .btn {
-    margin-right: 10px;
-}
-
-.playlist-details-modal {
-    background-color: #d9c0fb !important;
-    color: #0a0a0a;
-    border: 3px solid #5a3f80 !important;
-    border-radius: 10px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-    padding: 20px;
-}
-
-.btn-create-playlist {
-    margin-bottom: 40px;
-    /* Spazio dal fondo */
-}
-
-#editPlaylistForm,#addTrackForm, #newPlaylistForm {
-    background-color: #d9c0fb !important;
-    color: #0a0a0a;
-    border: 3px solid #5a3f80 !important;
-    border-radius: 10px;
+.playlist-header .dropdown {
+    margin-left: auto;
 }
 
 .btn-transparent {
@@ -73,15 +64,160 @@
     cursor: pointer;
 }
 
-/* colore icona normale */
+.btn-transparent:hover {
+    color: #e286f5;
+    background-color: #44475a;
+    border-radius: 50%;
+}
+
 .playlist-card i.bi-three-dots-vertical {
     color: #ffffff;
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* hover sul bottone */
 .playlist-card .btn-transparent:hover i.bi-three-dots-vertical {
     color: #e286f5 !important;
     transform: scale(1.2);
 }
 
+.btn-create-playlist {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: #bd93f9;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-create-playlist:hover {
+    background-color: #ff79c6;
+}
+
+/* Dettagli playlist modale */
+.playlist-details-modal .modal-content {
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+.playlist-details-header {
+    margin-bottom: 1rem;
+}
+
+.playlist-details-header h2 {
+    color: #50fa7b;
+    margin-bottom: 0.5rem;
+}
+
+.playlist-tag {
+    display: inline-block;
+    background-color: #bd93f9;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.track-card {
+    background-color: #44475a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid #bd93f9;
+}
+
+.track-card h6 {
+    color: #f8f8f2;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.track-info {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Modal custom */
+.custom-modal .modal-content {
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+.custom-modal .modal-header {
+    border-bottom: 1px solid #44475a;
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #44475a;
+}
+
+/* Liste brani in modifica */
+.list-group-item {
+    background-color: #f8f8f2 !important;
+    border: 1px solid #ddd;
+}
+
+.list-group-item h6 {
+    color: #282a36;
+}
+
+.list-group-item .text-muted {
+    color: #666 !important;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    background-color: #2a2a4a;
+    border: 1px solid #444;
+}
+
+.dropdown-item {
+    color: #f8f8f2;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #44475a;
+    color: #fff;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #ff5555;
+    color: #fff;
+}
+
+.dropdown-item.text-info:hover {
+    background-color: #8be9fd;
+    color: #000;
+}
+
+.dropdown-item.text-warning:hover {
+    background-color: #f1fa8c;
+    color: #000;
+}
+
+.dropdown-item.text-primary:hover {
+    background-color: #bd93f9;
+    color: #fff;
+}
+
+.dropdown-item.text-success:hover {
+    background-color: #50fa7b;
+    color: #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .playlist-section .row {
+        flex-direction: column;
+    }
+
+    .playlist-card {
+        margin-bottom: 1.5rem;
+    }
+}

@@ -5,6 +5,7 @@ import {
   getImageOrDefault,
   getArtistTopTracks,
   normalizeGenre,
+  getSpotifyAccessToken,
 } from './api.js';
 
 let scrollIndex = 0;
@@ -20,7 +21,7 @@ async function initHome() {
   /* --- Controllo login --- */
   const userDataString = sessionStorage.getItem('utente');
   if (!userDataString) {
-    mostraToast("Non sei loggato. Effettua il login per accedere alla home.", "danger");
+    showToast("Non sei loggato. Effettua il login per accedere alla home.", "danger");
     window.location.href = "login.html";
     return;
   }
@@ -29,7 +30,7 @@ async function initHome() {
   try {
     user = JSON.parse(userDataString);
   } catch {
-    mostraToast("Errore nel recupero dati utente. Rieffettua il login.", "danger");
+    showToast("Errore nel recupero dati utente. Rieffettua il login.", "danger");
     window.location.href = "login.html";
     return;
   }
@@ -67,6 +68,26 @@ function initCarousel() {
 
   document.querySelector('.music-left').addEventListener('click', () => updateCarousel(-1));
   document.querySelector('.music-right').addEventListener('click', () => updateCarousel(1));
+}
+
+// funzione per recuperare il genere dell'artista
+async function getArtistGenre(artistId) {
+  const accessToken = await getSpotifyAccessToken();
+  if (!accessToken) return 'N/D';
+
+  try {
+    const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+
+    if (response.ok) {
+      const artistData = await response.json();
+      return artistData.genres && artistData.genres.length > 0 ? artistData.genres[0] : 'N/D';
+    }
+  } catch (error) {
+    console.error('Errore nel recupero del genere dell\'artista:', error);
+  }
+  return 'N/D';
 }
 
 //suggerimenti musicali
@@ -134,14 +155,17 @@ async function mostraSuggerimentiMusicali(query) {
 
   /* --- Eventi pulsanti "Aggiungi a playlist" --- */
   carouselContainer.querySelectorAll('.add-to-playlist').forEach(button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
       const fullTrack = uniqueTracks.find(t => t.id === button.dataset.id);
+
+      const genre = await getArtistGenre(fullTrack.artists[0].id);
 
       const track = {
         id: fullTrack.id,
         title: fullTrack.name,
         artist: fullTrack.artists.map(a => a.name).join(', '),
         duration: formatDuration(fullTrack.duration_ms),
+        genre: genre,
         year: getReleaseYear(fullTrack)
       };
 
@@ -150,7 +174,7 @@ async function mostraSuggerimentiMusicali(query) {
   });
 }
 
-//modal playlist
+// modal playlist
 function scegliPlaylistEInserisci(track) {
   trackSelezionato = track;
 
@@ -167,7 +191,7 @@ function scegliPlaylistEInserisci(track) {
   new bootstrap.Modal(document.getElementById('playlistModal')).show();
 }
 
-//CONFERMA AGGIUNTA BRANO
+// conferma aggiunta brano
 document.addEventListener("click", (e) => {
   if (e.target.id !== "confirmAddBtn") return;
 
@@ -190,22 +214,22 @@ document.addEventListener("click", (e) => {
       tracks: []
     };
     playlists.push(playlist);
-    mostraToast(`Playlist "${newName}" creata`, "info");
+    showToast(`Playlist "${newName}" creata`, "info");
   } else {
     playlist = playlists.find(p => p.id === playlistId);
   }
 
   if (!playlist) {
-    mostraToast("Seleziona una playlist valida.", "danger");
+    showToast("Seleziona una playlist valida.", "danger");
     return;
   }
 
-  const giàPresente = playlist.tracks.some(t => t.id === trackSelezionato.id);
-  if (giàPresente) {
-    mostraToast("Questo brano è già presente nella playlist.", "warning");
+  const alreadyExist = playlist.tracks.some(t => t.id === trackSelezionato.id);
+  if (alreadyExist) {
+    showToast("Questo brano è già presente nella playlist.", "warning");
   } else {
     playlist.tracks.push(trackSelezionato);
-    mostraToast(`Brano aggiunto a "${playlist.name}"`, "success");
+    showToast(`Brano aggiunto a "${playlist.name}"`, "success");
   }
 
   localStorage.setItem('playlists', JSON.stringify(playlists));
@@ -214,8 +238,8 @@ document.addEventListener("click", (e) => {
   bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
 });
 
-//TOAST
-function mostraToast(messaggio, tipo = 'success') {
+// tost
+function showToast(messaggio, tipo = 'success') {
   const toastEl = document.getElementById('sn4mToast');
   const toastBody = document.getElementById('toastMessage');
 

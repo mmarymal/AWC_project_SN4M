@@ -1,22 +1,15 @@
-.home-content {
-    flex-grow: 1;
-    /* Permette al main di occupare lo spazio rimanente */
-    padding: 20px;
-    max-width: 1500px;
-    /* Larghezza massima per il contenuto */
-    margin: 20px 100px;
-    /* sopra/sotto 20px, sinistra/destra 100px */
-    background-color: #282a36;
-    /* Sfondo leggermente diverso per il main */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+.music-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-.home-content h2 {
-    margin-bottom: 20px;
-    border-bottom: 2px solid #44475a;
-    /* Sottolineatura per i titoli */
+.music-section h2 {
+    color: #50fa7b;
+    margin-bottom: 30px;
     padding-bottom: 10px;
+    border-bottom: 2px solid #44475a;
+    font-size: 1.8rem;
 }
 
 .track-card {
@@ -41,7 +34,6 @@
     position: relative;
     width: 100%;
     max-width: 1200px;
-    /* Larghezza visibile del carosello */
     margin: 0 auto;
 }
 
@@ -59,7 +51,6 @@
     transition: transform 0.5s ease;
     padding: 10px;
     width: max-content;
-    /* Espande il contenitore in orizzontale */
 }
 
 .music-left,
@@ -84,4 +75,3 @@
 .music-right {
     right: -30px;
 }
-

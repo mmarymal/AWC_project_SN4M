@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <main class="community-content">
+    <main>
         <section class="community-section">
             <h2 class="section-title">Le mie community</h2>
             <div id="myCommunities"></div>
@@ -56,7 +56,8 @@
             <h2 class="section-title mt-5">Altre community disponibili</h2>
             <div id="communityList"></div>
 
-            <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+            <button class="btn btn-primary btn-create-community mt-4" data-bs-toggle="modal"
+                data-bs-target="#createCommunityModal">
                 Crea nuova community
             </button>
         </section>
@@ -132,6 +133,7 @@
             <div class="modal-content community-details-modal">
                 <div class="modal-header">
                     <h5 class="modal-title">Dettagli Community</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="viewCommunityBody"></div>
                 <div class="modal-footer">
@@ -156,10 +158,20 @@
         </div>
     </div>
 
+    <!-- TOAST NOTIFICHE -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="sn4mToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Operazione completata!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="community.js"></script>
     <script src="playlist.js"></script>
     <script src="api.js"></script>
-    
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 

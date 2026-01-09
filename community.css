@@ -1,13 +1,9 @@
 .community-content {
     flex-grow: 1;
-    /* Permette al main di occupare lo spazio rimanente */
     padding: 20px;
     max-width: 1500px;
-    /* Larghezza massima per il contenuto */
     margin: 20px 100px;
-    /* sopra/sotto 20px, sinistra/destra 100px */
     background-color: #282a36;
-    /* Sfondo leggermente diverso per il main */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
@@ -15,7 +11,6 @@
 .community-content h2 {
     margin-bottom: 20px;
     border-bottom: 2px solid #44475a;
-    /* Sottolineatura per i titoli */
     padding-bottom: 10px;
 }
 
@@ -28,6 +23,10 @@
 
 .community-section {
     margin-top: 40px;
+    padding: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #myCommunities,
@@ -35,6 +34,7 @@
     margin-bottom: 30px;
 }
 
+/* Card Community - allineato con playlist */
 .community-card {
     background-color: #2a2a4a;
     border: 1px solid #444;
@@ -43,6 +43,12 @@
     margin-bottom: 1rem;
     color: #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.community-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .community-card h5 {
@@ -58,20 +64,6 @@
     margin-top: 10px;
 }
 
-.community-title {
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0;
-    color: #fff;
-    transition: color 0.3s ease;
-}
-
-.community-title:hover {
-    color: #50fa7b;
-    /* verde evidenziato */
-}
-
 .community-header {
     display: flex;
     justify-content: space-between;
@@ -79,8 +71,17 @@
 }
 
 .community-title {
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
     margin: 0;
+    color: #fff;
+    transition: color 0.3s ease;
     flex-grow: 1;
+}
+
+.community-title:hover {
+    color: #50fa7b;
 }
 
 .community-header .dropdown {
@@ -110,4 +111,101 @@
 .community-card .btn-transparent:hover i.bi-three-dots-vertical {
     color: #e286f5 !important;
     transform: scale(1.2);
+}
+
+/* Pulsante crea community */
+.btn-create-community {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: #bd93f9;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-create-community:hover {
+    background-color: #ff79c6;
+}
+
+/* Modal dettagli community */
+.community-details-modal .modal-content {
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+.community-details-modal .modal-header {
+    border-bottom: 1px solid #44475a;
+}
+
+.community-details-modal .modal-footer {
+    border-top: 1px solid #44475a;
+}
+
+.community-details-modal h2,
+.community-details-modal h4,
+.community-details-modal h5 {
+    color: #50fa7b;
+}
+
+/* Modal custom */
+.custom-modal .modal-content {
+    background-color: #282a36;
+    color: #f8f8f2;
+}
+
+.custom-modal .modal-header {
+    border-bottom: 1px solid #44475a;
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #44475a;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    background-color: #2a2a4a;
+    border: 1px solid #444;
+}
+
+.dropdown-item {
+    color: #f8f8f2;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #44475a;
+    color: #fff;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #ff5555;
+    color: #fff;
+}
+
+.dropdown-item.text-warning:hover {
+    background-color: #f1fa8c;
+    color: #000;
+}
+
+.dropdown-item.text-success:hover {
+    background-color: #50fa7b;
+    color: #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .community-section .row {
+        flex-direction: column;
+    }
+
+    .community-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .community-content {
+        margin: 20px;
+        padding: 15px;
+    }
 }

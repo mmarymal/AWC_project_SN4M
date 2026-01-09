@@ -1,4 +1,4 @@
-// CARICA HEADER GLOBALE
+// carica header globale
 fetch("global-header.html")
     .then(res => res.text())
     .then(html => {
@@ -8,7 +8,7 @@ fetch("global-header.html")
         document.dispatchEvent(new Event("headerLoaded"));
     });
 
-// LOGICA RICERCA SPOTIFY
+// logica ricerca 
 import { searchSpotify } from "./api.js";
 
 window.trackSelezionato = null;

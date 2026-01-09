@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN4M - Ricerca Playlist</title>
+
+    <link rel="icon" type="image/png" href="logo1.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="search-playlists.css">
+    <link rel="stylesheet" href="global.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div id="global-header"></div>
+
+    <main class="search-content">
+        <section class="search-section">
+            <h2 class="section-title">🔍 Ricerca Playlist Condivise</h2>
+
+            <!-- FILTRI DI RICERCA -->
+            <div class="search-filters">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Community</label>
+                        <select id="filterCommunity" class="form-select">
+                            <option value="">Tutte le mie community</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Cerca per Tag</label>
+                        <input type="text" id="filterTag" class="form-control" placeholder="es. rock, pop, relax...">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Cerca per Canzone</label>
+                        <input type="text" id="filterSong" class="form-control" placeholder="Titolo o artista...">
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button id="btnSearch" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Cerca
+                        </button>
+                        <button id="btnReset" class="btn btn-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Resetta filtri
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RISULTATI -->
+            <div id="searchResults" class="mt-4">
+                <p class="text-muted">Utilizza i filtri sopra per cercare playlist condivise nelle tue community.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SN4M - Social Network for Music</p>
+    </footer>
+
+    <!-- DETTAGLI PLAYLIST -->
+    <div class="modal fade" id="viewPlaylistModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content playlist-details-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dettagli Playlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="viewPlaylistBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="importPlaylistBtn">
+                        <i class="bi bi-download"></i> Importa nel mio profilo
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICHE -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="sn4mToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Operazione completata!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="search-playlists.js"></script>
+    <script src="api.js"></script>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script type="module" src="load-header.js"></script>
+
+</body>
+
+</html>
