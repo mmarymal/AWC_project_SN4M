@@ -221,7 +221,7 @@ function openCommunityDetails(id) {
     const community = communities.find(c => c.id === id);
     if (!community) return;
 
-    const sharedPlaylists = playlists.filter(p => p.community === id);
+    const sharedPlaylists = playlists.filter(p => p.communities?.includes(id));
 
     const body = document.getElementById('viewCommunityBody');
     body.textContent = '';
