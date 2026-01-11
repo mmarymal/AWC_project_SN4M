@@ -1,12 +1,24 @@
+window.trackToAdd = null;
+
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
     if (!user) return;
 
-    // Mostra nome utente nell’header
+    // Mostra nome utente nell'header
     document.getElementById('welcomeUsername').textContent = user.username;
 
     // Render iniziale
     renderPlaylists();
+
+    /* APRI MODALE CREA PLAYLIST DAL BOTTONE DELLA PAGINA */
+    const btn = document.getElementById("openCreateOnly");
+
+    if (btn) {
+        btn.addEventListener("click", () => {
+            const modal = new bootstrap.Modal(document.querySelector("#createPlaylistModal"));
+            modal.show();
+        });
+    }
 
     /* RICERCA PLAYLIST DELLE COMMUNITY */
     const searchInput = document.getElementById('communityPlaylistSearch');
@@ -41,34 +53,150 @@ document.addEventListener('headerLoaded', () => {
     }
 
     /* CREAZIONE NUOVA PLAYLIST  */
-    const newForm = document.getElementById('newPlaylistForm');
+    const newForm = document.querySelector('#newPlaylistForm');
     if (newForm) {
         newForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+            const trackToAddCopy = window.trackToAdd; // Salva una copia
 
             const newPlaylist = {
                 id: Date.now().toString(),
-                name: document.getElementById('playlistName').value.trim(),
-                description: document.getElementById('playlistDescription').value.trim(),
-                tags: document.getElementById('playlistTags').value.split(',').map(t => t.trim()).filter(Boolean),
+                name: document.querySelector('#createPlaylistName').value.trim(),
+                description: document.querySelector('#playlistDescription').value.trim(),
+                tags: document.querySelector('#playlistTags').value
+                    .split(',')
+                    .map(t => t.trim())
+                    .filter(Boolean),
                 creator: user.username,
                 communities: [],
                 tracks: []
             };
 
+            // Se stiamo creando la playlist mentre aggiungiamo un brano
+            if (trackToAddCopy) {
+                newPlaylist.tracks.push(trackToAddCopy);
+
+                playlists.push(newPlaylist);
+                localStorage.setItem('playlists', JSON.stringify(playlists));
+
+                const myPlaylistsContainer = document.getElementById('myPlaylists');
+                if (myPlaylistsContainer && typeof renderPlaylistCard === 'function') {
+                    myPlaylistsContainer.appendChild(renderPlaylistCard(newPlaylist, true));
+                }
+
+                showToast(`Playlist "${newPlaylist.name}" creata e brano "${trackToAddCopy.title}" aggiunto!`, "success");
+
+                // Chiudi modale e reset
+                bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
+                newForm.reset();
+                window.trackToAdd = null; // Reset solo alla fine
+
+                return;
+            }
+
+            // Creazione normale (senza brano da aggiungere)
             playlists.push(newPlaylist);
             localStorage.setItem('playlists', JSON.stringify(playlists));
 
-            document.getElementById('myPlaylists').appendChild(renderPlaylistCard(newPlaylist, true));
+            const myPlaylistsContainer = document.getElementById('myPlaylists');
+            if (myPlaylistsContainer && typeof renderPlaylistCard === 'function') {
+                myPlaylistsContainer.appendChild(renderPlaylistCard(newPlaylist, true));
+            }
 
-            showToast("Playlist creata con successo!");
+            showToast("Playlist creata con successo!", "success");
             bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
             newForm.reset();
         });
     }
 });
+
+/* NUOVA FUNZIONE: APRI MODALE AGGIUNTA BRANO */
+function openAddTrackModal(track) {
+    window.trackToAdd = track;
+
+    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+    const user = JSON.parse(sessionStorage.getItem('utente'));
+
+    const myPlaylists = playlists.filter(p => p.creator === user.username);
+
+    // Popola il select con le playlist
+    const playlistSelect = document.getElementById('playlistSelect');
+    playlistSelect.innerHTML = '<option value="">-- Seleziona playlist --</option>';
+
+    myPlaylists.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = p.name;
+        playlistSelect.appendChild(option);
+    });
+
+    // Mostra nome brano nel modale
+    document.getElementById('modalTrackName').textContent =
+        `Stai aggiungendo: ${track.title} - ${track.artist}`;
+
+    // Apri il modale
+    const modal = new bootstrap.Modal(document.getElementById('playlistModal'));
+    modal.show();
+
+    // Gestione bottone "Crea nuova playlist"
+    const openCreateBtn = document.getElementById('openCreatePlaylist');
+    openCreateBtn.onclick = () => {
+        // Chiudi modale di selezione
+        bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+
+        // Apri modale di creazione
+        const createModal = new bootstrap.Modal(document.getElementById('createPlaylistModal'));
+        createModal.show();
+    };
+
+    // Gestione bottone "Aggiungi"
+    const confirmBtn = document.getElementById('confirmAddBtn');
+    confirmBtn.onclick = () => {
+        const selectedPlaylistId = playlistSelect.value;
+
+        if (!selectedPlaylistId) {
+            showToast("Seleziona una playlist!", "warning");
+            return;
+        }
+
+        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+        const playlist = playlists.find(p => p.id === selectedPlaylistId);
+
+        if (!playlist) {
+            showToast("Playlist non trovata!", "danger");
+            return;
+        }
+
+        // Controlla se il brano è già presente
+        if (playlist.tracks.some(t => t.id === track.id)) {
+            showToast("Brano già presente in questa playlist!", "info");
+            bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+            window.trackToAdd = null;
+            return;
+        }
+
+        // Aggiungi il brano
+        playlist.tracks.push(track);
+        localStorage.setItem('playlists', JSON.stringify(playlists));
+
+        showToast(`Brano aggiunto a "${playlist.name}"!`, "success");
+        bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+        window.trackToAdd = null;
+
+        if (typeof renderPlaylists === 'function') {
+            renderPlaylists();
+        }
+    };
+
+    // Pulisci trackToAdd quando il modale viene chiuso
+    document.getElementById('playlistModal').addEventListener('hidden.bs.modal', () => {
+        if (!document.querySelector('#createPlaylistModal.show')) {
+            window.trackToAdd = null;
+        }
+    }, { once: true });
+}
 
 /* RENDER PLAYLIST */
 function renderPlaylists() {
@@ -216,7 +344,6 @@ function sharePlaylist(playlistId) {
 
     if (!playlist) return;
 
-    // Community in cui l'utente è membro
     const myCommunities = communities.filter(c => c.members.includes(user.username));
 
     if (myCommunities.length === 0) {
@@ -224,7 +351,6 @@ function sharePlaylist(playlistId) {
         return;
     }
 
-    // Crea modal per scegliere la community
     const modalHtml = `
             <div class="modal fade" id="shareCommunityModal" tabindex="-1">
                 <div class="modal-dialog">
@@ -251,7 +377,6 @@ function sharePlaylist(playlistId) {
             </div>
         `;
 
-    // Rimuovi modal precedente se esiste
     const oldModal = document.getElementById('shareCommunityModal');
     if (oldModal) oldModal.remove();
 
@@ -264,14 +389,12 @@ function sharePlaylist(playlistId) {
 
         if (!playlist.communities) playlist.communities = [];
 
-        // Se è già condivisa → avvisa e interrompi
         if (playlist.communities.includes(communityId)) {
             showToast("Playlist già presente in questa community!", "warning");
             bootstrap.Modal.getInstance(document.getElementById('shareCommunityModal')).hide();
             return;
         }
 
-        // Altrimenti condividila
         playlist.communities.push(communityId);
 
         localStorage.setItem('playlists', JSON.stringify(playlists));
@@ -282,6 +405,7 @@ function sharePlaylist(playlistId) {
         renderPlaylists();
     });
 }
+
 function openUnshareModal(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
@@ -342,7 +466,6 @@ function unsharePlaylist(playlistId) {
 
     if (!playlist) return;
 
-    // Rimuove la condivisione da tutte le community
     playlist.communities = [];
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
@@ -358,15 +481,14 @@ function importPlaylist(playlistId) {
 
     if (!originalPlaylist) return;
 
-    // Crea una copia della playlist
     const importedPlaylist = {
         id: Date.now().toString(),
         name: `${originalPlaylist.name} (importata)`,
         description: originalPlaylist.description,
         tags: [...originalPlaylist.tags],
         creator: user.username,
-        communities: [], // Le playlist importate sono private
-        tracks: JSON.parse(JSON.stringify(originalPlaylist.tracks)) // Deep copy
+        communities: [],
+        tracks: JSON.parse(JSON.stringify(originalPlaylist.tracks))
     };
 
     playlists.push(importedPlaylist);
@@ -403,7 +525,6 @@ function openPlaylistDetails(id) {
     header.appendChild(creatorInfo);
     header.appendChild(description);
 
-    // Community badge (una o più)
     if (playlist.communities && playlist.communities.length > 0) {
         const community = document.createElement('p');
         const communitiesData = communities.filter(c => playlist.communities.includes(c.id));
@@ -415,7 +536,6 @@ function openPlaylistDetails(id) {
         header.appendChild(community);
     }
 
-    // Tags
     if (playlist.tags?.length) {
         const tagsContainer = document.createElement('div');
         tagsContainer.className = 'mt-2';

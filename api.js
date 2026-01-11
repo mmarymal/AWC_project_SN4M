@@ -129,6 +129,15 @@ export async function getPlaylistTracks(playlistId = '37i9dQZEVXbMDoHDwVN2tF') {
     }
 }
 
+export async function getArtistGenres(artistId) {
+    const token = await getSpotifyAccessToken();
+    const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    return data.genres || [];
+}
+
 export function formatDuration(ms) {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);

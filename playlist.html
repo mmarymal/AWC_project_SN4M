@@ -82,8 +82,10 @@
                 <div class="col-md-6">
                     <div class="playlist-header-row">
                         <h2 class="section-title">Le mie playlist</h2>
-                        <button class="btn btn-create-playlist" data-bs-toggle="modal"
-                            data-bs-target="#createPlaylistModal">Crea nuova Playlist</button>
+                        <button id="openCreateOnly" class="btn btn-primary">
+                            Crea nuova Playlist
+                        </button>
+
                     </div>
                     <div id="myPlaylists"></div>
                 </div>
@@ -124,30 +126,6 @@
         </div>
     </template>
 
-    <!-- crea playlist -->
-    <div class="modal fade" id="createPlaylistModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="newPlaylistForm" class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Nuova Playlist</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <input type="text" id="playlistName" class="form-control mb-2" placeholder="Nome playlist" required>
-                    <textarea id="playlistDescription" class="form-control mb-2" placeholder="Descrizione playlist"
-                        rows="2" required></textarea>
-                    <input type="text" id="playlistTags" class="form-control mb-2"
-                        placeholder="Tag (separati da virgola)" required>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Crea</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- conferma eliminazione -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
