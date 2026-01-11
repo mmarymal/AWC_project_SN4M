@@ -91,8 +91,9 @@ function showSearchOverlay(results) {
         container.appendChild(div);
     });
 
-    // Attiva il pannello
+    //  Attiva overlay e blocca scroll del body
     overlay.style.display = "flex";
+    document.body.classList.add("overlay-open");
 
     // Eventi pulsanti "Aggiungi"
     container.querySelectorAll(".add-track").forEach(btn => {
@@ -102,14 +103,15 @@ function showSearchOverlay(results) {
 
             window.trackSelezionato = track;
 
-            //chiudi subito overlay
-            document.getElementById("searchOverlay").style.display = "none";
+            // Chiudi overlay e riattiva scroll
+            overlay.style.display = "none";
+            document.body.classList.remove("overlay-open");
 
-            //apri modale
             apriModalPlaylist(track);
         });
     });
 }
+
 
 document.addEventListener("headerLoaded", () => {
     const logoutBtn = document.getElementById("logoutBtn");

@@ -11,6 +11,39 @@ document.addEventListener('headerLoaded', () => {
 
     renderPlaylists();
 
+    const searchInput = document.getElementById('communityPlaylistSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', e => {
+            const query = e.target.value;
+
+            // prendi tutte le playlist condivise nelle community dell’utente
+            const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+            const communities = JSON.parse(localStorage.getItem('communities')) || [];
+            const user = JSON.parse(sessionStorage.getItem('utente'));
+
+            const myCommunities = communities.filter(c => c.members.includes(user.username));
+
+            const communityPlaylists = playlists.filter(p =>
+                Array.isArray(p.communities) && p.communities.some(cid => myCommunities.some(c => c.id === cid))
+            );
+
+            // filtra per nome o tag 
+            const filtered = searchPlaylists(query, communityPlaylists);
+
+            // renderizza solo quelle filtrate 
+            const container = document.getElementById('communityPlaylists');
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-muted">Nessuna playlist trovata.</p>';
+            } else {
+                filtered.forEach(p => {
+                    container.appendChild(renderPlaylistCard(p, p.creator === user.username));
+                });
+            }
+        });
+    }
+
     // Creazione nuova playlist
     const newForm = document.getElementById('newPlaylistForm');
     newForm.addEventListener('submit', function (e) {
@@ -66,7 +99,7 @@ function addTrackToPlaylist() {
     playlist.tracks.push(track);
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
-    showToast("Brano aggiunto alla playlist!");
+    showToast("Brano aggiunto alla playlist!", "success");
     bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
     renderPlaylists();
 }
@@ -106,9 +139,7 @@ function renderPlaylists() {
     if (communityPlaylistsFiltered.length === 0) {
         communityContainer.innerHTML = '<p class="text-muted">Nessuna playlist condivisa nelle tue community.</p>';
     } else {
-        communityPlaylistsFiltered.forEach(p => {
-            communityContainer.appendChild(renderPlaylistCard(p, p.creator === user.username));
-        });
+        communityPlaylistsFiltered.forEach(p => { communityContainer.appendChild(renderPlaylistCard(p, false)); });
     }
 
     //Salva la normalizzazione
@@ -138,25 +169,31 @@ function renderPlaylistCard(playlist, isOwner) {
     title.addEventListener('click', () => openPlaylistDetails(playlist.id));
 
     // Badge community
+    // if (playlist.communities.length > 0) {
+    //     playlist.communities.forEach(cid => {
+    //         const community = communities.find(c => c.id === cid);
+    //         if (!community) return;
+
+    //         const badge = document.createElement('span');
+    //         badge.className = 'badge bg-success ms-2';
+    //         badge.textContent = `📢`;
+    //         title.appendChild(badge);
+    //     });
+    // }
     if (playlist.communities.length > 0) {
-        playlist.communities.forEach(cid => {
-            const community = communities.find(c => c.id === cid);
-            if (!community) return;
-
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-success ms-2';
-            badge.textContent = `📢 ${community.name}`;
-            title.appendChild(badge);
-        });
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-success ms-2';
+        badge.textContent = `📢`;
+        title.appendChild(badge);
     }
 
-    // Info creator se non è la propria
-    if (playlist.creator !== user.username) {
-        const creatorInfo = document.createElement('small');
-        creatorInfo.className = 'text-muted d-block';
-        creatorInfo.textContent = `di ${playlist.creator}`;
-        title.parentElement.appendChild(creatorInfo);
-    }
+    // // Info creator se non è la propria
+    // if (playlist.creator !== user.username) {
+    //     const creatorInfo = document.createElement('small');
+    //     creatorInfo.className = 'text-muted d-block';
+    //     // creatorInfo.textContent = `di ${playlist.creator}`;
+    //     title.parentElement.appendChild(creatorInfo);
+    // }
 
     // menu per proprietario
     if (isOwner && playlist.creator === user.username) {
@@ -183,23 +220,17 @@ function renderPlaylistCard(playlist, isOwner) {
             dropdownMenu.appendChild(shareMoreItem);
 
             // Rimuovi da una specifica community
-            playlist.communities.forEach(cid => {
-                const community = communities.find(c => c.id === cid);
-                if (!community) return;
-
-                const unshareItem = document.createElement('li');
-                const unshareLink = document.createElement('a');
-                unshareLink.className = 'dropdown-item text-warning';
-                unshareLink.textContent = 'Rimuovi da una community...';
-                unshareLink.href = '#';
-                unshareLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openUnshareModal(playlist.id);
-                });
-                
-                unshareItem.appendChild(unshareLink);
-                dropdownMenu.appendChild(unshareItem)
+            const unshareItem = document.createElement('li');
+            const unshareLink = document.createElement('a');
+            unshareLink.className = 'dropdown-item text-warning';
+            unshareLink.textContent = 'Rimuovi da una community...';
+            unshareLink.href = '#';
+            unshareLink.addEventListener('click', (e) => {
+                e.preventDefault(); openUnshareModal(playlist.id); // ← qui l’utente sceglie da quale community rimuoverla 
             });
+            
+            unshareItem.appendChild(unshareLink);
+            dropdownMenu.appendChild(unshareItem);
 
             // Rimuovi da tutte le community
             const unshareAllItem = document.createElement('li');
@@ -243,6 +274,16 @@ function renderPlaylistCard(playlist, isOwner) {
     return clone;
 }
 
+function searchPlaylists(query, playlists) {
+    const q = query.trim().toLowerCase();
+
+    return playlists.filter(p => {
+        const nameMatch = p.name?.toLowerCase().includes(q);
+        const descMatch = p.description?.toLowerCase().includes(q);
+        const tagMatch = p.tags?.some(tag => tag.toLowerCase().includes(q));
+        return nameMatch || descMatch || tagMatch;
+    });
+}
 
 function sharePlaylist(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
@@ -256,7 +297,7 @@ function sharePlaylist(playlistId) {
     const myCommunities = communities.filter(c => c.members.includes(user.username));
 
     if (myCommunities.length === 0) {
-        showToast("Non fai parte di nessuna community!", "warning");
+        showToast("Non fai parte di nessuna community!", "info");
         return;
     }
 
@@ -299,9 +340,16 @@ function sharePlaylist(playlistId) {
         const communityId = document.getElementById('shareCommunitySelect').value;
 
         if (!playlist.communities) playlist.communities = [];
-        if (!playlist.communities.includes(communityId)) {
-            playlist.communities.push(communityId);
+
+        // Se è già condivisa → avvisa e interrompi
+        if (playlist.communities.includes(communityId)) {
+            showToast("Playlist già presente in questa community!", "warning");
+            bootstrap.Modal.getInstance(document.getElementById('shareCommunityModal')).hide();
+            return;
         }
+
+        // Altrimenti condividila
+        playlist.communities.push(communityId);
 
         localStorage.setItem('playlists', JSON.stringify(playlists));
 
@@ -360,7 +408,7 @@ function openUnshareModal(playlistId) {
         localStorage.setItem('playlists', JSON.stringify(playlists));
 
         const community = communities.find(c => c.id === communityId);
-        showToast(`Playlist rimossa da "${community?.name || 'Community'}"`, "info");
+        showToast(`Playlist rimossa da "${community?.name || 'Community'}"`, "warning");
         modal.hide();
         renderPlaylists();
     });
@@ -376,7 +424,7 @@ function unsharePlaylist(playlistId) {
     playlist.communities = [];
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
-    showToast("Condivisione rimossa da tutte le community!", "info");
+    showToast("Condivisione rimossa da tutte le community!", "primary");
     renderPlaylists();
 }
 

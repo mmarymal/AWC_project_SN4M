@@ -1,15 +1,66 @@
+/* sezione playlist */
 .playlist-section {
     margin-top: 40px;
     padding: 20px;
 }
 
+.playlist-section .col-md-6:first-child {
+    padding-right: 25px;
+}
+
+.playlist-section .col-md-6:last-child {
+    padding-left: 25px;
+}
+
+
 .section-title {
     color: #50fa7b;
     margin-bottom: 20px;
-    border-bottom: 2px solid #44475a;
-    padding-bottom: 10px;
 }
 
+/* header con bottone o campo di ricerca */
+.playlist-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: relative;
+}
+
+/* campo di ricerca */
+.playlist-search {
+    flex: 1;
+    max-width: 220px;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: #ccc;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.playlist-search::placeholder {
+    color: #888;
+}
+
+.playlist-search:focus {
+    outline: none;
+}
+
+/* lente solo nella colonna destra */
+.playlist-right .playlist-header-row::before {
+    content: "\f52a";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+}
+
+/* card playlist */
 .playlist-card {
     background-color: #2a2a4a;
     border: 1px solid #444;
@@ -21,11 +72,17 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+#myPlaylists,
+#communityPlaylists {
+    margin-top: 16px;
+}
+
 .playlist-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
+/* header card */
 .playlist-header {
     display: flex;
     justify-content: space-between;
@@ -46,15 +103,7 @@
     color: #50fa7b;
 }
 
-.playlist-title .badge {
-    font-size: 0.75rem;
-    vertical-align: middle;
-}
-
-.playlist-header .dropdown {
-    margin-left: auto;
-}
-
+/* pulsante opzioni */
 .btn-transparent {
     background: none;
     border: none;
@@ -76,101 +125,29 @@
 }
 
 .playlist-card .btn-transparent:hover i.bi-three-dots-vertical {
-    color: #e286f5 !important;
+    color: #bd93f9 !important;
     transform: scale(1.2);
 }
 
+/* bottone crea playlist */
 .btn-create-playlist {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background-color: #bd93f9;
+    background-color: #bd93f9 !important;
+    /* verde acceso */
+    color: #1f1f2e !important;
+    /* testo scuro leggibile */
     border: none;
-    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.95rem;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
 }
 
 .btn-create-playlist:hover {
     background-color: #ff79c6;
 }
 
-/* Dettagli playlist modale */
-.playlist-details-modal .modal-content {
-    background-color: #282a36;
-    color: #f8f8f2;
-}
-
-.playlist-details-header {
-    margin-bottom: 1rem;
-}
-
-.playlist-details-header h2 {
-    color: #50fa7b;
-    margin-bottom: 0.5rem;
-}
-
-.playlist-tag {
-    display: inline-block;
-    background-color: #bd93f9;
-    color: #fff;
-    padding: 4px 12px;
-    border-radius: 12px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.track-card {
-    background-color: #44475a;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 12px;
-    border-left: 4px solid #bd93f9;
-}
-
-.track-card h6 {
-    color: #f8f8f2;
-    margin-bottom: 6px;
-    font-weight: 600;
-}
-
-.track-info {
-    color: #a0a0a0;
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-/* Modal custom */
-.custom-modal .modal-content {
-    background-color: #282a36;
-    color: #f8f8f2;
-}
-
-.custom-modal .modal-header {
-    border-bottom: 1px solid #44475a;
-}
-
-.custom-modal .modal-footer {
-    border-top: 1px solid #44475a;
-}
-
-/* Liste brani in modifica */
-.list-group-item {
-    background-color: #f8f8f2 !important;
-    border: 1px solid #ddd;
-}
-
-.list-group-item h6 {
-    color: #282a36;
-}
-
-.list-group-item .text-muted {
-    color: #666 !important;
-}
-
-/* Dropdown menu */
+/* dropdown */
 .dropdown-menu {
     background-color: #2a2a4a;
     border: 1px solid #444;
@@ -211,7 +188,7 @@
     color: #000;
 }
 
-/* Responsive */
+/* responsive */
 @media (max-width: 768px) {
     .playlist-section .row {
         flex-direction: column;

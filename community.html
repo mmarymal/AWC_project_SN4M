@@ -18,48 +18,30 @@
 <body>
     <div id="global-header"></div>
 
-    <div class="modal fade" id="playlistModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <main>
+        <section class="community-section container mt-5">
+            <div class="row">
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Aggiungi alla playlist</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <!-- COLONNA SINISTRA -->
+                <div class="col-md-6">
+                    <div class="community-header-row">
+                        <h2 class="section-title">Le mie community</h2>
+                        <button class="btn btn-create-community" data-bs-toggle="modal"
+                            data-bs-target="#createCommunityModal">Crea nuova community</button>
+                    </div>
+                    <div id="myCommunities"></div>
                 </div>
 
-                <div class="modal-body">
-                    <p id="modalTrackName" class="fw-bold"></p>
-
-                    <label class="form-label">Seleziona playlist</label>
-                    <select id="playlistSelect" class="form-select mb-3"></select>
-
-                    <hr>
-
-                    <label class="form-label">Oppure crea una nuova playlist</label>
-                    <input type="text" id="newPlaylistName" class="form-control" placeholder="Nome nuova playlist">
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-success" onclick="addTrackToPlaylist()">Aggiungi</button>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <!-- COLONNA DESTRA -->
+                <div class="col-md-6 community-right">
+                    <div class="community-header-row">
+                        <h2 class="section-title">Altre community disponibili</h2>
+                        <input type="text" id="communitySearch" class="community-search" placeholder="Cerca community...">
+                    </div>
+                    <div id="communityList"></div>
                 </div>
 
             </div>
-        </div>
-    </div>
-
-    <main>
-        <section class="community-section">
-            <h2 class="section-title">Le mie community</h2>
-            <div id="myCommunities"></div>
-
-            <h2 class="section-title mt-5">Altre community disponibili</h2>
-            <div id="communityList"></div>
-
-            <button class="btn btn-primary btn-create-community mt-4" data-bs-toggle="modal"
-                data-bs-target="#createCommunityModal">
-                Crea nuova community
-            </button>
         </section>
     </main>
 
@@ -136,9 +118,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="viewCommunityBody"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                </div>
             </div>
         </div>
     </div>

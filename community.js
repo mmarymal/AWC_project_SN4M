@@ -7,6 +7,37 @@ document.addEventListener('headerLoaded', () => {
     renderCommunities();
     renderMyCommunities();
 
+    const searchInput = document.getElementById("communitySearch");
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const q = searchInput.value.trim();
+
+            const communities = JSON.parse(localStorage.getItem('communities')) || [];
+            const results = searchCommunities(q, communities);
+            
+            // Mostra SOLO le community non mie (come fa già renderCommunities) 
+            const user = JSON.parse(sessionStorage.getItem('utente'));
+            const filtered = results.filter(c => !c.members.includes(user.username));
+            
+            const container = document.getElementById("communityList");
+            container.textContent = "";
+
+            if (filtered.length === 0) {
+                const msg = document.createElement("p");
+                msg.textContent = "Nessuna community trovata...";
+                msg.style.color = "#888";
+                msg.style.fontStyle = "italic";
+                msg.style.padding = "10px 0";
+                container.appendChild(msg);
+                return;
+            }
+            
+            filtered.forEach(c => {
+                container.appendChild(renderCommunityCard(c));
+            });
+        });
+    }
+
     document.getElementById('newCommunityForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -124,6 +155,9 @@ function joinCommunity(id) {
 
     community.members.push(user.username);
     localStorage.setItem('communities', JSON.stringify(communities));
+
+    showToast(`Ti sei unita a "${community.name}"!`, "success")
+
     renderCommunities();
     renderMyCommunities();
 }
@@ -136,6 +170,8 @@ function leaveCommunity(id) {
 
     community.members = community.members.filter(m => m !== user.username);
     localStorage.setItem('communities', JSON.stringify(communities));
+
+    showToast(`Hai lasciato "${community.name}".`, "warning");
 
     renderCommunities();
     renderMyCommunities();
@@ -224,70 +260,44 @@ function openCommunityDetails(id) {
     const sharedPlaylists = playlists.filter(p => p.communities?.includes(id));
 
     const body = document.getElementById('viewCommunityBody');
-    body.textContent = '';
 
-    const title = document.createElement('h4');
-    title.textContent = community.name;
-    body.appendChild(title);
+    body.innerHTML = `
+        <h4 class="community-name">${community.name}</h4>
 
-    const desc = document.createElement('p');
-    const descLabel = document.createElement('strong');
-    descLabel.textContent = 'Descrizione: ';
-    desc.appendChild(descLabel);
-    desc.appendChild(document.createTextNode(community.description || 'Nessuna descrizione'));
-    body.appendChild(desc);
+        <div class="detail-card">
+            <h5 class="detail-title">Descrizione</h5>
+            <p class="detail-text">${community.description || 'Nessuna descrizione'}</p>
+        </div>
 
-    const tags = document.createElement('p');
-    const tagsLabel = document.createElement('strong');
-    tagsLabel.textContent = 'Tag: ';
-    tags.appendChild(tagsLabel);
-    tags.appendChild(document.createTextNode(community.tags?.join(', ') || 'Nessuno'));
-    body.appendChild(tags);
+        <div class="detail-card">
+            <h5 class="detail-title">Tag</h5>
+            <p class="detail-text">${community.tags?.join(', ') || 'Nessuno'}</p>
+        </div>
 
-    body.appendChild(document.createElement('hr'));
+        <div class="detail-card">
+            <h5 class="detail-title">Membri</h5>
+            <ul class="detail-list ">
+                ${community.members?.length ? community.members.map(m => `<li><i class="bi bi-person"></i> ${m}</li>`).join(''): '<li>Nessun membro</li>'}
+            </ul>
+        </div>
 
-    body.appendChild(document.createElement('hr'));
+        <div class="detail-card">
+            <h5 class="detail-title">Playlist condivise</h5>
+            <ul class="detail-list playlists">
+                ${sharedPlaylists.length ? sharedPlaylists.map(p => ` <li onclick="importSharedPlaylist('${p.id}')"> <i class="bi bi-music-note-list"></i> ${p.name} </li> `).join('') : '<li>Nessuna playlist</li>'}
+            </ul>
+        </div>
+    `;
 
-    // Membri
-    const membersTitle = document.createElement('h5');
-    membersTitle.textContent = 'Membri:';
-    body.appendChild(membersTitle);
-
-    const membersList = document.createElement('ul');
-    if (community.members?.length) {
-        community.members.forEach(m => {
-            const li = document.createElement('li');
-            li.textContent = m;
-            membersList.appendChild(li);
-        });
-    } else {
-        const li = document.createElement('li');
-        li.textContent = 'Nessun membro';
-        membersList.appendChild(li);
-    }
-    body.appendChild(membersList);
-
-    body.appendChild(document.createElement('hr'));
-
-    // Playlist condivise
-    const playlistsTitle = document.createElement('h5');
-    playlistsTitle.textContent = 'Playlist condivise:';
-    body.appendChild(playlistsTitle);
-
-    const playlistsList = document.createElement('ul');
-    if (sharedPlaylists.length) {
-        sharedPlaylists.forEach(p => {
-            const li = document.createElement('li');
-            li.textContent = p.name;
-            playlistsList.appendChild(li);
-        });
-    } else {
-        const li = document.createElement('li');
-        li.textContent = 'Nessuna playlist';
-        playlistsList.appendChild(li);
-    }
-    body.appendChild(playlistsList);
-
-    // Mostra modale
     new bootstrap.Modal(document.getElementById('viewCommunityModal')).show();
+}
+
+function searchCommunities(query, allCommunities) {
+    query = query.toLowerCase();
+
+    return allCommunities.filter(c =>
+        c.name.toLowerCase().includes(query) ||
+        c.description.toLowerCase().includes(query) ||
+        c.tags.some(tag => tag.toLowerCase().includes(query))
+    );
 }

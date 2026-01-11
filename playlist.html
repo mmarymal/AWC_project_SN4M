@@ -74,20 +74,27 @@
             </form>
         </div>
     </div>
- 
+
     <main>
         <section class="playlist-section container mt-5">
             <div class="row">
-
+                <!-- colonna sinistra -->
                 <div class="col-md-6">
-                    <h2 class="section-title">Le mie playlist</h2>
+                    <div class="playlist-header-row">
+                        <h2 class="section-title">Le mie playlist</h2>
+                        <button class="btn btn-create-playlist" data-bs-toggle="modal"
+                            data-bs-target="#createPlaylistModal">Crea Playlist</button>
+                    </div>
                     <div id="myPlaylists"></div>
-                    <button class="btn btn-primary btn-create-playlist" data-bs-toggle="modal"
-                        data-bs-target="#createPlaylistModal">Crea Playlist</button>
                 </div>
 
-                <div class="col-md-6">
-                    <h2 class="section-title">Playlist delle Community</h2>
+                <!-- colonna destra -->
+                <div class="col-md-6 playlist-right">
+                    <div class="playlist-header-row">
+                        <h2 class="section-title">Playlist delle Community</h2>
+                        <input type="text" id="communityPlaylistSearch" class="playlist-search"
+                            placeholder="Cerca playlist...">
+                    </div>
                     <div id="communityPlaylists"></div>
                 </div>
 
@@ -98,7 +105,7 @@
     <footer>
         <p>&copy; 2025 SN4M - Social Network for Music</p>
     </footer>
-    
+
     <!-- template card playlist -->
     <template id="playlistCardTemplate">
         <div class="playlist-card">
@@ -128,8 +135,10 @@
 
                 <div class="modal-body">
                     <input type="text" id="playlistName" class="form-control mb-2" placeholder="Nome playlist" required>
-                    <textarea id="playlistDescription" class="form-control mb-2" placeholder="Descrizione playlist" rows="2" required></textarea>
-                    <input type="text" id="playlistTags" class="form-control mb-2" placeholder="Tag (separati da virgola)" required>
+                    <textarea id="playlistDescription" class="form-control mb-2" placeholder="Descrizione playlist"
+                        rows="2" required></textarea>
+                    <input type="text" id="playlistTags" class="form-control mb-2"
+                        placeholder="Tag (separati da virgola)" required>
                 </div>
 
                 <div class="modal-footer">
@@ -140,7 +149,7 @@
         </div>
     </div>
 
-    <!-- CONFERMA ELIMINAZIONE -->
+    <!-- conferma eliminazione -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content custom-modal">
@@ -156,7 +165,7 @@
         </div>
     </div>
 
-    <!-- DETTAGLI PLAYLIST -->
+    <!-- dettagli playlist -->
     <div class="modal fade" id="viewPlaylistModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content playlist-details-modal">
@@ -173,12 +182,11 @@
 
     <script src="playlist.js"></script>
     <script src="api.js"></script>
-    
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <script type="module" src="load-header.js"></script>
-    
 
 </body>
 

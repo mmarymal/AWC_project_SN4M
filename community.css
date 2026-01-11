@@ -1,41 +1,93 @@
+/* layout principale */
 .community-content {
     flex-grow: 1;
-    padding: 20px;
     max-width: 1500px;
     margin: 20px 100px;
+    padding: 20px;
     background-color: #282a36;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
-.community-content h2 {
-    margin-bottom: 20px;
-    border-bottom: 2px solid #44475a;
-    padding-bottom: 10px;
-}
-
-.section-title {
-    color: #50fa7b;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #44475a;
-    padding-bottom: 10px;
-}
-
+/* sezione */
 .community-section {
-    margin-top: 40px;
-    padding: 20px;
     max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 40px auto 20px;
+    padding: 20px;
 }
 
+/* padding simmetrico tra colonne */
+.community-section .col-md-6:first-child {
+    padding-right: 25px;
+}
+
+.community-section .col-md-6:last-child {
+    padding-left: 25px;
+}
+
+/* spacing liste */
 #myCommunities,
 #communityList {
-    margin-bottom: 30px;
+    margin-top: 16px;
 }
 
-/* Card Community - allineato con playlist */
+/* titoli */
+.community-content h2 {
+    color: #50fa7b;
+    margin-bottom: 20px;
+}
+
+/* header con bottone o campo di ricerca */
+.community-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: relative;
+}
+
+/* titolo dentro header */
+.community-header-row .section-title {
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* campo di ricerca SOLO nella colonna destra */
+#communitySearch {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: #ccc;
+    font-size: 0.95rem;
+    margin: 0;
+    align-self: baseline;
+}
+
+#communitySearch::placeholder {
+    color: #888;
+}
+
+#communitySearch:focus {
+    outline: none;
+}
+
+/* icona lente */
+.community-right .community-header-row::before {
+    content: "\f52a";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+}
+
+/* card community */
 .community-card {
+    position: relative;
     background-color: #2a2a4a;
     border: 1px solid #444;
     border-radius: 8px;
@@ -64,6 +116,7 @@
     margin-top: 10px;
 }
 
+/* header card */
 .community-header {
     display: flex;
     justify-content: space-between;
@@ -71,27 +124,24 @@
 }
 
 .community-title {
+    flex-grow: 1;
     cursor: pointer;
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
     color: #fff;
     transition: color 0.3s ease;
-    flex-grow: 1;
 }
 
 .community-title:hover {
     color: #50fa7b;
 }
 
-.community-header .dropdown {
-    margin-left: auto;
-}
-
+/* pulsante opzioni */
 .btn-transparent {
     background: none;
     border: none;
-    color: #ffffff;
+    color: #fff;
     font-size: 1.4rem;
     padding: 4px;
     cursor: pointer;
@@ -109,79 +159,27 @@
 }
 
 .community-card .btn-transparent:hover i.bi-three-dots-vertical {
-    color: #e286f5 !important;
+    color: #bd93f9 !important;
     transform: scale(1.2);
 }
 
-/* Pulsante crea community */
-.btn-create-community {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background-color: #bd93f9;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-}
-
-.btn-create-community:hover {
-    background-color: #ff79c6;
-}
-
-/* Modal dettagli community */
-.community-details-modal .modal-content {
-    background-color: #282a36;
-    color: #f8f8f2;
-}
-
-.community-details-modal .modal-header {
-    border-bottom: 1px solid #44475a;
-}
-
-.community-details-modal .modal-footer {
-    border-top: 1px solid #44475a;
-}
-
-.community-details-modal h2,
-.community-details-modal h4,
-.community-details-modal h5 {
-    color: #50fa7b;
-}
-
-/* Modal custom */
-.custom-modal .modal-content {
-    background-color: #282a36;
-    color: #f8f8f2;
-}
-
-.custom-modal .modal-header {
-    border-bottom: 1px solid #44475a;
-}
-
-.custom-modal .modal-footer {
-    border-top: 1px solid #44475a;
-}
-
-/* Dropdown menu */
+/* dropdown */
 .dropdown-menu {
-    background-color: #2a2a4a;
+    background-color: #d1d1de;
     border: 1px solid #444;
 }
 
 .dropdown-item {
     color: #f8f8f2;
-    transition: background-color 0.2s ease;
 }
 
 .dropdown-item:hover {
-    background-color: #44475a;
+    background-color: #d1d1d1;
     color: #fff;
 }
 
 .dropdown-item.text-danger:hover {
     background-color: #ff5555;
-    color: #fff;
 }
 
 .dropdown-item.text-warning:hover {
@@ -194,18 +192,95 @@
     color: #000;
 }
 
-/* Responsive */
+/* detail card */
+.detail-card {
+    max-width: 700px;
+    margin: 0 auto 18px;
+    padding: 15px 18px;
+    background: #7daa5e;
+    border: 1px solid #3a3a4d;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.detail-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #bd93f9;
+}
+
+.detail-text {
+    margin: 0;
+    font-style: italic;
+    color: #e6e6e6;
+}
+
+.detail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.detail-list.members li,
+.detail-list.playlists li {
+    background: #34344a;
+    color: #f8f8f2;
+}
+
+.detail-list.members li {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.detail-list.playlists li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-list i {
+    color: #f99393;
+    opacity: 0.8;
+}
+
+.btn-create-community {
+    background-color: #bd93f9 !important;
+    /* verde acceso */
+    color: #1f1f2e !important;
+    /* testo scuro leggibile */
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-create-community:hover {
+    background-color: #3be06b !important;
+    /* leggermente più scuro o più chiaro */
+    color: #1f1f2e !important;
+}
+
+/* responsive */
 @media (max-width: 768px) {
     .community-section .row {
         flex-direction: column;
     }
 
-    .community-card {
-        margin-bottom: 1.5rem;
-    }
-
     .community-content {
         margin: 20px;
         padding: 15px;
+    }
+
+    .community-card {
+        margin-bottom: 1.5rem;
     }
 }
