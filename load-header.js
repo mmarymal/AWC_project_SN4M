@@ -30,12 +30,9 @@ function aggiornaDropdownPlaylist() {
         .join("");
 }
 
-/* -------------------------------------------
-   LOGICA CHE DIPENDE DALL'HEADER
-   (elementi dentro global-header.html)
--------------------------------------------- */
 document.addEventListener("headerLoaded", () => {
-    /* RICERCA SPOTIFY */
+
+    /* --- RICERCA SPOTIFY --- */
     const searchForm = document.getElementById("search-form");
     const searchInput = document.getElementById("search-input");
 
@@ -50,7 +47,7 @@ document.addEventListener("headerLoaded", () => {
         });
     }
 
-    /* LOGOUT */
+    /* --- LOGOUT --- */
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
@@ -58,18 +55,10 @@ document.addEventListener("headerLoaded", () => {
             window.location.href = "login.html";
         });
     }
-});
 
-/* -------------------------------------------
-   LOGICA CHE DIPENDE DAL DOM PRINCIPALE
-   (modali, form, overlay, ecc.)
--------------------------------------------- */
-document.addEventListener("DOMContentLoaded", () => {
-    /* --- MODALE PLAYLIST: APRI DA OVERLAY / BOTTONI --- */
-
-    // Funzione globale per aprire il modale "Aggiungi a playlist"
+    /* --- APRI MODALE PLAYLIST --- */
     window.apriModalPlaylist = function (track) {
-        window.trackSelezionato = track;
+        sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
 
         aggiornaDropdownPlaylist();
 
@@ -85,102 +74,91 @@ document.addEventListener("DOMContentLoaded", () => {
         playlistModal.show();
     };
 
-    /* --- MODALE CREA PLAYLIST APERTO DAL MODALE PLAYLIST --- */
-
-    const openCreatePlaylistBtn = document.getElementById("openCreatePlaylist");
-    if (openCreatePlaylistBtn) {
-        openCreatePlaylistBtn.addEventListener("click", () => {
-            const playlistModalEl = document.getElementById("playlistModal");
-            const createPlaylistModalEl = document.getElementById("createPlaylistModal");
-            if (!createPlaylistModalEl) return;
-
-            const playlistModal = playlistModalEl
-                ? bootstrap.Modal.getInstance(playlistModalEl)
-                : null;
-            playlistModal?.hide();
-
-            const createModal = bootstrap.Modal.getOrCreateInstance(createPlaylistModalEl);
-            createModal.show();
-        });
-    }
-
     /* --- RESET MODALE CREAZIONE PLAYLIST --- */
-
     const createPlaylistModalEl = document.getElementById("createPlaylistModal");
     if (createPlaylistModalEl) {
         createPlaylistModalEl.addEventListener("show.bs.modal", () => {
-            const nameInput = document.getElementById("createPlaylistName");
-            const descInput = document.getElementById("playlistDescription");
-            const tagsInput = document.getElementById("playlistTags");
-
-            if (nameInput) nameInput.value = "";
-            if (descInput) descInput.value = "";
-            if (tagsInput) tagsInput.value = "";
-
-            // Se sto aggiungendo un brano, chiudo il modale playlist
-            if (window.trackSelezionato) {
-                const playlistModalEl = document.getElementById("playlistModal");
-                if (playlistModalEl) {
-                    const playlistModal = bootstrap.Modal.getInstance(playlistModalEl);
-                    playlistModal?.hide();
-                }
-            }
+            document.getElementById("createPlaylistName").value = "";
+            document.getElementById("playlistDescription").value = "";
+            document.getElementById("playlistTags").value = "";
         });
     }
 
-    /* --- CREAZIONE PLAYLIST (DOM COMPLETAMENTE PRONTO) --- */
+    /* --- CREAZIONE PLAYLIST --- */
     const newPlaylistForm = document.getElementById("newPlaylistForm");
 
     if (!newPlaylistForm) {
-        console.log("DEBUG: newPlaylistForm non trovato in questa pagina");
-    } else {
-        newPlaylistForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+        console.log("DEBUG: newPlaylistForm non trovato DOPO headerLoaded");
+        return;
+    }
 
-            const user = JSON.parse(sessionStorage.getItem("utente"));
-            if (!user) {
-                mostraToast("Utente non autenticato.", "danger");
-                return;
-            }
+    console.log("DEBUG: newPlaylistForm TROVATO dopo headerLoaded");
 
-            const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+    newPlaylistForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("DEBUG: submit intercettato");
 
-            const name = newPlaylistForm.querySelector("#createPlaylistName")?.value.trim();
-            if (!name) {
-                mostraToast("Inserisci un nome per la playlist.", "danger");
-                return;
-            }
+        const user = JSON.parse(sessionStorage.getItem("utente"));
+        console.log("DEBUG: utente =", user);
 
-            const description = newPlaylistForm.querySelector("#playlistDescription")?.value.trim() || "";
-            const rawTags = newPlaylistForm.querySelector("#playlistTags")?.value || "";
+        if (!user) {
+            mostraToast("Utente non autenticato.", "danger");
+            return;
+        }
 
-            const tags = rawTags
-                .split(",")
-                .map(t => t.trim())
-                .filter(Boolean);
+        const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+        const nameInput = document.getElementById("createPlaylistName");
+        const name = nameInput?.value.trim();
+        console.log(`DEBUG: nameInput =`, nameInput);
+        console.log(`DEBUG: nome playlist = "${name}"`);
 
-            const newPlaylist = {
-                id: Date.now().toString(),
-                name,
-                description,
-                tags,
-                creator: user.username,
-                community: null,
-                tracks: []
-            };
 
-            playlists.push(newPlaylist);
-            localStorage.setItem("playlists", JSON.stringify(playlists));
+        if (!name) { //da mettere a posto
+            console.log("DEBUG: sto per mostrare il toast");
+            mostraToast("Inserisci un nome per la playlist.", "danger");
+            console.log("DEBUG: toast mostrato");
 
-            mostraToast(`Playlist "${name}" creata`, "success");
+            return;
+        }
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById("createPlaylistModal"));
-            modal?.hide();
+        const description = newPlaylistForm.querySelector("#playlistDescription")?.value.trim() || "";
+        const rawTags = newPlaylistForm.querySelector("#playlistTags")?.value || "";
+        const tags = rawTags.split(",").map(t => t.trim()).filter(Boolean);
 
-            aggiornaDropdownPlaylist();
+        const newPlaylist = {
+            id: Date.now().toString(),
+            name,
+            description,
+            tags,
+            creator: user.username,
+            community: null,
+            tracks: []
+        };
 
-            if (window.trackSelezionato) {
-                const playlistModal = bootstrap.Modal.getOrCreateInstance(document.getElementById("playlistModal"));
+        console.log("DEBUG: newPlaylist generata =", newPlaylist);
+
+        playlists.push(newPlaylist);
+        localStorage.setItem("playlists", JSON.stringify(playlists));
+
+        mostraToast(`Playlist "${name}" creata`, "success");
+
+        const createPlaylistModalEl = document.getElementById("createPlaylistModal");
+        const createModal = bootstrap.Modal.getInstance(createPlaylistModalEl);
+        createModal?.hide();
+        console.log("DEBUG: modale creazione chiuso");
+
+        aggiornaDropdownPlaylist();
+        console.log("DEBUG: dropdown aggiornata");
+
+        const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
+        console.log("DEBUG track nel submit:", track);
+
+        if (track) {
+            const playlistModalEl = document.getElementById("playlistModal");
+            console.log("DEBUG playlistModalEl:", playlistModalEl);
+
+            if (playlistModalEl) {
+                const playlistModal = bootstrap.Modal.getOrCreateInstance(playlistModalEl);
                 playlistModal.show();
 
                 setTimeout(() => {
@@ -188,82 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (select) select.value = newPlaylist.id;
                 }, 200);
             }
-
-            newPlaylistForm.reset();
-        });
-    }
-
-
-    /* --- AGGIUNTA BRANO ALLA PLAYLIST --- */
-
-    document.addEventListener("click", async (e) => {
-        if (e.target.id !== "confirmAddBtn") return;
-
-        const track = window.trackSelezionato;
-        if (!track || !track.id) {
-            mostraToast("Nessun brano selezionato.", "danger");
-            console.log("DEBUG: trackSelezionato è nullo o invalido", track);
-            return;
         }
 
-        const user = JSON.parse(sessionStorage.getItem("utente"));
-        if (!user) {
-            mostraToast("Utente non autenticato.", "danger");
-            return;
-        }
-
-        const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-        const playlistSelect = document.getElementById("playlistSelect");
-        if (!playlistSelect) {
-            mostraToast("Nessuna playlist disponibile.", "danger");
-            return;
-        }
-
-        const playlistId = playlistSelect.value;
-        const playlist = playlists.find(p => p.id === playlistId);
-
-        if (!playlist) {
-            mostraToast("Seleziona una playlist valida.", "danger");
-            return;
-        }
-
-        const alreadyExist = playlist.tracks?.some(t => t.id === track.id);
-        if (alreadyExist) {
-            mostraToast("Questo brano è già presente nella playlist.", "warning");
-        } else {
-            let genres = [];
-            try {
-                genres = await getArtistGenres(track.artists?.[0]?.id);
-            } catch (err) {
-                console.log("DEBUG: errore getArtistGenres", err);
-            }
-
-            const normalizedTrack = {
-                id: track.id,
-                title: track.name,
-                artist: track.artists?.map(a => a.name).join(", ") || "N/D",
-                duration: track.duration_ms
-                    ? `${Math.floor(track.duration_ms / 60000)}:${String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2, '0')}`
-                    : "N/D",
-                year: track.album?.release_date?.split("-")[0] || "N/D",
-                genre: genres?.[0] || "N/D"
-            };
-
-            if (!Array.isArray(playlist.tracks)) {
-                playlist.tracks = [];
-            }
-
-            playlist.tracks.push(normalizedTrack);
-            mostraToast(`Brano aggiunto a "${playlist.name}"`, "success");
-        }
-
-        localStorage.setItem("playlists", JSON.stringify(playlists));
-
-        const playlistModalEl = document.getElementById("playlistModal");
-        if (playlistModalEl) {
-            const playlistModal = bootstrap.Modal.getInstance(playlistModalEl);
-            playlistModal?.hide();
-        }
+        newPlaylistForm.reset();
     });
 });
 
@@ -309,7 +214,7 @@ function showSearchOverlay(results) {
             const id = btn.dataset.id;
             const track = results.find(t => t.id === id);
 
-            window.trackSelezionato = track;
+            sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
 
             overlay.style.display = "none";
             document.body.classList.remove("overlay-open");
