@@ -123,4 +123,19 @@ document.addEventListener("headerLoaded", () => {
     });
 });
 
+// Quando un dropdown Bootstrap si apre
+document.addEventListener('shown.bs.dropdown', function (event) {
+    const card = event.target.closest('.community-card, .playlist-card');
+    if (card) {
+        card.classList.add('dropdown-open');
+    }
+});
+
+// Quando un dropdown Bootstrap si chiude
+document.addEventListener('hidden.bs.dropdown', function (event) {
+    const card = event.target.closest('.community-card, .playlist-card');
+    if (card) {
+        card.classList.remove('dropdown-open');
+    }
+});
 

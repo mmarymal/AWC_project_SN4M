@@ -57,6 +57,8 @@ document.addEventListener('headerLoaded', () => {
 
         bootstrap.Modal.getInstance(document.getElementById('createCommunityModal')).hide();
         this.reset();
+        
+        showToast(`La community "${newCommunity.name}" è stata creata!`, "success");
         renderCommunities();
         renderMyCommunities();
     });
@@ -80,6 +82,7 @@ function editCommunity(id) {
 
         localStorage.setItem('communities', JSON.stringify(communities));
         bootstrap.Modal.getInstance(document.getElementById('editCommunityModal')).hide();
+        showToast(`La community "${community.name}" è stata modificata.`, "info");
         renderCommunities();
         renderMyCommunities();
     };
@@ -90,10 +93,23 @@ function editCommunity(id) {
 function confirmDeleteCommunity(id) {
     const btn = document.getElementById('confirmDeleteCommunityBtn');
     btn.onclick = function () {
+        // Rimuovi la community dalla lista 
         let communities = JSON.parse(localStorage.getItem('communities')) || [];
         communities = communities.filter(c => c.id !== id);
         localStorage.setItem('communities', JSON.stringify(communities));
+
+        // Rimuovi il riferimento da tutte le playlist 
+        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+        playlists.forEach(p => {
+            if (p.communities?.includes(id)) {
+                p.communities = p.communities.filter(cid => cid !== id);
+            }
+        }); localStorage.setItem('playlists', JSON.stringify(playlists));
+
         bootstrap.Modal.getInstance(document.getElementById('confirmDeleteCommunityModal')).hide();
+
+        showToast("Community eliminata con successo.", "danger");
+
         renderCommunities();
         renderMyCommunities();
     };
@@ -170,6 +186,15 @@ function leaveCommunity(id) {
 
     community.members = community.members.filter(m => m !== user.username);
     localStorage.setItem('communities', JSON.stringify(communities));
+
+    // Rimuovi playlist condivise da quella community
+    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+    playlists.forEach(p => {
+        if (p.communities?.includes(id)) {
+            p.communities = p.communities.filter(cid => cid !== id);
+        }
+    });
+    localStorage.setItem('playlists', JSON.stringify(playlists));
 
     showToast(`Hai lasciato "${community.name}".`, "warning");
 

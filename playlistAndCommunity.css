@@ -1,4 +1,11 @@
-/* layout principale */
+/* HEADER GLOBALE */
+#global-header {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* LAYOUT PRINCIPALE */
 .community-content {
     flex-grow: 1;
     max-width: 1500px;
@@ -8,38 +15,59 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     position: relative;
+    overflow: visible !important;
 }
 
-/* sezione */
-.community-section {
+.community-section,
+.playlist-section {
     max-width: 900px;
     margin: 40px auto 20px;
     padding: 20px;
+    overflow: visible !important;
 }
 
-/* padding simmetrico tra colonne */
-.community-section .col-md-6:first-child {
+/* padding simmetrico colonne */
+.community-section .col-md-6:first-child,
+.playlist-section .col-md-6:first-child {
     padding-right: 25px;
 }
 
-.community-section .col-md-6:last-child {
+.community-section .col-md-6:last-child,
+.playlist-section .col-md-6:last-child {
     padding-left: 25px;
+}
+
+.row,
+.col-md-6 {
+    overflow: visible !important;
 }
 
 /* spacing liste */
 #myCommunities,
-#communityList {
+#communityList,
+#myPlaylists,
+#communityPlaylists {
     margin-top: 16px;
 }
 
-/* titoli */
+/* titoli sezioni */
+.section-title,
 .community-content h2 {
     color: #50fa7b;
     margin-bottom: 20px;
 }
 
-/* header con bottone o campo di ricerca */
-.community-header-row {
+/* HEADER CARD */
+.community-header,
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible !important;
+}
+
+.community-header-row,
+.playlist-header-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -48,33 +76,35 @@
     position: relative;
 }
 
-/* titolo dentro header */
-.community-header-row .section-title {
-    margin-bottom: 20px;
+.community-header-row .section-title,
+.playlist-header-row .section-title {
     flex-grow: 1;
 }
 
-/* campo di ricerca SOLO nella colonna destra */
-#communitySearch {
+/* CAMPI DI RICERCA */
+#communitySearch,
+.playlist-search {
     padding: 6px 12px;
     border: none;
     background: transparent;
     color: #ccc;
     font-size: 0.95rem;
     margin: 0;
-    align-self: baseline;
 }
 
-#communitySearch::placeholder {
+#communitySearch::placeholder,
+.playlist-search::placeholder {
     color: #888;
 }
 
-#communitySearch:focus {
+#communitySearch:focus,
+.playlist-search:focus {
     outline: none;
 }
 
 /* icona lente */
-.community-right .community-header-row::before {
+.community-right .community-header-row::before,
+.playlist-right .playlist-header-row::before {
     content: "\f52a";
     font-family: "bootstrap-icons";
     position: absolute;
@@ -85,8 +115,9 @@
     pointer-events: none;
 }
 
-/* card community */
-.community-card {
+/* CARD */
+.community-card,
+.playlist-card {
     position: relative;
     background-color: #2a2a4a;
     border: 1px solid #444;
@@ -96,34 +127,26 @@
     color: #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1;
+    /* base */
+    overflow: visible !important;
 }
 
-.community-card:hover {
+/* quando il dropdown è aperto, la card sale sopra le altre */
+.community-card.dropdown-open,
+.playlist-card.dropdown-open {
+    z-index: 999 !important;
+}
+
+.community-card:hover,
+.playlist-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.community-card h5 {
-    color: #50fa7b;
-    margin-bottom: 8px;
-}
-
-.community-card p {
-    margin-bottom: 6px;
-}
-
-.community-card button {
-    margin-top: 10px;
-}
-
-/* header card */
-.community-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.community-title {
+/* titoli card */
+.community-title,
+.playlist-title {
     flex-grow: 1;
     cursor: pointer;
     font-size: 1.2rem;
@@ -133,11 +156,12 @@
     transition: color 0.3s ease;
 }
 
-.community-title:hover {
+.community-title:hover,
+.playlist-title:hover {
     color: #50fa7b;
 }
 
-/* pulsante opzioni */
+/* PULSANTE OPZIONI */
 .btn-transparent {
     background: none;
     border: none;
@@ -153,28 +177,39 @@
     border-radius: 50%;
 }
 
-.community-card i.bi-three-dots-vertical {
+.community-card i.bi-three-dots-vertical,
+.playlist-card i.bi-three-dots-vertical {
     color: #ffffff;
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.community-card .btn-transparent:hover i.bi-three-dots-vertical {
+.community-card .btn-transparent:hover i.bi-three-dots-vertical,
+.playlist-card .btn-transparent:hover i.bi-three-dots-vertical {
     color: #bd93f9 !important;
     transform: scale(1.2);
 }
 
-/* dropdown */
+/* DROPDOWN */
+.dropdown {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 10000 !important;
+}
+
 .dropdown-menu {
-    background-color: #d1d1de;
+    position: absolute !important;
+    z-index: 99999 !important;
+    background-color: #2a2a4a;
     border: 1px solid #444;
 }
 
 .dropdown-item {
     color: #f8f8f2;
+    transition: background-color 0.2s ease;
 }
 
 .dropdown-item:hover {
-    background-color: #d1d1d1;
+    background-color: #44475a;
     color: #fff;
 }
 
@@ -192,7 +227,38 @@
     color: #000;
 }
 
-/* detail card */
+.dropdown-item.text-info:hover {
+    background-color: #8be9fd;
+    color: #000;
+}
+
+.dropdown-item.text-primary:hover {
+    background-color: #bd93f9;
+    color: #fff;
+}
+
+/* BOTTONI CREAZIONE */
+.btn-create-community,
+.btn-create-playlist {
+    background-color: #bd93f9 !important;
+    color: #1f1f2e !important;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-create-community:hover {
+    background-color: #3be06b !important;
+}
+
+.btn-create-playlist:hover {
+    background-color: #ff79c6 !important;
+}
+
+/* DETAIL CARD */
 .detail-card {
     max-width: 700px;
     margin: 0 auto 18px;
@@ -250,28 +316,11 @@
     opacity: 0.8;
 }
 
-.btn-create-community {
-    background-color: #bd93f9 !important;
-    /* verde acceso */
-    color: #1f1f2e !important;
-    /* testo scuro leggibile */
-    border: none;
-    padding: 6px 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
-}
-
-.btn-create-community:hover {
-    background-color: #3be06b !important;
-    /* leggermente più scuro o più chiaro */
-    color: #1f1f2e !important;
-}
-
-/* responsive */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .community-section .row {
+
+    .community-section .row,
+    .playlist-section .row {
         flex-direction: column;
     }
 
@@ -280,7 +329,8 @@
         padding: 15px;
     }
 
-    .community-card {
+    .community-card,
+    .playlist-card {
         margin-bottom: 1.5rem;
     }
 }
