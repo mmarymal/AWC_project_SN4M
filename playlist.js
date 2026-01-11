@@ -1,22 +1,19 @@
 document.addEventListener('headerLoaded', () => {
-    const btn = document.getElementById("confirmAddBtn");
-    if (btn) {
-        btn.addEventListener("click", addTrackToPlaylist);
-    }
-
     const user = JSON.parse(sessionStorage.getItem('utente'));
     if (!user) return;
 
+    // Mostra nome utente nell’header
     document.getElementById('welcomeUsername').textContent = user.username;
 
+    // Render iniziale
     renderPlaylists();
 
+    /* RICERCA PLAYLIST DELLE COMMUNITY */
     const searchInput = document.getElementById('communityPlaylistSearch');
     if (searchInput) {
         searchInput.addEventListener('input', e => {
             const query = e.target.value;
 
-            // prendi tutte le playlist condivise nelle community dell’utente
             const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
             const communities = JSON.parse(localStorage.getItem('communities')) || [];
             const user = JSON.parse(sessionStorage.getItem('utente'));
@@ -24,13 +21,12 @@ document.addEventListener('headerLoaded', () => {
             const myCommunities = communities.filter(c => c.members.includes(user.username));
 
             const communityPlaylists = playlists.filter(p =>
-                Array.isArray(p.communities) && p.communities.some(cid => myCommunities.some(c => c.id === cid))
+                Array.isArray(p.communities) &&
+                p.communities.some(cid => myCommunities.some(c => c.id === cid))
             );
 
-            // filtra per nome o tag 
             const filtered = searchPlaylists(query, communityPlaylists);
 
-            // renderizza solo quelle filtrate 
             const container = document.getElementById('communityPlaylists');
             container.innerHTML = '';
 
@@ -44,66 +40,37 @@ document.addEventListener('headerLoaded', () => {
         });
     }
 
-    // Creazione nuova playlist
+    /* CREAZIONE NUOVA PLAYLIST  */
     const newForm = document.getElementById('newPlaylistForm');
-    newForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+    if (newForm) {
+        newForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+            const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
 
-        const newPlaylist = {
-            id: Date.now().toString(),
-            name: document.getElementById('playlistName').value.trim(),
-            description: document.getElementById('playlistDescription').value.trim(),
-            tags: document.getElementById('playlistTags').value.split(',').map(t => t.trim()).filter(Boolean),
-            creator: user.username,
-            // 🔁 ora può essere condivisa in più community
-            communities: [],
-            tracks: []
-        };
+            const newPlaylist = {
+                id: Date.now().toString(),
+                name: document.getElementById('playlistName').value.trim(),
+                description: document.getElementById('playlistDescription').value.trim(),
+                tags: document.getElementById('playlistTags').value.split(',').map(t => t.trim()).filter(Boolean),
+                creator: user.username,
+                communities: [],
+                tracks: []
+            };
 
-        playlists.push(newPlaylist);
-        localStorage.setItem('playlists', JSON.stringify(playlists));
+            playlists.push(newPlaylist);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
 
-        document.getElementById('myPlaylists').appendChild(renderPlaylistCard(newPlaylist, true));
+            document.getElementById('myPlaylists').appendChild(renderPlaylistCard(newPlaylist, true));
 
-        showToast("Playlist creata con successo!");
-        bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
-        newForm.reset();
-    });
+            showToast("Playlist creata con successo!");
+            bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
+            newForm.reset();
+        });
+    }
 });
 
-function addTrackToPlaylist() {
-    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-    const user = JSON.parse(sessionStorage.getItem('utente'));
-    const playlistId = document.getElementById('playlistSelect').value;
-    const playlist = playlists.find(p => p.id === playlistId);
-    if (!playlist || !trackSelezionato) return;
-
-    const alreadyInPlaylist = playlist.tracks.some(t => t.id === trackSelezionato.id);
-    if (alreadyInPlaylist) {
-        showToast("Brano già presente nella playlist!", "warning");
-        bootstrap.Modal.getInstance(document.getElementById("playlistModal")).hide();
-        return;
-    }
-
-    const track = {
-        id: trackSelezionato.id,
-        title: trackSelezionato.name,
-        artist: trackSelezionato.artists.map(a => a.name).join(', '),
-        duration: trackSelezionato.duration_ms ? Math.floor(trackSelezionato.duration_ms / 1000) + " sec" : "N/D",
-        year: trackSelezionato.album?.release_date?.slice(0, 4) || "N/D",
-        genre: "N/D"
-    };
-
-    playlist.tracks.push(track);
-    localStorage.setItem('playlists', JSON.stringify(playlists));
-
-    showToast("Brano aggiunto alla playlist!", "success");
-    bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
-    renderPlaylists();
-}
-
+/* RENDER PLAYLIST */
 function renderPlaylists() {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
@@ -115,20 +82,13 @@ function renderPlaylists() {
     myContainer.innerHTML = '';
     communityContainer.innerHTML = '';
 
-    //Normalizza tutte le playlist vecchie
     playlists.forEach(p => {
-        if (!Array.isArray(p.communities)) {
-            p.communities = [];
-        }
+        if (!Array.isArray(p.communities)) p.communities = [];
     });
 
-    //Playlist personali (create dall'utente)
     const myPlaylists = playlists.filter(p => p.creator === user.username);
-    myPlaylists.forEach(p => {
-        myContainer.appendChild(renderPlaylistCard(p, true));
-    });
+    myPlaylists.forEach(p => myContainer.appendChild(renderPlaylistCard(p, true)));
 
-    //Playlist condivise nelle community dell'utente
     const myCommunities = communities.filter(c => c.members.includes(user.username));
 
     const communityPlaylistsFiltered = playlists.filter(p =>
@@ -139,47 +99,30 @@ function renderPlaylists() {
     if (communityPlaylistsFiltered.length === 0) {
         communityContainer.innerHTML = '<p class="text-muted">Nessuna playlist condivisa nelle tue community.</p>';
     } else {
-        communityPlaylistsFiltered.forEach(p => { communityContainer.appendChild(renderPlaylistCard(p, false)); });
+        communityPlaylistsFiltered.forEach(p => communityContainer.appendChild(renderPlaylistCard(p, false)));
     }
 
-    //Salva la normalizzazione
     localStorage.setItem('playlists', JSON.stringify(playlists));
 }
 
+/* CARD PLAYLIST */
 function renderPlaylistCard(playlist, isOwner) {
     const template = document.getElementById('playlistCardTemplate');
     const clone = template.content.cloneNode(true);
     const user = JSON.parse(sessionStorage.getItem('utente'));
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
 
-    // Fix playlist vecchie
-    if (!Array.isArray(playlist.communities)) {
-        playlist.communities = [];
-    }
+    if (!Array.isArray(playlist.communities)) playlist.communities = [];
 
     const card = clone.querySelector('.playlist-card');
     const title = clone.querySelector('.playlist-title');
     const dropdownMenu = clone.querySelector('.dropdown-menu');
 
-    // Pulisci menu PRIMA di aggiungere voci
     dropdownMenu.innerHTML = '';
 
-    // Titolo playlist
     title.textContent = playlist.name;
     title.addEventListener('click', () => openPlaylistDetails(playlist.id));
 
-    // Badge community
-    // if (playlist.communities.length > 0) {
-    //     playlist.communities.forEach(cid => {
-    //         const community = communities.find(c => c.id === cid);
-    //         if (!community) return;
-
-    //         const badge = document.createElement('span');
-    //         badge.className = 'badge bg-success ms-2';
-    //         badge.textContent = `📢`;
-    //         title.appendChild(badge);
-    //     });
-    // }
     if (playlist.communities.length > 0) {
         const badge = document.createElement('span');
         badge.className = 'badge bg-success ms-2';
@@ -187,18 +130,7 @@ function renderPlaylistCard(playlist, isOwner) {
         title.appendChild(badge);
     }
 
-    // // Info creator se non è la propria
-    // if (playlist.creator !== user.username) {
-    //     const creatorInfo = document.createElement('small');
-    //     creatorInfo.className = 'text-muted d-block';
-    //     // creatorInfo.textContent = `di ${playlist.creator}`;
-    //     title.parentElement.appendChild(creatorInfo);
-    // }
-
-    // menu per proprietario
-    if (isOwner && playlist.creator === user.username) {
-
-        // Modifica
+    if (isOwner) {
         const editItem = document.createElement('li');
         editItem.innerHTML = `<a class="dropdown-item" href="#">Modifica</a>`;
         editItem.addEventListener('click', e => {
@@ -207,10 +139,7 @@ function renderPlaylistCard(playlist, isOwner) {
         });
         dropdownMenu.appendChild(editItem);
 
-        // Se è già condivisa → aggiungi pulsanti multipli
         if (playlist.communities.length > 0) {
-
-            // Condividi in un’altra community
             const shareMoreItem = document.createElement('li');
             shareMoreItem.innerHTML = `<a class="dropdown-item text-info" href="#">Condividi in una community</a>`;
             shareMoreItem.addEventListener('click', e => {
@@ -219,20 +148,14 @@ function renderPlaylistCard(playlist, isOwner) {
             });
             dropdownMenu.appendChild(shareMoreItem);
 
-            // Rimuovi da una specifica community
             const unshareItem = document.createElement('li');
-            const unshareLink = document.createElement('a');
-            unshareLink.className = 'dropdown-item text-warning';
-            unshareLink.textContent = 'Rimuovi da una community...';
-            unshareLink.href = '#';
-            unshareLink.addEventListener('click', (e) => {
-                e.preventDefault(); openUnshareModal(playlist.id); // ← qui l’utente sceglie da quale community rimuoverla 
+            unshareItem.innerHTML = `<a class="dropdown-item text-warning" href="#">Rimuovi da una community...</a>`;
+            unshareItem.addEventListener('click', e => {
+                e.preventDefault();
+                openUnshareModal(playlist.id);
             });
-            
-            unshareItem.appendChild(unshareLink);
             dropdownMenu.appendChild(unshareItem);
 
-            // Rimuovi da tutte le community
             const unshareAllItem = document.createElement('li');
             unshareAllItem.innerHTML = `<a class="dropdown-item text-warning" href="#">Rimuovi da tutte le community</a>`;
             unshareAllItem.addEventListener('click', e => {
@@ -242,7 +165,6 @@ function renderPlaylistCard(playlist, isOwner) {
             dropdownMenu.appendChild(unshareAllItem);
 
         } else {
-            // Se NON è condivisa → mostra solo "Condividi"
             const shareItem = document.createElement('li');
             shareItem.innerHTML = `<a class="dropdown-item text-info" href="#">Condividi in community</a>`;
             shareItem.addEventListener('click', e => {
@@ -252,7 +174,6 @@ function renderPlaylistCard(playlist, isOwner) {
             dropdownMenu.appendChild(shareItem);
         }
 
-        // Elimina playlist
         const deleteItem = document.createElement('li');
         deleteItem.innerHTML = `<a class="dropdown-item text-danger" href="#">Elimina</a>`;
         deleteItem.addEventListener('click', e => {
@@ -262,7 +183,6 @@ function renderPlaylistCard(playlist, isOwner) {
         dropdownMenu.appendChild(deleteItem);
 
     } else {
-        // menù per non proprietario
         const importItem = document.createElement('li');
         importItem.innerHTML = `<a class="dropdown-item text-primary" href="#">Importa nel mio profilo</a>`;
         importItem.addEventListener('click', e => {
@@ -271,9 +191,11 @@ function renderPlaylistCard(playlist, isOwner) {
         });
         dropdownMenu.appendChild(importItem);
     }
+
     return clone;
 }
 
+/* RICERCA PLAYLIST */
 function searchPlaylists(query, playlists) {
     const q = query.trim().toLowerCase();
 
@@ -285,6 +207,7 @@ function searchPlaylists(query, playlists) {
     });
 }
 
+/* CONDIVISIONE / RIMOZIONE COMMUNITY */
 function sharePlaylist(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
@@ -303,30 +226,30 @@ function sharePlaylist(playlistId) {
 
     // Crea modal per scegliere la community
     const modalHtml = `
-        <div class="modal fade" id="shareCommunityModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Condividi in una community</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Scegli in quale community condividere "<strong>${playlist.name}</strong>":</p>
-                        <select id="shareCommunitySelect" class="form-select">
-                            ${myCommunities.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-                        </select>
-                        <small class="text-muted d-block mt-2">
-                            Puoi ripetere l'operazione per condividerla in più community.
-                        </small>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="confirmShareBtn">Condividi</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            <div class="modal fade" id="shareCommunityModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Condividi in una community</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Scegli in quale community condividere "<strong>${playlist.name}</strong>":</p>
+                            <select id="shareCommunitySelect" class="form-select">
+                                ${myCommunities.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                            <small class="text-muted d-block mt-2">
+                                Puoi ripetere l'operazione per condividerla in più community.
+                            </small>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="confirmShareBtn">Condividi</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
 
     // Rimuovi modal precedente se esiste
     const oldModal = document.getElementById('shareCommunityModal');
@@ -359,7 +282,6 @@ function sharePlaylist(playlistId) {
         renderPlaylists();
     });
 }
-
 function openUnshareModal(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
@@ -373,27 +295,27 @@ function openUnshareModal(playlistId) {
     }
 
     const modalHtml = `
-        <div class="modal fade" id="unshareCommunityModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Rimuovi condivisione</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Scegli da quale community rimuovere "<strong>${playlist.name}</strong>":</p>
-                        <select id="unshareCommunitySelect" class="form-select">
-                            ${sharedCommunities.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="confirmUnshareBtn">Rimuovi</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            <div class="modal fade" id="unshareCommunityModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Rimuovi condivisione</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Scegli da quale community rimuovere "<strong>${playlist.name}</strong>":</p>
+                            <select id="unshareCommunitySelect" class="form-select">
+                                ${sharedCommunities.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" id="confirmUnshareBtn">Rimuovi</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
 
     const oldModal = document.getElementById('unshareCommunityModal');
     if (oldModal) oldModal.remove();
@@ -428,6 +350,7 @@ function unsharePlaylist(playlistId) {
     renderPlaylists();
 }
 
+/* IMPORTA PLAYLIST */
 function importPlaylist(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const user = JSON.parse(sessionStorage.getItem('utente'));
@@ -453,6 +376,7 @@ function importPlaylist(playlistId) {
     renderPlaylists();
 }
 
+/* DETTAGLI PLAYLIST */
 function openPlaylistDetails(id) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];
@@ -484,10 +408,10 @@ function openPlaylistDetails(id) {
         const community = document.createElement('p');
         const communitiesData = communities.filter(c => playlist.communities.includes(c.id));
         community.innerHTML = `
-            <span class="badge bg-success">
-                📢 Condivisa in: ${communitiesData.map(c => c.name).join(', ')}
-            </span>
-        `;
+                <span class="badge bg-success">
+                    📢 Condivisa in: ${communitiesData.map(c => c.name).join(', ')}
+                </span>
+            `;
         header.appendChild(community);
     }
 
@@ -526,11 +450,11 @@ function openPlaylistDetails(id) {
             info.className = 'track-info';
 
             info.innerHTML = `
-                🎤 ${track.artist}<br>
-                ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp;
-                📅 ${track.year || 'N/D'} &nbsp; | &nbsp;
-                🎧 ${track.genre || 'N/D'}
-            `;
+                    🎤 ${track.artist}<br>
+                    ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp;
+                    📅 ${track.year || 'N/D'} &nbsp; | &nbsp;
+                    🎧 ${track.genre || 'N/D'}
+                `;
 
             card.appendChild(trackName);
             card.appendChild(info);
@@ -546,6 +470,7 @@ function openPlaylistDetails(id) {
     new bootstrap.Modal(document.getElementById('viewPlaylistModal')).show();
 }
 
+/* MODIFICA PLAYLIST */
 function editPlaylist(id) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const playlist = playlists.find(p => p.id === id);
@@ -563,22 +488,22 @@ function editPlaylist(id) {
             const li = document.createElement('li');
             li.classList.add("list-group-item", "p-3", "rounded", "shadow-sm", "mb-2", "bg-light");
 
-            li.innerHTML = ` 
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-1">${track.title}</h6> 
-                        <p class="mb-0 text-muted" style="font-size: 0.9em;">
-                            🎤 ${track.artist} &nbsp; | &nbsp; 
-                            🎧 ${track.genre || 'N/D'} &nbsp; | &nbsp; 
-                            ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp; 
-                            📅 ${track.year || 'N/D'} 
-                        </p> 
+            li.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${track.title}</h6>
+                            <p class="mb-0 text-muted" style="font-size: 0.9em;">
+                                🎤 ${track.artist} &nbsp; | &nbsp;
+                                🎧 ${track.genre || 'N/D'} &nbsp; | &nbsp;
+                                ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp;
+                                📅 ${track.year || 'N/D'}
+                            </p>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm remove-track" data-id="${track.id}" title="Rimuovi brano">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
                     </div>
-                    <button class="btn btn-outline-danger btn-sm remove-track" data-id="${track.id}" title="Rimuovi brano"> 
-                        <i class="bi bi-x-circle"></i>
-                    </button>
-                </div>
-            `;
+                `;
 
             trackList.appendChild(li);
         });
@@ -612,19 +537,7 @@ function editPlaylist(id) {
     new bootstrap.Modal(document.getElementById('editPlaylistModal')).show();
 }
 
-function unshareFromCommunity(playlistId, communityId) {
-    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-    const playlist = playlists.find(p => p.id === playlistId);
-    if (!playlist || !playlist.communities) return;
-
-    playlist.communities = playlist.communities.filter(cid => cid !== communityId);
-    localStorage.setItem('playlists', JSON.stringify(playlists));
-
-    showToast(`Playlist rimossa da "${communityId}"`, "info");
-    renderPlaylists();
-}
-
-
+/* ELIMINA PLAYLIST */
 function confirmDelete(id) {
     const btn = document.getElementById('confirmDeleteBtn');
     btn.onclick = function () {
@@ -639,6 +552,7 @@ function confirmDelete(id) {
     new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
 }
 
+/* TOAST */
 function showToast(message, tipo = "success") {
     const toastEl = document.getElementById('sn4mToast');
     const toastMessage = document.getElementById('toastMessage');

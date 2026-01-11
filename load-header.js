@@ -1,4 +1,4 @@
-// carica header globale
+// Carica header globale
 fetch("global-header.html")
     .then(res => res.text())
     .then(html => {
@@ -8,12 +8,13 @@ fetch("global-header.html")
         document.dispatchEvent(new Event("headerLoaded"));
     });
 
-// logica ricerca 
+// Import API
 import { searchSpotify } from "./api.js";
 
+// Variabile globale per il brano selezionato
 window.trackSelezionato = null;
 
-// Attendi che l’header sia caricato
+/* LOGICA RICERCA SPOTIFY */
 document.addEventListener("headerLoaded", () => {
     const form = document.getElementById("search-form");
     const input = document.getElementById("search-input");
@@ -27,12 +28,13 @@ document.addEventListener("headerLoaded", () => {
 
         const results = await searchSpotify(query);
         showSearchOverlay(results.tracks.items);
-
     });
 });
 
-// APRI MODAL PLAYLIST
-function apriModalPlaylist(track) {
+/* FUNZIONE PER APRIRE IL MODALE PLAYLIST */
+window.apriModalPlaylist = function (track) {
+    window.trackSelezionato = track;
+
     const select = document.getElementById("playlistSelect");
     const user = JSON.parse(sessionStorage.getItem("utente"));
     const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
@@ -43,25 +45,95 @@ function apriModalPlaylist(track) {
         .map(p => `<option value="${p.id}">${p.name}</option>`)
         .join("");
 
-    document.getElementById("modalTrackName").textContent = `Brano: ${track.name}`;
+    document.getElementById("modalTrackName").textContent = `Brano: ${track.name || track.title}`;
 
     new bootstrap.Modal(document.getElementById("playlistModal")).show();
-}
+};
 
-// TOAST
-export function mostraToast(msg, tipo = "success") {
-    const toastEl = document.getElementById('sn4mToast');
-    const toastMessage = document.getElementById('toastMessage');
-    if (!toastEl || !toastMessage) return;
-    
-    toastMessage.textContent = msg;
-    
-    // Cambia colore in base al tipo 
-    toastEl.className = `toast align-items-center text-white bg-${tipo} border-0`;
-    
-    new bootstrap.Toast(toastEl).show();
-}
+/* LOGICA CREAZIONE PLAYLIST (MODALE 2) */
+document.addEventListener("submit", (e) => {
+    if (e.target.id !== "newPlaylistForm") return;
 
+    e.preventDefault();
+
+    const user = JSON.parse(sessionStorage.getItem("utente"));
+    const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+
+    const name = document.getElementById("playlistName").value.trim();
+    const description = document.getElementById("playlistDescription").value.trim();
+    const tags = document.getElementById("playlistTags").value.split(",").map(t => t.trim());
+
+    const newPlaylist = {
+        id: Date.now().toString(),
+        name,
+        description,
+        tags,
+        creator: user.username,
+        community: null,
+        tracks: []
+    };
+
+    playlists.push(newPlaylist);
+    localStorage.setItem("playlists", JSON.stringify(playlists));
+
+    mostraToast(`Playlist "${name}" creata`, "success");
+
+    // Chiudi modale creazione
+    bootstrap.Modal.getInstance(document.getElementById("createPlaylistModal")).hide();
+
+    // Aggiorna select nel primo modale
+    const select = document.getElementById("playlistSelect");
+    select.innerHTML = playlists
+        .filter(p => p.creator === user.username)
+        .map(p => `<option value="${p.id}">${p.name}</option>`)
+        .join("");
+
+    // Seleziona la playlist appena creata
+    select.value = newPlaylist.id;
+
+    // Riapri il modale principale
+    new bootstrap.Modal(document.getElementById("playlistModal")).show();
+});
+
+/* LOGICA AGGIUNTA BRANO ALLA PLAYLIST */
+document.addEventListener("click", (e) => {
+    if (e.target.id !== "confirmAddBtn") return;
+
+    const user = JSON.parse(sessionStorage.getItem('utente'));
+    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+
+    const playlistId = document.getElementById('playlistSelect').value;
+    const playlist = playlists.find(p => p.id === playlistId);
+
+    if (!playlist) {
+        mostraToast("Seleziona una playlist valida.", "danger");
+        return;
+    }
+
+    const track = window.trackSelezionato;
+
+    const alreadyExist = playlist.tracks.some(t => t.id === track.id);
+    if (alreadyExist) {
+        mostraToast("Questo brano è già presente nella playlist.", "warning");
+    } else {
+        playlist.tracks.push(track);
+        mostraToast(`Brano aggiunto a "${playlist.name}"`, "success");
+    }
+
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+
+    bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+});
+
+/* CHIUDI PRIMO MODALE QUANDO APRI IL SECONDO */
+document.addEventListener("click", (e) => {
+    if (e.target.matches('[data-bs-target="#createPlaylistModal"]')) {
+        const modal = bootstrap.Modal.getInstance(document.getElementById("playlistModal"));
+        if (modal) modal.hide();
+    }
+});
+
+/* OVERLAY RISULTATI RICERCA */
 function showSearchOverlay(results) {
     if (!results || results.length === 0) return;
 
@@ -91,11 +163,9 @@ function showSearchOverlay(results) {
         container.appendChild(div);
     });
 
-    //  Attiva overlay e blocca scroll del body
     overlay.style.display = "flex";
     document.body.classList.add("overlay-open");
 
-    // Eventi pulsanti "Aggiungi"
     container.querySelectorAll(".add-track").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
@@ -103,7 +173,6 @@ function showSearchOverlay(results) {
 
             window.trackSelezionato = track;
 
-            // Chiudi overlay e riattiva scroll
             overlay.style.display = "none";
             document.body.classList.remove("overlay-open");
 
@@ -112,7 +181,7 @@ function showSearchOverlay(results) {
     });
 }
 
-
+/* LOGOUT */
 document.addEventListener("headerLoaded", () => {
     const logoutBtn = document.getElementById("logoutBtn");
     if (!logoutBtn) return;
@@ -123,20 +192,14 @@ document.addEventListener("headerLoaded", () => {
     });
 });
 
-// Quando un dropdown Bootstrap si apre
-document.addEventListener('shown.bs.dropdown', function (event) {
-    const card = event.target.closest('.community-card, .playlist-card');
-    if (card) {
-        card.classList.add('dropdown-open');
-    }
-});
+/* TOAST */
+export function mostraToast(msg, tipo = "success") {
+    const toastEl = document.getElementById('sn4mToast');
+    const toastMessage = document.getElementById('toastMessage');
+    if (!toastEl || !toastMessage) return;
 
-// Quando un dropdown Bootstrap si chiude
-document.addEventListener('hidden.bs.dropdown', function (event) {
-    const card = event.target.closest('.community-card, .playlist-card');
-    if (card) {
-        card.classList.remove('dropdown-open');
-    }
-});
+    toastMessage.textContent = msg;
+    toastEl.className = `toast align-items-center text-white bg-${tipo} border-0`;
 
-
+    new bootstrap.Toast(toastEl).show();
+}
