@@ -15,8 +15,59 @@ document.addEventListener('headerLoaded', () => {
 
     if (btn) {
         btn.addEventListener("click", () => {
-            const modal = new bootstrap.Modal(document.querySelector("#createPlaylistModal"));
+            const modal = new bootstrap.Modal(document.querySelector("#createPlaylistStandaloneModal"));
             modal.show();
+        });
+    }
+
+    /* CREAZIONE PLAYLIST - STANDALONE */
+    const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
+
+    if (standaloneForm) {
+        standaloneForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("standalonePlaylistName").value.trim();
+            const description = document.getElementById("standalonePlaylistDescription").value.trim();
+            const tags = document.getElementById("standalonePlaylistTags").value
+                .split(",")
+                .map(t => t.trim())
+                .filter(Boolean);
+
+            if (!name) {
+                showToast("Inserisci un nome per la playlist.", "danger");
+                return;
+            }
+
+            const user = JSON.parse(sessionStorage.getItem("utente"));
+            const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+
+            const newPlaylist = {
+                id: Date.now().toString(),
+                name,
+                description,
+                tags,
+                creator: user.username,
+                communities: [],
+                tracks: []
+            };
+
+            playlists.push(newPlaylist);
+            localStorage.setItem("playlists", JSON.stringify(playlists));
+
+            // Aggiorna UI
+            if (typeof renderPlaylists === "function") {
+                renderPlaylists();
+            }
+
+            // Chiudi modale
+            bootstrap.Modal.getInstance(
+                document.getElementById("createPlaylistStandaloneModal")
+            ).hide();
+
+            showToast(`Playlist "${name}" creata!`, "success");
+
+            standaloneForm.reset();
         });
     }
 
@@ -89,7 +140,7 @@ document.addEventListener('headerLoaded', () => {
                 showToast(`Playlist "${newPlaylist.name}" creata e brano "${trackToAddCopy.title}" aggiunto!`, "success");
 
                 // Chiudi modale e reset
-                bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('createPlaylistStandaloneModal')).hide();
                 newForm.reset();
                 window.trackToAdd = null; // Reset solo alla fine
 
@@ -106,7 +157,7 @@ document.addEventListener('headerLoaded', () => {
             }
 
             showToast("Playlist creata con successo!", "success");
-            bootstrap.Modal.getInstance(document.getElementById('createPlaylistModal')).hide();
+            bootstrap.Modal.getInstance(document.getElementById('createPlaylistStandaloneModal')).hide();
             newForm.reset();
         });
     }
@@ -147,7 +198,7 @@ function openAddTrackModal(track) {
         bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
 
         // Apri modale di creazione
-        const createModal = new bootstrap.Modal(document.getElementById('createPlaylistModal'));
+        const createModal = new bootstrap.Modal(document.getElementById('createPlaylistStandaloneModal'));
         createModal.show();
     };
 
@@ -190,12 +241,6 @@ function openAddTrackModal(track) {
         }
     };
 
-    // Pulisci trackToAdd quando il modale viene chiuso
-    document.getElementById('playlistModal').addEventListener('hidden.bs.modal', () => {
-        if (!document.querySelector('#createPlaylistModal.show')) {
-            window.trackToAdd = null;
-        }
-    }, { once: true });
 }
 
 /* RENDER PLAYLIST */
@@ -225,7 +270,7 @@ function renderPlaylists() {
     );
 
     if (communityPlaylistsFiltered.length === 0) {
-        communityContainer.innerHTML = '<p class="text-muted">Nessuna playlist condivisa nelle tue community.</p>';
+        communityContainer.innerHTML = '<p style="color:#bd93f9;">Nessuna playlist condivisa nelle tue community.</p>';
     } else {
         communityPlaylistsFiltered.forEach(p => communityContainer.appendChild(renderPlaylistCard(p, false)));
     }

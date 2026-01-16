@@ -20,6 +20,31 @@
 <body>
     <div id="global-header"></div>
 
+    <!-- crea playlist pulsante pagina -->
+    <div class="modal fade" id="createPlaylistStandaloneModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="createPlaylistStandaloneForm" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crea nuova Playlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+    
+                <div class="modal-body">
+                    <input type="text" id="standalonePlaylistName" class="form-control mb-2" placeholder="Nome playlist"
+                        required>
+                    <textarea id="standalonePlaylistDescription" class="form-control mb-2" placeholder="Descrizione"
+                        rows="2"></textarea>
+                    <input type="text" id="standalonePlaylistTags" class="form-control"
+                        placeholder="Tag (separati da virgola)">
+                </div>
+    
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Crea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!--modifica playlist -->
     <div class="modal fade" id="editPlaylistModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
