@@ -159,7 +159,20 @@ function renderMyCommunities() {
 
     const otherContainer = document.getElementById('communityList');
     otherContainer.textContent = '';
+
     const others = communities.filter(c => !c.members.includes(user.username));
+
+    // se non ci sono community disponibili
+    if (others.length === 0) {
+        otherContainer.innerHTML = `
+            <p style="color:#bd93f9; font-style:italic; padding:10px 0;">
+                Nessuna community disponibile...
+            </p>
+        `;
+        return; 
+    }
+
+    // Altrimenti mostra le card
     others.forEach(c => otherContainer.appendChild(renderCommunityCard(c)));
 }
 

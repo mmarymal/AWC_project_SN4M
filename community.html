@@ -27,8 +27,9 @@
                 <div class="col-md-6">
                     <div class="community-header-row">
                         <h2 class="section-title">Le mie community</h2>
-                        <button class="btn btn-create-community" data-bs-toggle="modal"
-                            data-bs-target="#createCommunityModal">Crea nuova community</button>
+                            <button id="openCreateOnly" class="btn btn-create-community" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                                Crea nuova Community 
+                            </button>
                     </div>
                     <div id="myCommunities"></div>
                 </div>
@@ -83,7 +84,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Crea</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                 </div>
             </form>
         </div>
@@ -106,7 +106,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Salva modifiche</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                 </div>
             </form>
         </div>

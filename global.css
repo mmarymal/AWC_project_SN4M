@@ -412,3 +412,143 @@ footer {
 .close-btn:hover {
     background-color: #a86cf5;
 }
+
+/* MODALI (aggiungi a playlist e crea playlist */
+/* sfondo generale dei modali */
+#playlistModal .modal-content,
+#createPlaylistModal .modal-content {
+    background-color: #3b3b5b;
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#playlistModal .modal-header,
+#createPlaylistModal .modal-header {
+    background-color: #3b3b5b;
+    border-bottom: 1px solid #666;
+}
+
+#playlistModal .modal-title,
+#createPlaylistModal .modal-title {
+    color: #50fa7b;
+    font-weight: 700;
+}
+
+#playlistModal .modal-footer,
+#createPlaylistModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* input, textarea e select */
+#playlistModal input,
+#playlistModal textarea,
+#playlistModal select,
+#createPlaylistModal input,
+#createPlaylistModal textarea,
+#createPlaylistModal select {
+    background-color: #2a2a4a;
+    border: 1px solid #666;
+    color: #f8f8f2;
+}
+
+#playlistModal input:focus,
+#playlistModal textarea:focus,
+#playlistModal select:focus,
+#createPlaylistModal input:focus,
+#createPlaylistModal textarea:focus,
+#createPlaylistModal select:focus {
+    border-color: #bd93f9;
+    box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+#playlistModal input::placeholder,
+#playlistModal textarea::placeholder,
+#createPlaylistModal input::placeholder,
+#createPlaylistModal textarea::placeholder {
+    color: #6272a4;
+    opacity: 1;
+}
+
+/* pulsante "Crea nuova playlist" nel modale playlistModal */
+#playlistModal #btnCreaPlaylist {
+    background-color: transparent;
+    border: 1px solid #bd93f9;
+    color: #bd93f9;
+}
+
+#playlistModal #btnCreaPlaylist:hover {
+    background-color: #bd93f9;
+    color: #1f1f2e;
+}
+
+/* pulsanti primari (Aggiungi, Crea) */
+#playlistModal .btn-primary,
+#createPlaylistModal .btn-success {
+    background-color: #50fa7b;
+    border-color: #50fa7b;
+    color: #1f1f2e;
+    font-weight: 600;
+}
+
+#playlistModal .btn-primary:hover,
+#createPlaylistModal .btn-success:hover {
+    background-color: #3be06b;
+    border-color: #3be06b;
+}
+
+/* Freccia dropdown select */
+#playlistModal select,
+#createPlaylistModal select {
+    background-color: #2a2a4a;
+    border: 1px solid #666;
+    color: #f8f8f2;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+/* Opzioni del dropdown */
+#playlistModal select option,
+#createPlaylistModal select option {
+    background-color: #2a2a4a;
+    color: #f8f8f2;
+}
+
+/* Opzione hover */
+#playlistModal select option:hover,
+#createPlaylistModal select option:hover {
+    background: linear-gradient(#bd93f9, #bd93f9);
+    /* Viola */
+}
+
+/* Opzione selezionata */
+#playlistModal select option:checked,
+#createPlaylistModal select option:checked {
+    background: linear-gradient(#bd93f9, #bd93f9);  /* Viola */
+}
+
+/* Pulsante chiusura modale */
+#playlistModal .modal-header .btn-close,
+#createPlaylistModal .modal-header .btn-close {
+    background-color: transparent;
+    opacity: 1;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+#playlistModal .modal-header .btn-close:hover,
+#createPlaylistModal .modal-header .btn-close:hover {
+    background-color: rgba(255, 121, 198, 0.2);
+    filter: brightness(0) invert(1);
+    opacity: 1;
+}
+
+/* testo descrittivo nel body */
+#playlistModal .modal-body p {
+    color: #f8f8f2;
+}

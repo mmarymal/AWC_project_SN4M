@@ -224,25 +224,20 @@
 
 
 /* BOTTONI CREAZIONE*/
-.btn-create-community,
-.btn-create-playlist {
+#openCreateOnly {
     background-color: #bd93f9 !important;
     color: #1f1f2e !important;
     border: none;
     padding: 6px 12px;
     font-size: 0.95rem;
-    font-weight: 600;
     border-radius: 6px;
     transition: background-color 0.2s ease;
 }
 
-.btn-create-community:hover {
-    background-color: #3be06b !important;
-}
-
-.btn-create-playlist:hover {
+#openCreateOnly:hover {
     background-color: #ff79c6 !important;
 }
+
 
 /* DETAIL CARD (community) */
 .detail-card {
@@ -320,3 +315,490 @@
         margin-bottom: 1.5rem;
     }
 }
+
+/* MODALI CREA PLAYLIST e COMMUNITY*/
+
+/* sfondo generale del mdoale */
+#createPlaylistStandaloneModal .modal-content,
+#createCommunityModal .modal-content {
+    background-color: #3b3b5b;    
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#createPlaylistStandaloneModal .modal-header,
+#createCommunityModal .modal-header {
+    background-color: #3b3b5b;    
+    border-bottom: 1px solid #666;
+}
+
+#createPlaylistStandaloneModal .modal-title,
+#createCommunityModal .modal-title {
+    color: #50fa7b;
+    font-weight: 700;
+}
+
+#createPlaylistStandaloneModal .modal-footer,
+#createCommunityModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* input e text area */
+#createPlaylistStandaloneModal input,
+#createPlaylistStandaloneModal textarea,
+#createCommunityModal input,
+#createCommunityModal textarea {
+    background-color: #51518d;
+    border: 1px solid #666;
+    color: #f8f8f2;
+}
+
+#createPlaylistStandaloneModal input:focus,
+#createPlaylistStandaloneModal textarea:focus,
+#createCommunityModal input:focus,
+#createCommunityModal textarea:focus {
+    border-color: #bd93f9;
+    box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+.modal-content input::placeholder,
+.modal-content textarea::placeholder {
+    color: #bd93f9;
+    opacity: 1;
+}
+
+/* pulsanti */
+#createPlaylistStandaloneModal .btn-primary,
+#createCommunityModal .btn-success {
+    background-color: #50fa7b;
+    border-color: #50fa7b;
+    color: #226a34;
+    font-weight: 600;
+}
+
+#createPlaylistStandaloneModal .btn-primary:hover,
+#createCommunityModal .btn-success:hover {
+    background-color: #3be06b;
+    border-color: #3be06b;
+}
+
+/* Pulsante chiusura modale */
+#createPlaylistStandaloneModal .modal-header .btn-close,
+#createCommunityModal .modal-header .btn-close {
+    background-color: transparent;
+    opacity: 1;
+    filter: brightness(0) invert(1); /*la X è bianca*/
+    transition: all 0.3s ease;
+}
+
+#createPlaylistStandaloneModal .modal-header .btn-close:hover,
+#createCommunityModal .modal-header .btn-close:hover {
+    background-color: rgba(255, 121, 198, 0.2);
+    /* Sfondo rosa semi-trasparente */
+    filter: brightness(0) invert(1);
+    opacity: 1;
+}
+
+/* MODALE CONDIVIDI PLAYLIST IN COMMUNITY */
+
+#shareCommunityModal .modal-content {
+    background-color: #3b3b5b;
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#shareCommunityModal .modal-header {
+    background-color: #3b3b5b;
+    border-bottom: 1px solid #666;
+}
+
+#shareCommunityModal .modal-title {
+    color: #50fa7b;
+    font-weight: 700;
+}
+
+#shareCommunityModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* select */
+#shareCommunityModal select {
+    background-color: #2a2a4a;
+    border: 1px solid #666;
+    color: #f8f8f2;
+    padding: 10px 40px 10px 14px;
+    font-size: 1rem;
+    min-height: 45px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+#shareCommunityModal select:focus {
+    border-color: #bd93f9;
+    box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+#shareCommunityModal select option {
+    background-color: #2a2a4a;
+    color: #f8f8f2;
+}
+
+/* testo descrittivo e small */
+#shareCommunityModal .modal-body p,
+#shareCommunityModal .modal-body small {
+    color: #f8f8f2;
+}
+
+#shareCommunityModal .text-muted {
+    color: #bd93f9 !important;
+}
+
+/* pulsante Condividi */
+#shareCommunityModal .btn-primary {
+    background-color: #50fa7b;
+    border-color: #50fa7b;
+    color: #1f1f2e;
+    font-weight: 600;
+}
+
+#shareCommunityModal .btn-primary:hover {
+    background-color: #3be06b;
+    border-color: #3be06b;
+}
+
+/* Pulsante chiusura */
+#shareCommunityModal .modal-header .btn-close {
+    background-color: transparent;
+    opacity: 1;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+#shareCommunityModal .modal-header .btn-close:hover {
+    background-color: rgba(255, 121, 198, 0.2);
+    filter: brightness(0) invert(1);
+    opacity: 1;
+}
+
+/* MODALE RIMOZIONE CONDIVISIONE PLAYLIST DA COMMUNITY */
+#unshareCommunityModal .modal-content {
+    background-color: #3b3b5b;
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#unshareCommunityModal .modal-header {
+    background-color: #3b3b5b;
+    border-bottom: 1px solid #666;
+}
+
+#unshareCommunityModal .modal-title {
+    color: #50fa7b;
+    /* rosso per differenziarlo dal verde */
+    font-weight: 700;
+}
+
+#unshareCommunityModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* select */
+#unshareCommunityModal select {
+    background-color: #2a2a4a;
+    border: 1px solid #666;
+    color: #f8f8f2;
+    padding: 10px 40px 10px 14px;
+    font-size: 1rem;
+    min-height: 45px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+#unshareCommunityModal select:focus {
+    border-color: #bd93f9;
+    box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+#unshareCommunityModal select option {
+    background-color: #2a2a4a;
+    color: #f8f8f2;
+}
+
+/* testo descrittivo */
+#unshareCommunityModal .modal-body p {
+    color: #f8f8f2;
+}
+
+/* pulsante Rimuovi */
+#unshareCommunityModal .btn-danger {
+    background-color: #ff5555;
+    border-color: #ff5555;
+    color: #1f1f2e;
+    font-weight: 600;
+}
+
+#unshareCommunityModal .btn-danger:hover {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+/* pulsante Annulla */
+#unshareCommunityModal .btn-secondary {
+    background-color: #44475a;
+    border-color: #666;
+    color: #f8f8f2;
+}
+
+#unshareCommunityModal .btn-secondary:hover {
+    background-color: #6272a4;
+}
+
+/* ELIMINAZIONE COMMUNITY/PLAYLIST CREATA DALL'UTENTE */
+#confirmDeleteCommunityModal .modal-content,
+#confirmDeletePlaylistModal .modal-content {
+    background-color: #3b3b5b;
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#confirmDeleteCommunityModal .modal-header,
+#confirmDeletePlaylistModal .modal-header {
+    background-color: #3b3b5b;
+    border-bottom: 1px solid #666;
+}
+
+#confirmDeleteCommunityModal .modal-title,
+#confirmDeletePlaylistModal .modal-title {
+    color: #3be06b;
+    font-weight: 700;
+}
+
+#confirmDeleteCommunityModal .modal-body,
+#confirmDeletePlaylistModal .modal-body {
+    color: #f8f8f2;
+}
+
+#confirmDeleteCommunityModal .modal-footer,
+#confirmDeletePlaylistModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* Pulsante Elimina */
+#confirmDeleteCommunityModal .btn-danger,
+#confirmDeletePlaylistModal .btn-danger {
+    background-color: #ff5555;
+    border-color: #ff5555;
+    color: #1f1f2e;
+    font-weight: 600;
+}
+
+#confirmDeleteCommunityModal .btn-danger:hover,
+#confirmDeletePlaylistModal .btn-danger:hover {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+/* Pulsante Annulla */
+#confirmDeleteCommunityModal .btn-secondary,
+#confirmDeletePlaylistModal .btn-secondary {
+    background-color: #44475a;
+    border-color: #666;
+    color: #f8f8f2;
+}
+
+#confirmDeleteCommunityModal .btn-secondary:hover,
+#confirmDeletePlaylistModal .btn-secondary:hover {
+    background-color: #6272a4;
+}
+
+/* MODALE MODIFICA PLAYLIST/COMMUNITY*/
+#editPlaylistModal .modal-content,
+#editCommunityModal .modal-content {
+    background-color: #3b3b5b;
+    color: #f8f8f2;
+    border: 1px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+#editPlaylistModal .modal-header,
+#editCommunityModal .modal-header {
+    background-color: #3b3b5b;
+    border-bottom: 1px solid #666;
+}
+
+#editPlaylistModal .modal-title,
+#editCommunityModal .modal-title {
+    color: #3be06b;
+    font-weight: 700;
+}
+
+/* Pulsante chiusura */
+#editPlaylistModal .btn-close,
+#editCommunityModal .btn-close {
+    background-color: transparent;
+    opacity: 1;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+#editPlaylistModal .btn-close:hover,
+#editCommunityModal .btn-close:hover {
+    background-color: rgba(189, 147, 249, 0.2);
+    opacity: 1;
+}
+
+/* Input e textarea */
+#editPlaylistModal input,
+#editPlaylistModal textarea,
+#editCommunityModal input,
+#editCommunityModal textarea {
+    background-color: #2a2a4a;
+    border: 1px solid #666;
+    color: #f8f8f2;
+}
+
+#editPlaylistModal input:focus,
+#editPlaylistModal textarea:focus,
+#editCommunityModal input:focus,
+#editCommunityModal textarea:focus {
+    border-color: #bd93f9;
+    box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+}
+
+#editPlaylistModal .modal-footer,
+#editCommunityModal .modal-footer {
+    background-color: #3b3b5b;
+    border-top: 1px solid #666;
+}
+
+/* Pulsante Salva modifiche */
+#editPlaylistModal .btn-success,
+#editCommunityModal .btn-success {
+    background-color: #50fa7b;
+    border-color: #50fa7b;
+    color: #1f1f2e;
+    font-weight: 600;
+}
+
+#editPlaylistModal .btn-success:hover,
+#editCommunityModal .btn-success:hover {
+    background-color: #3be06b;
+    border-color: #3be06b;
+}
+
+/* MODALE MODIFICA PLAYLIST: BRANI */
+/* Titolo sezione brani */
+#editPlaylistModal h5 {
+    color: #bd93f9;
+    font-weight: 600;
+}
+
+/* contenitore lista */
+#editPlaylistModal #editPlaylistTracks {
+    margin-top: 10px;
+    padding: 0;
+}
+
+/* Lista brani */
+#editPlaylistModal .list-group-item {
+    background-color: #2a2a4a;
+    border: 1px solid #444;
+    color: #f8f8f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.25s ease;
+}
+/* Hover */
+#editPlaylistModal .list-group-item:hover {
+    border-color: #bd93f9;
+    background-color: #34345a;
+    box-shadow: 0 4px 12px rgba(189, 147, 249, 0.2);
+}
+
+/* Info brano */
+.track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.track-title {
+    font-weight: 600;
+    color: #f8f8f2;
+}
+
+.track-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.meta-badge {
+    background-color: #44475a;
+    color: #f8f8f2;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-style: normal;
+}
+
+/* Pulsante rimozione */
+.btn-remove-track {
+    background: transparent;
+    border: none;
+    color: #ff5555;
+    font-size: 1.2rem;
+    padding: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-remove-track:hover {
+    color: #ff6b6b;
+    background-color: #22223b;
+    
+}
+
+/*stile messaggio se non c'è nessun brano nella playlist*/
+.no-tracks-msg {
+    background-color: #2a2a4a;
+    border: 1px solid #444;
+    color: #bd93f9;
+    padding: 14px 16px;
+    border-radius: 8px;
+    text-align: center;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.no-tracks-msg i {
+    font-size: 1.2rem;
+    color: #bd93f9;
+}
+
+
