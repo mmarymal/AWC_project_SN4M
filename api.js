@@ -129,13 +129,28 @@ export async function getPlaylistTracks(playlistId = '37i9dQZEVXbMDoHDwVN2tF') {
     }
 }
 
-export async function getArtistGenres(artistId) {
+export async function getArtistGenre(artistId) {
     const token = await getSpotifyAccessToken();
-    const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    return data.genres || [];
+    if (!token) return 'N/D';
+
+    try {
+        const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            console.error('Errore nel recupero artista:', res.status);
+            return 'N/D';
+        }
+
+        const data = await res.json();
+        console.log('Generi disponibili per artista:', data.name, data.genres); // Per debug
+
+        return data.genres?.[0] || 'N/D';
+    } catch (error) {
+        console.error('Errore nel recupero del genere dell\'artista:', error);
+        return 'N/D';
+    }
 }
 
 export function formatDuration(ms) {

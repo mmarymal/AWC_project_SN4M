@@ -163,15 +163,10 @@ document.addEventListener('headerLoaded', () => {
     }
 
     // Reset modale "Crea Playlist" quando viene chiuso
-    document.getElementById('createPlaylistModal')
+    document.getElementById('createPlaylistStandaloneModal')
         .addEventListener('hidden.bs.modal', () => {
-            document.getElementById('newPlaylistForm').reset();
-        });
-
-    // Reset modale "Modifica Playlist" quando viene chiuso
-    document.getElementById('editPlaylistModal')
-        .addEventListener('hidden.bs.modal', () => {
-            document.getElementById('editPlaylistForm').reset();
+            const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
+            if (standaloneForm) standaloneForm.reset();
         });
 
 });
@@ -606,10 +601,10 @@ function openPlaylistDetails(id) {
             info.className = 'track-info';
 
             info.innerHTML = `
-                    🎤 ${track.artist}<br>
-                    ⏱ ${track.duration || 'N/D'} &nbsp; | &nbsp;
-                    📅 ${track.year || 'N/D'} &nbsp; | &nbsp;
-                    🎧 ${track.genre || 'N/D'}
+                    🎤 ${track.artist} &nbsp; | &nbsp;
+                    ⏱ ${track.duration || 'Sconosciuto'} &nbsp; | &nbsp;
+                    🎧 ${track.genre || 'Sconosciuto'} &nbsp; | &nbsp;
+                    📅 ${track.year || 'Sconosciuto'}
                 `;
 
             card.appendChild(trackName);
@@ -648,10 +643,10 @@ function editPlaylist(id) {
                 <div class="track-info">
                     <div class="track-title">${track.title || 'undefined'}</div>
                     <div class="track-meta">
-                        <span class="meta-badge">${track.artist || 'Artista: N/D'}</span>
-                        <span class="meta-badge">${track.genre || 'Genere: N/D'}</span>
-                        <span class="meta-badge">${track.duration || 'Durata: N/D'}</span>
-                        <span class="meta-badge">${track.year || 'Anno: N/D'}</span>
+                        <span class="meta-badge">${track.artist || 'Artista: Sconosciuto'}</span>
+                        <span class="meta-badge">${track.duration || 'Durata: Sconosciuto'}</span>
+                        <span class="meta-badge">${track.genre || 'Genere: Sconosciuto'}</span>
+                        <span class="meta-badge">${track.year || 'Anno: Sconosciuto'}</span>
                     </div>
                 </div>
                 <button class="btn-remove-track" data-id="${track.id}" title="Rimuovi brano">

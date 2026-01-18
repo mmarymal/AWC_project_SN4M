@@ -6,6 +6,7 @@ import {
   getArtistTopTracks,
   normalizeGenre,
   getSpotifyAccessToken,
+  getArtistGenre
 } from './api.js';
 
 let scrollIndex = 0;
@@ -68,25 +69,6 @@ function initCarousel() {
   document.querySelector('.music-right').addEventListener('click', () => updateCarousel(1));
 }
 
-/* GENERE ARTISTA */
-async function getArtistGenre(artistId) {
-  const accessToken = await getSpotifyAccessToken();
-  if (!accessToken) return 'N/D';
-
-  try {
-    const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    });
-
-    if (response.ok) {
-      const artistData = await response.json();
-      return artistData.genres?.[0] || 'N/D';
-    }
-  } catch (error) {
-    console.error('Errore nel recupero del genere dell\'artista:', error);
-  }
-  return 'N/D';
-}
 
 /* SUGGERIMENTI MUSICALI */
 async function mostraSuggerimentiMusicali(query) {

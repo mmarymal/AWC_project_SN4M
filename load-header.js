@@ -7,7 +7,13 @@ fetch("global-header.html")
     });
 
 // Import API
-import { searchSpotify } from "./api.js";
+import {
+    searchSpotify,
+    formatDuration,
+    getReleaseYear,
+    getSpotifyAccessToken,
+    getArtistGenre
+} from "./api.js";
 
 // Variabile globale per il brano selezionato
 window.trackSelezionato = null;
@@ -234,9 +240,23 @@ function showSearchOverlay(results) {
     document.body.classList.add("overlay-open");
 
     container.querySelectorAll(".add-track").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
             const id = btn.dataset.id;
-            const track = results.find(t => t.id === id);
+            const fullTrack = results.find(t => t.id === id);
+
+            // IMPORTANTE: Recupera il genere dall'artista (come nel carosello)
+            const genre = await getArtistGenre(fullTrack.artists[0].id);
+
+            // Normalizza la struttura ESATTAMENTE come nel carosello
+            const track = {
+                id: fullTrack.id,
+                name: fullTrack.name,
+                title: fullTrack.name,
+                artist: fullTrack.artists.map(a => a.name).join(", "),
+                duration: formatDuration(fullTrack.duration_ms),
+                genre: genre,
+                year: getReleaseYear(fullTrack)
+            };
 
             sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
 

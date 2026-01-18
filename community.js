@@ -69,12 +69,6 @@ document.addEventListener('headerLoaded', () => {
             document.getElementById('newCommunityForm').reset();
         });
 
-    // Reset modale "Modifica Community" quando viene chiuso
-    document.getElementById('editCommunityModal')
-        .addEventListener('hidden.bs.modal', () => {
-            document.getElementById('editCommunityForm').reset();
-        });
-
 });
 
 function editCommunity(id) {
