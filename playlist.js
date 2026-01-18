@@ -161,6 +161,19 @@ document.addEventListener('headerLoaded', () => {
             newForm.reset();
         });
     }
+
+    // Reset modale "Crea Playlist" quando viene chiuso
+    document.getElementById('createPlaylistModal')
+        .addEventListener('hidden.bs.modal', () => {
+            document.getElementById('newPlaylistForm').reset();
+        });
+
+    // Reset modale "Modifica Playlist" quando viene chiuso
+    document.getElementById('editPlaylistModal')
+        .addEventListener('hidden.bs.modal', () => {
+            document.getElementById('editPlaylistForm').reset();
+        });
+
 });
 
 /* NUOVA FUNZIONE: APRI MODALE AGGIUNTA BRANO */

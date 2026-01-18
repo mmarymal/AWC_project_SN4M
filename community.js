@@ -62,6 +62,19 @@ document.addEventListener('headerLoaded', () => {
         renderCommunities();
         renderMyCommunities();
     });
+
+    // Reset modale "Crea Community" quando viene chiuso
+    document.getElementById('createCommunityModal')
+        .addEventListener('hidden.bs.modal', () => {
+            document.getElementById('newCommunityForm').reset();
+        });
+
+    // Reset modale "Modifica Community" quando viene chiuso
+    document.getElementById('editCommunityModal')
+        .addEventListener('hidden.bs.modal', () => {
+            document.getElementById('editCommunityForm').reset();
+        });
+
 });
 
 function editCommunity(id) {
