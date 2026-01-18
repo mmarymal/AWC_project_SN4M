@@ -300,32 +300,31 @@ function openCommunityDetails(id) {
     const body = document.getElementById('viewCommunityBody');
 
     body.innerHTML = `
-        <h4 class="community-name">${community.name}</h4>
+    <h4 class="community-name">${community.name}</h4>
 
-        <div class="detail-card">
-            <h5 class="detail-title">Descrizione</h5>
-            <p class="detail-text">${community.description || 'Nessuna descrizione'}</p>
-        </div>
+    <p class="detail-row">
+        <span class="detail-label">Descrizione:</span> ${community.description || 'Nessuna descrizione'}
+    </p>
 
-        <div class="detail-card">
-            <h5 class="detail-title">Tag</h5>
-            <p class="detail-text">${community.tags?.join(', ') || 'Nessuno'}</p>
-        </div>
+    <p class="detail-row">
+        <span class="detail-label">Tag:</span> ${community.tags?.join(', ') || 'Nessuno'}
+    </p>
 
-        <div class="detail-card">
-            <h5 class="detail-title">Membri</h5>
-            <ul class="detail-list ">
-                ${community.members?.length ? community.members.map(m => `<li><i class="bi bi-person"></i> ${m}</li>`).join(''): '<li>Nessun membro</li>'}
-            </ul>
-        </div>
+    <div class="detail-section">
+        <h5 class="detail-title">Membri</h5>
+        <ul class="detail-list">
+            ${community.members?.length ? community.members.map(m => `<li><i class="bi bi-person"></i> ${m}</li>`).join('') : '<li>Nessun membro</li>'}
+        </ul>
+    </div>
 
-        <div class="detail-card">
-            <h5 class="detail-title">Playlist condivise</h5>
-            <ul class="detail-list playlists">
-                ${sharedPlaylists.length ? sharedPlaylists.map(p => ` <li onclick="importSharedPlaylist('${p.id}')"> <i class="bi bi-music-note-list"></i> ${p.name} </li> `).join('') : '<li>Nessuna playlist</li>'}
-            </ul>
-        </div>
-    `;
+    <div class="detail-section">
+        <h5 class="detail-title">Playlist condivise</h5>
+        <ul class="detail-list playlists">
+            ${sharedPlaylists.length ? sharedPlaylists.map(p => `<li onclick="importSharedPlaylist('${p.id}')"><i class="bi bi-music-note-list"></i> ${p.name}</li>`).join('') : '<li>Nessuna playlist</li>'}
+        </ul>
+    </div>
+`;
+
 
     new bootstrap.Modal(document.getElementById('viewCommunityModal')).show();
 }

@@ -534,16 +534,30 @@ function openPlaylistDetails(id) {
     const title = document.createElement('h2');
     title.textContent = playlist.name;
 
-    const creatorInfo = document.createElement('p');
-    creatorInfo.className = 'text-muted';
-    creatorInfo.innerHTML = `<strong>Creata da:</strong> ${playlist.creator}`;
-
-    const description = document.createElement('p');
-    description.innerHTML = `<strong>Descrizione:</strong> ${playlist.description || 'Nessuna descrizione'}`;
+    header.appendChild(title);
 
     header.appendChild(title);
-    header.appendChild(creatorInfo);
-    header.appendChild(description);
+
+    // CREATA DA
+    const creatorRow = document.createElement('p');
+    creatorRow.className = 'detail-row';
+    creatorRow.innerHTML = `<span class="detail-label">Creata da:</span> ${playlist.creator}`;
+    header.appendChild(creatorRow);
+
+    // DESCRIZIONE
+    const descriptionRow = document.createElement('p');
+    descriptionRow.className = 'detail-row';
+    descriptionRow.innerHTML = `<span class="detail-label">Descrizione:</span> ${playlist.description || 'Nessuna descrizione'}`;
+    header.appendChild(descriptionRow);
+
+    // TAGS
+    if (playlist.tags?.length) {
+        const tagsRow = document.createElement('p');
+        tagsRow.className = 'detail-row';
+        tagsRow.innerHTML = `<span class="detail-label">Tags:</span> ${playlist.tags.join(', ')}`;
+        header.appendChild(tagsRow);
+    }
+
 
     if (playlist.communities && playlist.communities.length > 0) {
         const community = document.createElement('p');
@@ -556,18 +570,6 @@ function openPlaylistDetails(id) {
         header.appendChild(community);
     }
 
-    if (playlist.tags?.length) {
-        const tagsContainer = document.createElement('div');
-        tagsContainer.className = 'mt-2';
-        playlist.tags.forEach(tag => {
-            const badge = document.createElement('span');
-            badge.className = 'playlist-tag';
-            badge.textContent = tag;
-            tagsContainer.appendChild(badge);
-        });
-        header.appendChild(tagsContainer);
-    }
-
     body.appendChild(header);
 
     const hr = document.createElement('hr');
@@ -575,6 +577,7 @@ function openPlaylistDetails(id) {
 
     const trackTitle = document.createElement('h5');
     trackTitle.textContent = "🎵 Brani nella playlist";
+    trackTitle.className = "playlist-section-title";
     trackTitle.style.marginBottom = "1rem";
     body.appendChild(trackTitle);
 
@@ -602,7 +605,7 @@ function openPlaylistDetails(id) {
         });
     } else {
         const empty = document.createElement('p');
-        empty.className = 'text-muted';
+        empty.className = 'playlist-empty-message';
         empty.textContent = "Nessun brano nella playlist.";
         body.appendChild(empty);
     }

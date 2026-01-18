@@ -5,12 +5,6 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* .global-header,
-.navbar,
-main {
-    outline: 1px solid red;
-} */
-
 body {
     background-color: #1a1a2e; /* Sfondo scuro */
     color: #e0e0e0; /* Testo chiaro */
@@ -56,7 +50,6 @@ button:hover {
 h1,
 h2 {
     color: #50fa7b;
-    /* Colore verde per i titoli */
 }
 
 .global-header {
@@ -89,7 +82,6 @@ h2 {
     justify-self: end;
 }
 
-
 .logo-container {
     display: flex;
     align-items: center;
@@ -97,8 +89,7 @@ h2 {
 }
 
 .logo-container .image {
-    height: 40px;
-    /* Dimensione del logo */
+    height: 40px; /* Dimensione del logo */
     width: auto;
 }
 
@@ -109,8 +100,7 @@ h2 {
     /* Colore più chiaro per il nome dell'app */
 }
 
-
-/* Stili per la Navigazione (Navbar) */
+/* NAVIGAZIONE (Navbar) */
 .navbar {
     display: flex;
     justify-content: center;   /* Centra gli elementi di navigazione */
@@ -118,7 +108,6 @@ h2 {
     margin-top: 0;  /* Spazio sotto la riga superiore dell'header */
     margin-bottom: 0;
 }
-
 
 .navbar a {
     font-size: 1.2em;
@@ -168,7 +157,21 @@ h2 {
 
 .user-info strong {
     color: #f1fa8c;
-    /* Colore giallo per le etichette in grassetto */
+}
+
+.logout-btn {
+    background-color: #bd93f9;
+    color: #1f1f2e;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: #ff79c6;
 }
 
 footer {
@@ -180,10 +183,9 @@ footer {
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.icon ion-icon {
+/* .icon ion-icon {
     vertical-align: middle;
-    /* Allinea le icone al testo */
-}
+} ??????*/
 
 /* Stili per il Form di Ricerca */
 #search-form {
@@ -237,11 +239,11 @@ footer {
 .search-box::-webkit-scrollbar-thumb {
     background: #44475a; /* colore del cursore */
     border-radius: 10px; 
-    border: 2px solid #1a1a2e; /* bordo per effetto "pill" */
+    border: 2px solid #1a1a2e; 
 }
 
 .search-box::-webkit-scrollbar-thumb:hover {
-    background: #7a4de8; /* colore quando passi sopra */
+    background: #7a4de8; 
 }
 
 .modal {
@@ -309,7 +311,6 @@ footer {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* centra verticalmente titolo e artista */
 }
 
 .spotify-img {
