@@ -8,7 +8,7 @@
 }
 
 body {
-    background: url('sfondo.png') no-repeat center center fixed;
+    background: url('../img/sfondo.png') no-repeat center center fixed;
     background-size: cover;
 
     color: #e0e0e0;
