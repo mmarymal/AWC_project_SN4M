@@ -38,6 +38,25 @@ a:hover {
     /* Colore link al passaggio del mouse */
 }
 
+/* Pulsante Login */
+.login-btn, .register-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #bd93f9;
+    color: #f8f8f2;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-btn:hover, .register-btn:hover {
+    background-color: #a86afe;
+    transform: translateY(-2px);
+}
+
 button {
     background-color: #bd93f9;
     /* Pulsante viola */
@@ -51,7 +70,7 @@ button {
 }
 
 button:hover {
-    background-color: #ff79c6;
+    background-color: #a86afe;
     /* Pulsante rosa al passaggio del mouse */
 }
 

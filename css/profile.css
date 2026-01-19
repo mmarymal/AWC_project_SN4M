@@ -10,6 +10,7 @@
     color: #f8f8f2;
 }
 
+/* input */
 .profile-box input[type="text"],
 .profile-box input[type="email"],
 .profile-box textarea {
@@ -31,19 +32,109 @@
 }
 
 /* Pulsante Salva */
-.profile-box button {
+.profile-box .save-btn {
     width: 100%;
     padding: 12px;
     background-color: #bd93f9;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.profile-box .save-btn:hover {
+    background-color: #a86afe;
+    transform: translateY(-2px);
+}
+
+/*  Pulsante cancella account */
+.profile-box .delete-account-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: #ff5555;
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.profile-box button:hover {
-    background-color: #ff79c6;
+.profile-box .delete-account-btn:hover {
+    background-color: #c84343;
+    transform: translateY(-2px);
 }
+
+
+/* Sfondo del modal */
+.modal-backdrop.show {
+    opacity: 0.6;
+    background-color: #000;
+}
+
+/* Contenitore del modal */
+#deleteAccountModal .modal-content {
+    background-color: #2c2c3e;
+    color: #f8f8f2;
+    border-radius: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+    animation: modalPop 0.25s ease-out;
+}
+
+/* Header */
+#deleteAccountModal .modal-header {
+    border-bottom: none;
+}
+
+#deleteAccountModal .modal-title {
+    font-weight: 600;
+    color: #ff5555;
+    /* rosso Dracula */
+}
+
+/* Corpo */
+#deleteAccountModal .modal-body {
+    font-size: 1.05em;
+    line-height: 1.5;
+}
+
+/* Footer */
+#deleteAccountModal .modal-footer {
+    border-top: none;
+}
+
+/* Pulsante Annulla */
+#deleteAccountModal .btn-secondary {
+    background-color: #44475a;
+    border: none;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+}
+
+#deleteAccountModal .btn-secondary:hover {
+    background-color: #5a5f78;
+}
+
+/* Pulsante Elimina */
+#deleteAccountModal .btn-danger {
+    background-color: #ff5555;
+    border: none;
+    border-radius: 10px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#deleteAccountModal .btn-danger:hover {
+    background-color: #ff4444;
+    transform: translateY(-2px);
+}
+
+#deleteAccountModal .btn-danger:active {
+    transform: translateY(0);
+}
+
+
 

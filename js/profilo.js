@@ -49,8 +49,44 @@ document.addEventListener('headerLoaded', function () {
 
     mostraTost("Profilo aggiornato con successo!");
     setTimeout(() => window.location.href = "profilo.html", 2000);
-
   });
+
+  const deleteBtn = document.getElementById('deleteAccountBtn');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteAccount');
+
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function () {
+      const modal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+      modal.show();
+    });
+  }
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', function () {
+
+      // Rimuovi utente da localStorage
+      let utenti = JSON.parse(localStorage.getItem('utenti')) || [];
+      utenti = utenti.filter(u => u.email !== user.email);
+      localStorage.setItem('utenti', JSON.stringify(utenti));
+
+      // Rimuovi playlist dell’utente
+      let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+      playlists = playlists.filter(p => p.creator !== user.username);
+      localStorage.setItem('playlists', JSON.stringify(playlists));
+
+      // Rimuovi communities create dall’utente
+      let communities = JSON.parse(localStorage.getItem('communities')) || [];
+      communities = communities.filter(c => c.creator !== user.username);
+      localStorage.setItem('communities', JSON.stringify(communities));
+
+      // Rimuovi utente da sessionStorage
+      sessionStorage.removeItem('utente');
+
+      // Notifica e redirect
+      mostraTost("Account eliminato con successo.");
+      setTimeout(() => window.location.href = "login.html", 1500);
+    });
+  }
 
 });
 
