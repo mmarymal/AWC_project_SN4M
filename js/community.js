@@ -307,34 +307,66 @@ function openCommunityDetails(id) {
     const body = document.getElementById('viewCommunityBody');
 
     body.innerHTML = `
-    <h4 class="community-name">${community.name}</h4>
+        <h4 class="community-name">${community.name}</h4>
 
-    <p class="detail-row">
-        <span class="detail-label">Descrizione:</span> ${community.description || 'Nessuna descrizione'}
-    </p>
+        <p class="detail-row">
+            <span class="detail-label">Descrizione:</span> ${community.description || 'Nessuna descrizione'}
+        </p>
 
-    <p class="detail-row">
-        <span class="detail-label">Tag:</span> ${community.tags?.join(', ') || 'Nessuno'}
-    </p>
+        <p class="detail-row">
+            <span class="detail-label">Tag:</span> ${community.tags?.join(', ') || 'Nessuno'}
+        </p>
 
-    <div class="detail-section">
-        <h5 class="detail-title">Membri</h5>
-        <ul class="detail-list">
-            ${community.members?.length ? community.members.map(m => `<li><i class="bi bi-person"></i> ${m}</li>`).join('') : '<li>Nessun membro</li>'}
-        </ul>
-    </div>
+        <div class="detail-section">
+            <h5 class="detail-title">Membri</h5>
+            <ul class="detail-list">
+                ${community.members?.length
+                            ? community.members.map(m => `
+                        <li>
+                            <i class="bi bi-person"></i>
+                            <span class="member-item" data-username="${m}" style="cursor:pointer; color:#bd93f9;"> ${m}</span>
+                        </li>
+                    `).join('')
+                            : '<li>Nessun membro</li>'
+                }
+            </ul>
+        </div>
 
-    <div class="detail-section">
-        <h5 class="detail-title">Playlist condivise</h5>
-        <ul class="detail-list playlists">
-            ${sharedPlaylists.length ? sharedPlaylists.map(p => `<li onclick="importSharedPlaylist('${p.id}')"><i class="bi bi-music-note-list"></i> ${p.name}</li>`).join('') : '<li>Nessuna playlist</li>'}
-        </ul>
-    </div>
-`;
+        <div class="detail-section">
+            <h5 class="detail-title">Playlist condivise</h5>
+            <ul class="detail-list playlists">
+                ${sharedPlaylists.length ? sharedPlaylists.map(p => `<li onclick="importSharedPlaylist('${p.id}')"><i class="bi bi-music-note-list"></i> ${p.name}</li>`).join('') : '<li>Nessuna playlist</li>'}
+            </ul>
+        </div>
+    `;
 
+    attachMemberClickEvents()
 
     new bootstrap.Modal(document.getElementById('viewCommunityModal')).show();
 }
+
+function attachMemberClickEvents() {
+    const memberItems = document.querySelectorAll('.member-item');
+
+    memberItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const username = item.dataset.username;
+
+            const utenti = JSON.parse(localStorage.getItem('utenti')) || [];
+            const membro = utenti.find(u => u.username === username);
+
+            if (!membro) return;
+
+            document.getElementById('modalUsername').textContent = membro.username;
+            document.getElementById('modalPreferences').textContent = membro.preferences || "Nessuna preferenza";
+            document.getElementById('modalArtists').textContent = membro.artists?.join(', ') || "Nessun artista";
+
+            const modal = new bootstrap.Modal(document.getElementById('memberInfoModal'));
+            modal.show();
+        });
+    });
+}
+
 
 function searchCommunities(query, allCommunities) {
     query = query.toLowerCase();
