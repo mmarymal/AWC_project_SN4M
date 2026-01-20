@@ -99,6 +99,12 @@ document.addEventListener('headerLoaded', function () {
       // Rimuovi communities create dall’utente
       let communities = JSON.parse(localStorage.getItem('communities')) || [];
       communities = communities.filter(c => c.creator !== user.username);
+
+      // Rimuovi utente dai membri delle altre communities
+      communities.forEach(c => {
+        c.members = c.members.filter(m => m !== user.username);
+      });
+
       localStorage.setItem('communities', JSON.stringify(communities));
 
       // Rimuovi utente da sessionStorage
