@@ -93,6 +93,7 @@ document.addEventListener('headerLoaded', function () {
 
       // Rimuovi playlist dell’utente
       let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+      const deletedPlaylistIds = playlists.filter(p => p.creator === user.username).map(p => p.id);
       playlists = playlists.filter(p => p.creator !== user.username);
       localStorage.setItem('playlists', JSON.stringify(playlists));
 
@@ -103,6 +104,13 @@ document.addEventListener('headerLoaded', function () {
       // Rimuovi utente dai membri delle altre communities
       communities.forEach(c => {
         c.members = c.members.filter(m => m !== user.username);
+      });
+
+      // Rimuovi playlist eliminate dalle community 
+      communities.forEach(c => {
+        if (c.playlists) {
+          c.playlists = c.playlists.filter(pid => !deletedPlaylistIds.includes(pid));
+        }
       });
 
       localStorage.setItem('communities', JSON.stringify(communities));
