@@ -21,41 +21,45 @@ document.addEventListener('headerLoaded', () => {
     }
 
     /* CREAZIONE PLAYLIST da pagina playlist */
+    // Recupera form per creazione playlist da pagina "playlist.html"
     const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
 
+    // Procede solo se form esiste nella pagina
     if (standaloneForm) {
+
         standaloneForm.addEventListener("submit", (e) => {
             e.preventDefault();
 
+            // lettura e validazione campi
             const name = document.getElementById("standalonePlaylistName").value.trim();
             const description = document.getElementById("standalonePlaylistDescription").value.trim();
+
+            //converte stringa tag in array
             const tags = document.getElementById("standalonePlaylistTags").value
                 .split(",")
                 .map(t => t.trim())
                 .filter(Boolean);
 
-            if (!name) {
-                showToast("Inserisci un nome per la playlist.", "danger");
-                return;
-            }
-
+            // Recupero dati utente e playlist salvate
             const user = JSON.parse(sessionStorage.getItem("utente"));
             const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
 
+            // Creazione oggetto playlist
             const newPlaylist = {
                 id: Date.now().toString(),
                 name,
                 description,
                 tags,
                 creator: user.username,
-                communities: [],
-                tracks: []
+                communities: [], //nessuna community alla creazione
+                tracks: [] // vuota alla creazione
             };
 
+            // Salva playlist
             playlists.push(newPlaylist);
             localStorage.setItem("playlists", JSON.stringify(playlists));
 
-            // Aggiorna UI
+            // Aggiornamento UI, se pagina ha funzione render, la chiama
             if (typeof renderPlaylists === "function") {
                 renderPlaylists();
             }
@@ -66,8 +70,6 @@ document.addEventListener('headerLoaded', () => {
             ).hide();
 
             showToast(`Playlist "${name}" creata!`, "success");
-
-            standaloneForm.reset();
         });
     }
 
