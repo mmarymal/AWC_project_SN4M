@@ -144,7 +144,6 @@ export async function getArtistGenre(artistId) {
         }
 
         const data = await res.json();
-        console.log('Generi disponibili per artista:', data.name, data.genres); // Per debug
 
         return data.genres?.[0] || 'N/D';
     } catch (error) {

@@ -224,7 +224,7 @@ function showSearchOverlay(results) {
     container.innerHTML = "";
 
     results.forEach(track => {
-        const img = track.album.images?.[0]?.url || "default.jpg";
+        const img = track.album.images?.[0]?.url;
         const artists = track.artists.map(a => a.name).join(", ");
 
         const div = document.createElement("div");
@@ -250,7 +250,6 @@ function showSearchOverlay(results) {
     document.body.classList.add("overlay-open");
 
     // listener per titolo + immagine -> apri dettagli brano
-
     container.querySelectorAll(".track-link, .spotify-img").forEach(el => {
         el.addEventListener("click", () => {
             const id = el.dataset.id;
