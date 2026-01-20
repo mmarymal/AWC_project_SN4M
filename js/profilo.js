@@ -1,16 +1,22 @@
 document.addEventListener('headerLoaded', function () {
+
+  // recupera dati dell'utente dalla sessione
   const userDataString = sessionStorage.getItem('utente');
+
+  // se non loggato, reindirizza al login
   if (!userDataString) {
-    mostraTost("Non sei loggato. Effettua il login.");
+    showTost("Non sei loggato. Effettua il login.");
     setTimeout(() => window.location.href = "login.html", 1500);
     return;
   }
 
   let user;
   try {
+    // prova a convertire la stringa JSON in oggetto
     user = JSON.parse(userDataString);
   } catch (error) {
-    mostraTost("Dati sbagliati. Riprova il login.");
+    // se JSON è corrotto, fa logout
+    showTost("Dati sbagliati. Riprova il login.");
     setTimeout(() => window.location.href = "login.html", 1500);
     return;
   }
@@ -18,7 +24,7 @@ document.addEventListener('headerLoaded', function () {
   // Mostra nome utente
   document.getElementById('welcomeUsername').textContent = user.username;
 
-  // Precompila il form
+  // Precompila il form del profilo con i dati salvati
   document.getElementById('username').value = user.username;
   document.getElementById('email').value = user.email;
   document.getElementById('preferences').value = user.preferences || '';
@@ -28,17 +34,18 @@ document.addEventListener('headerLoaded', function () {
   document.getElementById('profileForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    //leggo nuova password (se presenti)
+    //leggo nuova password (se presente)
     const newPassword = document.getElementById('newPassword').value.trim();
     const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
     
-    //validazione cambio password
+    //se l'utente vuole cambiare password, verifica che coincidono
     if (newPassword || confirmNewPassword) {
       if (newPassword !== confirmNewPassword) {
-        mostraTost("Le nuove password non corrispondono.", "danger"); ùreturn;
+        showTost("Le nuove password non corrispondono.", "danger"); ùreturn;
       }
     }
 
+    // crea oggetto utente aggiornato
     const updatedUser = {
       username: document.getElementById('username').value.trim(),
       email: user.email, // l'email non è modificabile
@@ -47,24 +54,27 @@ document.addEventListener('headerLoaded', function () {
       password: newPassword || user.password // mantieni la vecchia password se non viene cambiata
     };
 
-    // Aggiorna localStorage
+    // Aggiorna utente nel localStorage
     let utenti = JSON.parse(localStorage.getItem('utenti')) || [];
     const index = utenti.findIndex(u => u.email === user.email && u.password === user.password);
+
     if (index !== -1) {
       utenti[index] = updatedUser;
       localStorage.setItem('utenti', JSON.stringify(utenti));
     }
 
-    // Aggiorna sessionStorage
+    // Aggiorna anche sessionStorage
     sessionStorage.setItem('utente', JSON.stringify(updatedUser));
 
-    mostraTost("Profilo aggiornato con successo!");
+    showTost("Profilo aggiornato con successo!");
     setTimeout(() => window.location.href = "profilo.html", 2000);
   });
 
+  // GESTIONE ELIMINAZIONE ACCOUNT
   const deleteBtn = document.getElementById('deleteAccountBtn');
   const confirmDeleteBtn = document.getElementById('confirmDeleteAccount');
 
+  // apre modale di conferma eliminazione
   if (deleteBtn) {
     deleteBtn.addEventListener('click', function () {
       const modal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
@@ -72,6 +82,7 @@ document.addEventListener('headerLoaded', function () {
     });
   }
 
+  // conferma eliminazione account
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener('click', function () {
 
@@ -94,14 +105,14 @@ document.addEventListener('headerLoaded', function () {
       sessionStorage.removeItem('utente');
 
       // Notifica e redirect
-      mostraTost("Account eliminato con successo.");
+      showTost("Account eliminato con successo.");
       setTimeout(() => window.location.href = "login.html", 1500);
     });
   }
 
 });
 
-function mostraTost(message) {
+function showTost(message) {
   const toastEl = document.getElementById('sn4mToast');
   const toastMessage = document.getElementById('toastMessage');
   if (!toastEl || !toastMessage) return;
