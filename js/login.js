@@ -14,7 +14,7 @@ function loginUser(event) {
   const password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
-    mostraToast("Inserisci sia email che password.", "warning");
+    showToast("Inserisci sia email che password.", "warning");
     return;
   }
 
@@ -23,12 +23,12 @@ function loginUser(event) {
     utenti = JSON.parse(localStorage.getItem('utenti')) || [];
   } catch (error) {
     console.error("Errore durante il parsing del localStorage:", error);
-    mostraToast("Errore interno. Riprova più tardi.", "danger");
+    showToast("Errore interno. Riprova più tardi.", "danger");
     return;
   }
 
   if (!Array.isArray(utenti) || utenti.length === 0) {
-    mostraToast("Nessun utente registrato. Registrati prima di effettuare il login.", "warning");
+    showToast("Nessun utente registrato. Registrati prima di effettuare il login.", "warning");
     return;
   }
 
@@ -37,20 +37,20 @@ function loginUser(event) {
   if (found) {
     sessionStorage.clear();
     sessionStorage.setItem('utente', JSON.stringify(found));
-    mostraToast(`Benvenuto ${found.username}!`, "success");
+    showToast(`Benvenuto ${found.username}!`, "success");
     setTimeout(() => window.location.href = "home.html", 1500);
   } else {
-    mostraToast("Email o password errate. Riprova.", "danger");
+    showToast("Email o password errate. Riprova.", "danger");
   }
 }
 
 function logoutUser() {
   sessionStorage.removeItem("utente");
-  mostraToast("Hai effettuato il logout!", "info");
+  showToast("Hai effettuato il logout!", "info");
   setTimeout(() => window.location.href = "login.html", 1500);
 }
 
-function mostraToast(messaggio, tipo = 'success') {
+function showToast(messaggio, tipo = 'success') {
   const toastEl = document.getElementById('sn4mToast');
   const toastBody = document.getElementById('toastMessage');
 

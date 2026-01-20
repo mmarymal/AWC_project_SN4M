@@ -18,9 +18,7 @@ import {
 // Variabile globale per il brano selezionato
 window.trackSelezionato = null;
 
-/* -------------------------------------------
-   FUNZIONE: POPOLA DROPDOWN PLAYLIST
--------------------------------------------- */
+/* FUNZIONE: POPOLA DROPDOWN PLAYLIST */
 function aggiornaDropdownPlaylist() {
     const select = document.getElementById("playlistSelect");
     if (!select) return;
@@ -59,6 +57,15 @@ document.addEventListener("headerLoaded", () => {
         logoutBtn.addEventListener("click", () => {
             sessionStorage.removeItem("utente");
             window.location.href = "login.html";
+        });
+    }
+
+    const addBtn = document.getElementById("addToPlaylistFromSong");
+    if (addBtn) {
+        addBtn.addEventListener("click", () => {
+            if (window.trackSelezionato) {
+                window.apriModalPlaylist(window.trackSelezionato);
+            }
         });
     }
 
@@ -159,6 +166,7 @@ document.addEventListener("headerLoaded", () => {
 
         newPlaylistForm.reset();
     });
+    
 });
 
 /* --- AGGIUNGI BRANO ALLA PLAYLIST --- */
@@ -223,9 +231,11 @@ function showSearchOverlay(results) {
         div.classList.add("spotify-result");
 
         div.innerHTML = `
-            <img src="${img}" class="spotify-img">
+            <img src="${img}" class="spotify-img" data-id"${track.id}" style="cursor:pointer;">
             <div class="spotify-info">
-                <h4>${track.name}</h4>
+                <h4 class="track-link" data-id="${track.id}" style="cursor:pointer; color:#bd93f9;">
+                    ${track.name}
+                </h4>
                 <p>${artists}</p>
                 <button class="btn btn-primary btn-sm add-track" data-id="${track.id}">
                     ➕ Aggiungi a playlist
@@ -239,33 +249,39 @@ function showSearchOverlay(results) {
     overlay.style.display = "flex";
     document.body.classList.add("overlay-open");
 
+    // listener per titolo + immagine -> apri dettagli brano
+
+    container.querySelectorAll(".track-link, .spotify-img").forEach(el => {
+        el.addEventListener("click", () => {
+            const id = el.dataset.id;
+            window.location.href = `song.html?id=${id}`;
+        });
+    });
+
+    // listener per i pulsanti "aggiungi a playlist"
     container.querySelectorAll(".add-track").forEach(btn => {
         btn.addEventListener("click", async () => {
             const id = btn.dataset.id;
             const fullTrack = results.find(t => t.id === id);
-
-            // IMPORTANTE: Recupera il genere dall'artista (come nel carosello)
             const genre = await getArtistGenre(fullTrack.artists[0].id);
-
-            // Normalizza la struttura ESATTAMENTE come nel carosello
             const track = {
                 id: fullTrack.id,
                 name: fullTrack.name,
                 title: fullTrack.name,
                 artist: fullTrack.artists.map(a => a.name).join(", "),
                 duration: formatDuration(fullTrack.duration_ms),
-                genre: genre,
-                year: getReleaseYear(fullTrack)
+                genre: genre, year: getReleaseYear(fullTrack)
             };
-
+            
             sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
-
+            
             overlay.style.display = "none";
             document.body.classList.remove("overlay-open");
-
+            
             apriModalPlaylist(track);
         });
     });
+
 }
 
 /*  TOAST */

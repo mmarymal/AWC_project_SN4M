@@ -123,13 +123,32 @@ async function mostraSuggerimentiMusicali(query) {
     const card = document.createElement('div');
     card.classList.add('track-card');
     card.innerHTML = `
-      <img src="${getImageOrDefault(track.album.images)}" alt="${track.name}" class="track-image">
-      <h3>${track.name}</h3>
+      <img src="${getImageOrDefault(track.album.images)}" 
+          alt="${track.name}" 
+          class="track-image"
+          data-id="${track.id}"
+          style="cursor:pointer;">
+
+      <h3 class="track-title" 
+          data-id="${track.id}" 
+          style="cursor:pointer;">
+          ${track.name}
+      </h3>
+
       <p>${track.artists.map(a => a.name).join(', ')}</p>
+
       <button class="add-to-playlist btn btn-outline-primary btn-sm mt-2" data-id="${track.id}">
         ➕ Aggiungi a playlist
       </button>
     `;
+
+    document.querySelectorAll(".track-title, .track-image").forEach(el => {
+      el.addEventListener("click", () => {
+        const id = el.dataset.id;
+        window.location.href = `song.html?id=${id}`;
+      });
+    });
+
     carouselContainer.appendChild(card);
   });
 

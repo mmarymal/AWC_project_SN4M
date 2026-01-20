@@ -1,7 +1,6 @@
 .profile-box {
     max-width: 600px;
     margin: 60px auto;
-    /* Centra orizzontalmente e aggiunge spazio verticale */
     padding: 40px;
     background-color: rgba(40, 42, 54, 0.9);
     border-radius: 20px;
@@ -13,12 +12,14 @@
 /* input */
 .profile-box input[type="text"],
 .profile-box input[type="email"],
+.profile-box input[type="password"],
 .profile-box textarea {
     width: 100%;
     padding: 12px 16px;
     margin-bottom: 20px;
     border: none;
     border-radius: 10px;
+    border: 2px solid transparent;
     background-color: #2c2c3e;
     color: #f8f8f2;
     font-size: 1em;
@@ -29,6 +30,14 @@
 .profile-box textarea:focus {
     outline: none;
     box-shadow: 0 0 8px #bd93f9;
+}
+
+/* email non modificabile */
+.readonly-field {
+    background-color: #212130 !important;
+    color: #bfbfc9 !important;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Pulsante Salva */
@@ -131,10 +140,3 @@
     background-color: #ff4444;
     transform: translateY(-2px);
 }
-
-#deleteAccountModal .btn-danger:active {
-    transform: translateY(0);
-}
-
-
-

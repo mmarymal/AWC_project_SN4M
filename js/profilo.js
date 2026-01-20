@@ -27,13 +27,24 @@ document.addEventListener('headerLoaded', function () {
   // Salva modifiche
   document.getElementById('profileForm').addEventListener('submit', function (event) {
     event.preventDefault();
+
+    //leggo nuova password (se presenti)
+    const newPassword = document.getElementById('newPassword').value.trim();
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
     
+    //validazione cambio password
+    if (newPassword || confirmNewPassword) {
+      if (newPassword !== confirmNewPassword) {
+        mostraTost("Le nuove password non corrispondono.", "danger"); ùreturn;
+      }
+    }
+
     const updatedUser = {
       username: document.getElementById('username').value.trim(),
-      email: document.getElementById('email').value.trim(),
+      email: user.email, // l'email non è modificabile
       preferences: document.getElementById('preferences').value.trim(),
       artists: document.getElementById('artists').value.trim().split(',').map(a => a.trim()),
-      password: user.password // manteniamo la password originale
+      password: newPassword || user.password // mantieni la vecchia password se non viene cambiata
     };
 
     // Aggiorna localStorage

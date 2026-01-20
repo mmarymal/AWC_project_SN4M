@@ -46,6 +46,7 @@ function registrazione(event) {
     return;
   }
 
+  //aggiunge il nuovo utente e salva in locale
   utenti.push(nuovoUser);
   localStorage.setItem('utenti', JSON.stringify(utenti));
 
