@@ -37,7 +37,7 @@ function loginUser(event) {
     return;
   }
 
-  //cera un utente con email e password corrispondenti
+  //cerca un utente con email e password corrispondenti
   const found = utenti.find(utente => utente.email === email && utente.password === password);
 
   if (found) {
@@ -54,7 +54,10 @@ function loginUser(event) {
 }
 
 function logoutUser() {
+  // rimuove dalla sessione l'utente attualmente loggato
   sessionStorage.removeItem("utente");
+
+  // mostra conferma di logout e reindirizza a login
   showToast("Hai effettuato il logout!", "info");
   setTimeout(() => window.location.href = "login.html", 1500);
 }
