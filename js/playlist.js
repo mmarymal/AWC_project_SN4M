@@ -20,7 +20,7 @@ document.addEventListener('headerLoaded', () => {
         });
     }
 
-    /* CREAZIONE PLAYLIST - STANDALONE */
+    /* CREAZIONE PLAYLIST da pagina playlist */
     const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
 
     if (standaloneForm) {
@@ -71,6 +71,13 @@ document.addEventListener('headerLoaded', () => {
         });
     }
 
+    // Reset modale "Crea Playlist" quando viene chiuso
+    document.getElementById('createPlaylistStandaloneModal')
+        .addEventListener('hidden.bs.modal', () => {
+            const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
+            if (standaloneForm) standaloneForm.reset();
+        });
+    
     /* RICERCA PLAYLIST DELLE COMMUNITY */
     const searchInput = document.getElementById('communityPlaylistSearch');
     if (searchInput) {
@@ -102,72 +109,6 @@ document.addEventListener('headerLoaded', () => {
             }
         });
     }
-
-    /* CREAZIONE NUOVA PLAYLIST  */
-    const newForm = document.querySelector('#newPlaylistForm');
-    if (newForm) {
-        newForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-            const trackToAddCopy = window.trackToAdd; // Salva una copia
-
-            const newPlaylist = {
-                id: Date.now().toString(),
-                name: document.querySelector('#createPlaylistName').value.trim(),
-                description: document.querySelector('#playlistDescription').value.trim(),
-                tags: document.querySelector('#playlistTags').value
-                    .split(',')
-                    .map(t => t.trim())
-                    .filter(Boolean),
-                creator: user.username,
-                communities: [],
-                tracks: []
-            };
-
-            // Se stiamo creando la playlist mentre aggiungiamo un brano
-            if (trackToAddCopy) {
-                newPlaylist.tracks.push(trackToAddCopy);
-
-                playlists.push(newPlaylist);
-                localStorage.setItem('playlists', JSON.stringify(playlists));
-
-                const myPlaylistsContainer = document.getElementById('myPlaylists');
-                if (myPlaylistsContainer && typeof renderPlaylistCard === 'function') {
-                    myPlaylistsContainer.appendChild(renderPlaylistCard(newPlaylist, true));
-                }
-
-                showToast(`Playlist "${newPlaylist.name}" creata e brano "${trackToAddCopy.title}" aggiunto!`, "success");
-
-                // Chiudi modale e reset
-                bootstrap.Modal.getInstance(document.getElementById('createPlaylistStandaloneModal')).hide();
-                newForm.reset();
-                window.trackToAdd = null; // Reset solo alla fine
-
-                return;
-            }
-
-            // Creazione normale (senza brano da aggiungere)
-            playlists.push(newPlaylist);
-            localStorage.setItem('playlists', JSON.stringify(playlists));
-
-            const myPlaylistsContainer = document.getElementById('myPlaylists');
-            if (myPlaylistsContainer && typeof renderPlaylistCard === 'function') {
-                myPlaylistsContainer.appendChild(renderPlaylistCard(newPlaylist, true));
-            }
-
-            showToast("Playlist creata con successo!", "success");
-            bootstrap.Modal.getInstance(document.getElementById('createPlaylistStandaloneModal')).hide();
-            newForm.reset();
-        });
-    }
-
-    // Reset modale "Crea Playlist" quando viene chiuso
-    document.getElementById('createPlaylistStandaloneModal')
-        .addEventListener('hidden.bs.modal', () => {
-            const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
-            if (standaloneForm) standaloneForm.reset();
-        });
 
 });
 
@@ -289,6 +230,21 @@ function renderPlaylists() {
 
     localStorage.setItem('playlists', JSON.stringify(playlists));
 }
+
+document.addEventListener("playlistCreated", (e) => {
+    const playlist = e.detail.playlist;
+    
+    // Aggiorna tutta la UI della pagina playlist 
+    if (typeof renderPlaylists === "function") {
+        renderPlaylists(); return;
+    }
+    
+    // Oppure aggiorna solo la sezione "myPlaylists" 
+    const container = document.getElementById("myPlaylists");
+    if (container && typeof renderPlaylistCard === "function") {
+        container.appendChild(renderPlaylistCard(playlist, true));
+    }
+});
 
 /* CARD PLAYLIST */
 function renderPlaylistCard(playlist, isOwner) {
@@ -458,21 +414,21 @@ function openUnshareModal(playlistId) {
         return;
     }
 
-    // ⭐ RIEMPI IL TESTO
+    // RIEMPI IL TESTO
     document.getElementById("unshareCommunityText").innerHTML =
         `Scegli da quale community rimuovere "<strong>${playlist.name}</strong>":`;
 
-    // ⭐ RIEMPI LA SELECT
+    // RIEMPI LA SELECT
     const select = document.getElementById("unshareCommunitySelect");
     select.innerHTML = sharedCommunities
         .map(c => `<option value="${c.id}">${c.name}</option>`)
         .join('');
 
-    // ⭐ MOSTRA IL MODALE
+    // MOSTRA IL MODALE
     const modal = new bootstrap.Modal(document.getElementById('unshareCommunityModal'));
     modal.show();
 
-    // ⭐ GESTISCI IL CLICK
+    // GESTISCI IL CLICK
     document.getElementById('confirmUnshareBtn').onclick = () => {
         const communityId = select.value;
 

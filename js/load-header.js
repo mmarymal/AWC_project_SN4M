@@ -136,6 +136,10 @@ document.addEventListener("headerLoaded", () => {
         playlists.push(newPlaylist);
         localStorage.setItem("playlists", JSON.stringify(playlists));
 
+        document.dispatchEvent(new CustomEvent("playlistCreated", {
+            detail: { playlist: newPlaylist }
+        }));
+
         mostraToast(`Playlist "${name}" creata`, "success");
 
         // Chiudi il modale di creazione
