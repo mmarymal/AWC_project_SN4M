@@ -3,7 +3,7 @@ window.trackToAdd = null;
 
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return; 
+    if (!user) return;
 
     // Mostra nome utente nell'header della pagina
     document.getElementById('welcomeUsername').textContent = user.username;
@@ -30,7 +30,7 @@ document.addEventListener('headerLoaded', () => {
     // Procede solo se form esiste nella pagina
     if (standaloneForm) {
         standaloneForm.addEventListener("submit", (e) => {
-            e.preventDefault(); 
+            e.preventDefault();
 
             // Recupera e valida campi del form
             const name = document.getElementById("standalonePlaylistName").value.trim();
@@ -52,7 +52,7 @@ document.addEventListener('headerLoaded', () => {
                 name,
                 description,
                 tags,
-                creator: user.username, 
+                creator: user.username,
                 communities: [], // Inizialmente non è condivisa in nessuna community
                 tracks: [] // La playlist parte vuota
             };
@@ -81,44 +81,60 @@ document.addEventListener('headerLoaded', () => {
             if (standaloneForm) standaloneForm.reset();
         });
 
-    /* FUNZIONALITÀ DI RICERCA PLAYLIST DELLE COMMUNITY */
-    const searchInput = document.getElementById('communityPlaylistSearch');
-    if (searchInput) {
-        // Ad ogni input dell'utente, filtra le playlist
-        searchInput.addEventListener('input', e => {
-            const query = e.target.value;
+    /* FUNZIONE FILTRO PLAYLIST */
+    function searchPlaylists(query, playlists) {
+        const q = query.trim().toLowerCase();
 
-            // Recupera tutti i dati necessari
-            const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-            const communities = JSON.parse(localStorage.getItem('communities')) || [];
-            const user = JSON.parse(sessionStorage.getItem('utente'));
-
-            // Trova le community a cui l'utente appartiene
-            const myCommunities = communities.filter(c => c.members.includes(user.username));
-
-            // Trova le playlist condivise nelle community dell'utente
-            const communityPlaylists = playlists.filter(p =>
-                Array.isArray(p.communities) &&
-                p.communities.some(cid => myCommunities.some(c => c.id === cid))
-            );
-
-            // Filtra le playlist in base alla query di ricerca
-            const filtered = searchPlaylists(query, communityPlaylists);
-
-            // Aggiorna il container con i risultati filtrati
-            const container = document.getElementById('communityPlaylists');
-            container.innerHTML = '';
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<p class="text-muted">Nessuna playlist trovata.</p>';
-            } else {
-                // Renderizza ogni playlist filtrata
-                filtered.forEach(p => {
-                    container.appendChild(renderPlaylistCard(p, p.creator === user.username));
-                });
-            }
+        // Filtra le playlist in base a nome, descrizione o tag
+        return playlists.filter(p => {
+            const nameMatch = p.name?.toLowerCase().includes(q);
+            const descMatch = p.description?.toLowerCase().includes(q);
+            const tagMatch = p.tags?.some(tag => tag.toLowerCase().includes(q));
+            return nameMatch || descMatch || tagMatch;
         });
     }
+
+    /* FUNZIONALITÀ DI RICERCA PLAYLIST DELLE COMMUNITY */
+    function communityPlaylistSearch() {
+        const searchInput = document.getElementById('communityPlaylistSearch');
+        if (searchInput) {
+            // Ad ogni input dell'utente, filtra le playlist
+            searchInput.addEventListener('input', e => {
+                const query = e.target.value;
+
+                // Recupera tutti i dati necessari
+                const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+                const communities = JSON.parse(localStorage.getItem('communities')) || [];
+                const user = JSON.parse(sessionStorage.getItem('utente'));
+
+                // Trova le community a cui l'utente appartiene
+                const myCommunities = communities.filter(c => c.members.includes(user.username));
+
+                // Trova le playlist condivise nelle community dell'utente
+                const communityPlaylists = playlists.filter(p =>
+                    Array.isArray(p.communities) &&
+                    p.communities.some(cid => myCommunities.some(c => c.id === cid))
+                );
+
+                // Filtra le playlist in base alla query di ricerca
+                const filtered = searchPlaylists(query, communityPlaylists);
+
+                // Aggiorna il container con i risultati filtrati
+                const container = document.getElementById('communityPlaylists');
+                container.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p class="text-muted">Nessuna playlist trovata.</p>';
+                } else {
+                    // Renderizza ogni playlist filtrata
+                    filtered.forEach(p => {
+                        container.appendChild(renderPlaylistCard(p, p.creator === user.username));
+                    });
+                }
+            });
+        }
+    }
+
 });
 
 /* FUNZIONE PER RENDERIZZARE TUTTE LE PLAYLIST */
@@ -294,19 +310,6 @@ function renderPlaylistCard(playlist, isOwner) {
     return clone;
 }
 
-/* FUNZIONE DI RICERCA PLAYLIST */
-function searchPlaylists(query, playlists) {
-    const q = query.trim().toLowerCase();
-
-    // Filtra le playlist in base a nome, descrizione o tag
-    return playlists.filter(p => {
-        const nameMatch = p.name?.toLowerCase().includes(q);
-        const descMatch = p.description?.toLowerCase().includes(q);
-        const tagMatch = p.tags?.some(tag => tag.toLowerCase().includes(q));
-        return nameMatch || descMatch || tagMatch;
-    });
-}
-
 /* FUNZIONE PER CONDIVIDERE UNA PLAYLIST IN UNA COMMUNITY */
 function sharePlaylist(playlistId) {
     // Recupera tutti i dati necessari
@@ -361,7 +364,7 @@ function sharePlaylist(playlistId) {
         showToast(`Playlist condivisa in "${community?.name || 'Community'}"!`, "success");
 
         modal.hide();
-        renderPlaylists(); 
+        renderPlaylists();
     };
 }
 
@@ -428,7 +431,7 @@ function unsharePlaylist(playlistId) {
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
     showToast("Condivisione rimossa da tutte le community!", "primary");
-    renderPlaylists(); 
+    renderPlaylists();
 }
 
 /* FUNZIONE PER IMPORTARE UNA PLAYLIST NEL PROFILO PERSONALE */
