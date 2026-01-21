@@ -256,7 +256,7 @@ function renderPlaylistCard(playlist, isOwner) {
             unshareItem.innerHTML = `<a class="dropdown-item text-warning" href="#">Rimuovi da una community...</a>`;
             unshareItem.addEventListener('click', e => {
                 e.preventDefault();
-                openUnshareModal(playlist.id);
+                unsharePlaylistSingleCommunity(playlist.id);
             });
             dropdownMenu.appendChild(unshareItem);
 
@@ -374,7 +374,7 @@ function sharePlaylist(playlistId) {
 }
 
 /* FUNZIONE PER RIMUOVERE UNA PLAYLIST DA UNA SINGOLA COMMUNITY */
-function openUnshareModal(playlistId) {
+function unsharePlaylistSingleCommunity(playlistId) {
     // Recupera playlist e community
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
     const communities = JSON.parse(localStorage.getItem('communities')) || [];

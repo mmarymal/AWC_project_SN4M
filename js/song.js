@@ -6,53 +6,135 @@ import {
     getArtistGenre
 } from "./api.js";
 
+import { showToast } from "./load-header.js";
+
+/*carica dettagli completi di un brano, eseguita quando pagina si carica*/
 async function loadTrackDetails() {
+    //recupera id brano
     const params = new URLSearchParams(window.location.search);
     const trackId = params.get("id");
 
-    if (!trackId) return;
+    //se non c'è id, esce da funzione
+    if (!trackId) {
+        showToast("Nessun brano selezionato", "danger");
+        return;
+    }
 
-    // Recupera token Spotify
-    const token = await getSpotifyAccessToken();
+    try {
+        // Recupera token Spotify
+        const token = await getSpotifyAccessToken();
 
-    // Recupera dettagli completi del brano
-    const res = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+        // Recupera dettagli completi del brano
+        const res = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-    const track = await res.json();
+        if (!res.ok) {
+            throw new Error(`Errore API Spotify: ${res.status}`);
+        }
 
-    // Recupera genere dall'artista principale
-    const genre = await getArtistGenre(track.artists[0].id);
+        const track = await res.json(); //converte in JSON
 
-    // Popola la pagina
-    document.getElementById("trackTitle").textContent = track.name;
-    document.getElementById("trackArtist").textContent = track.artists.map(a => a.name).join(", ");
-    document.getElementById("trackAlbum").textContent = track.album.name;
-    document.getElementById("trackDuration").textContent = formatDuration(track.duration_ms);
-    document.getElementById("trackYear").textContent = getReleaseYear(track);
-    document.getElementById("trackGenre").textContent = genre || "Sconosciuto";
+        // Recupera genere dall'artista principale
+        const genre = await getArtistGenre(track.artists[0].id);
 
-    document.getElementById("trackImage").src = track.album.images?.[0]?.url;
+        // Popola la pagina con dati
+        const elements = {
+            trackTitle: document.getElementById("trackTitle"),
+            trackArtist: document.getElementById("trackArtist"),
+            trackAlbum: document.getElementById("trackAlbum"),
+            trackDuration: document.getElementById("trackDuration"),
+            trackYear: document.getElementById("trackYear"),
+            trackGenre: document.getElementById("trackGenre"),
+            trackImage: document.getElementById("trackImage")
+        };
 
-    // Salva il brano per "Aggiungi a playlist"
-    sessionStorage.setItem("trackSelezionato", JSON.stringify( {
-        id: track.id,
-        title: track.name,
-        artist: track.artists.map(a => a.name).join(", "),
-        duration: formatDuration(track.duration_ms),
-        genre: genre,
-        year: getReleaseYear(track)
-    }));
+        // Popola gli elementi
+        if (elements.trackTitle) elements.trackTitle.textContent = track.name;
+        if (elements.trackArtist) elements.trackArtist.textContent = track.artists.map(a => a.name).join(", ");
+        if (elements.trackAlbum) elements.trackAlbum.textContent = track.album.name;
+        if (elements.trackDuration) elements.trackDuration.textContent = formatDuration(track.duration_ms);
+        if (elements.trackYear) elements.trackYear.textContent = getReleaseYear(track);
+        if (elements.trackGenre) elements.trackGenre.textContent = genre || "Sconosciuto";
+
+        if (elements.trackImage && track.album.images?.[0]?.url) {
+            elements.trackImage.src = track.album.images[0].url;
+            elements.trackImage.alt = `Cover di ${track.album.name}`;
+        }
+
+        // Salva il brano per "Aggiungi a playlist"
+        const trackData = {
+            id: track.id,
+            title: track.name,
+            name: track.name,
+            artist: track.artists.map(a => a.name).join(", "),
+            duration: formatDuration(track.duration_ms),
+            genre: genre || "Sconosciuto",
+            year: getReleaseYear(track)
+        };
+
+        // IMPORTANTE: queste righe devono stare DENTRO il try, dopo aver creato trackData
+        window.trackSelezionato = trackData;
+        sessionStorage.setItem("trackSelezionato", JSON.stringify(trackData));
+
+        console.log("✅ Dettagli brano caricati con successo");
+
+    } catch (error) {
+        showToast(`Errore: ${error.message}`, "danger");
+    }
 }
 
-loadTrackDetails();
+document.addEventListener('headerLoaded', () => {
+    // Verifica che l'utente sia loggato
+    const user = JSON.parse(sessionStorage.getItem('utente'));
+    console.log("Utente loggato:", user);
 
-document.getElementById("addToPlaylistFromSong").addEventListener("click", () => {
-    const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
-    apriModalPlaylist(track);
+    if (!user) {
+        showToast("Devi effettuare il login per vedere questa pagina", "warning");
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
+        return;
+    }
+
+    // Mostra username nell'header
+    const welcomeUsername = document.getElementById('welcomeUsername');
+    if (welcomeUsername) {
+        welcomeUsername.textContent = user.username;
+        console.log("Username impostato nell'header");
+    }
+
+    // Carica i dettagli del brano
+    loadTrackDetails();
+
+    // Gestisce il bottone "Aggiungi a playlist"
+    const addButton = document.getElementById("addToPlaylistFromSong");
+    if (addButton) {
+        addButton.addEventListener("click", () => {
+            const track = window.trackSelezionato || JSON.parse(sessionStorage.getItem("trackSelezionato"));
+
+            if (!track) {
+                showToast("Nessun brano selezionato", "danger");
+                return;
+            }
+
+            if (typeof window.apriModalPlaylist === 'function') {
+                window.apriModalPlaylist(track);
+            } else {
+                showToast("Funzione non disponibile", "danger");
+            }
+        });
+    }
+
+    // Gestisce il logout
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            sessionStorage.removeItem("utente");
+            showToast("Logout effettuato", "info");
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1000);
+        });
+    }
 });
-
-
-
-

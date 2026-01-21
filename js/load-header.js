@@ -37,28 +37,34 @@ function aggiornaDropdownPlaylist() {
 document.addEventListener("headerLoaded", () => {
 
     /* --- RICERCA SPOTIFY --- */
-    const searchForm = document.getElementById("search-form");
-    const searchInput = document.getElementById("search-input");
+    function search() {
+        const searchForm = document.getElementById("search-form");
+        const searchInput = document.getElementById("search-input");
 
-    if (searchForm && searchInput) {
-        searchForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const query = searchInput.value.trim();
-            if (!query) return;
+        if (searchForm && searchInput) {
+            searchForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (!query) return;
 
-            const results = await searchSpotify(query);
-            showSearchOverlay(results.tracks.items);
-        });
+                const results = await searchSpotify(query);
+                showSearchOverlay(results.tracks.items);
+            });
+        }
     }
+    search();
 
     /* --- LOGOUT --- */
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            sessionStorage.removeItem("utente");
-            window.location.href = "login.html";
-        });
+    function logout() {
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("utente");
+                window.location.href = "login.html";
+            });
+        }
     }
+    logout();
 
     const addBtn = document.getElementById("addToPlaylistFromSong");
     if (addBtn) {
@@ -70,151 +76,159 @@ document.addEventListener("headerLoaded", () => {
     }
 
     /* --- APRI MODALE PLAYLIST (AGGIUNGI BRANO) --- */
-    window.apriModalPlaylist = function (track) {
-        sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
+    function apriModalPlaylist() {
+        window.apriModalPlaylist = function (track) {
+            sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
 
-        aggiornaDropdownPlaylist();
+            aggiornaDropdownPlaylist();
 
-        const trackNameEl = document.getElementById("modalTrackName");
-        if (trackNameEl) {
-            trackNameEl.textContent = `Brano: ${track.name || track.title || "Sconosciuto"}`;
+            const trackNameEl = document.getElementById("modalTrackName");
+            if (trackNameEl) {
+                trackNameEl.textContent = `Brano: ${track.name || track.title || "Sconosciuto"}`;
+            }
+
+            const playlistModalEl = document.getElementById("playlistModal");
+            if (!playlistModalEl) return;
+
+            const playlistModal = bootstrap.Modal.getOrCreateInstance(playlistModalEl);
+            playlistModal.show();
+        };
+        /* --- RESET MODALE CREAZIONE PLAYLIST (solo flusso aggiungi brano) --- */
+        const createPlaylistModalEl = document.getElementById("createPlaylistModal");
+        if (createPlaylistModalEl) {
+            createPlaylistModalEl.addEventListener("show.bs.modal", () => {
+                document.getElementById("createPlaylistName").value = "";
+                document.getElementById("playlistDescription").value = "";
+                document.getElementById("playlistTags").value = "";
+            });
         }
-
-        const playlistModalEl = document.getElementById("playlistModal");
-        if (!playlistModalEl) return;
-
-        const playlistModal = bootstrap.Modal.getOrCreateInstance(playlistModalEl);
-        playlistModal.show();
-    };
-
-    /* --- RESET MODALE CREAZIONE PLAYLIST (solo flusso aggiungi brano) --- */
-    const createPlaylistModalEl = document.getElementById("createPlaylistModal");
-    if (createPlaylistModalEl) {
-        createPlaylistModalEl.addEventListener("show.bs.modal", () => {
-            document.getElementById("createPlaylistName").value = "";
-            document.getElementById("playlistDescription").value = "";
-            document.getElementById("playlistTags").value = "";
-        });
     }
+    apriModalPlaylist();
 
     /* --- CREAZIONE PLAYLIST (solo flusso aggiungi brano) --- */
-    const newPlaylistForm = document.getElementById("newPlaylistForm");
+    function createPlaylist() {
+        const newPlaylistForm = document.getElementById("newPlaylistForm");
 
-    if (!newPlaylistForm) return;
+        if (!newPlaylistForm) return;
 
-    newPlaylistForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+        newPlaylistForm.addEventListener("submit", (e) => {
+            e.preventDefault();
 
-        const user = JSON.parse(sessionStorage.getItem("utente"));
-        if (!user) {
-            mostraToast("Utente non autenticato.", "danger");
-            return;
-        }
+            const user = JSON.parse(sessionStorage.getItem("utente"));
+            if (!user) {
+                showToast("Utente non autenticato.", "danger");
+                return;
+            }
 
-        const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-        const name = document.getElementById("createPlaylistName")?.value.trim();
+            const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+            const name = document.getElementById("createPlaylistName")?.value.trim();
 
-        if (!name) {
-            mostraToast("Inserisci un nome per la playlist.", "danger");
-            return;
-        }
+            if (!name) {
+                showToast("Inserisci un nome per la playlist.", "danger");
+                return;
+            }
 
-        const description = document.getElementById("playlistDescription")?.value.trim() || "";
-        const rawTags = document.getElementById("playlistTags")?.value || "";
-        const tags = rawTags.split(",").map(t => t.trim()).filter(Boolean);
+            const description = document.getElementById("playlistDescription")?.value.trim() || "";
+            const rawTags = document.getElementById("playlistTags")?.value || "";
+            const tags = rawTags.split(",").map(t => t.trim()).filter(Boolean);
 
-        const newPlaylist = {
-            id: Date.now().toString(),
-            name,
-            description,
-            tags,
-            creator: user.username,
-            community: null,
-            tracks: []
-        };
+            const newPlaylist = {
+                id: Date.now().toString(),
+                name,
+                description,
+                tags,
+                creator: user.username,
+                community: null,
+                tracks: []
+            };
 
-        playlists.push(newPlaylist);
-        localStorage.setItem("playlists", JSON.stringify(playlists));
+            playlists.push(newPlaylist);
+            localStorage.setItem("playlists", JSON.stringify(playlists));
 
-        document.dispatchEvent(new CustomEvent("playlistCreated", {
-            detail: { playlist: newPlaylist }
-        }));
+            document.dispatchEvent(new CustomEvent("playlistCreated", {
+                detail: { playlist: newPlaylist }
+            }));
 
-        mostraToast(`Playlist "${name}" creata`, "success");
+            showToast(`Playlist "${name}" creata`, "success");
 
-        // Chiudi il modale di creazione
-        const createModal = bootstrap.Modal.getInstance(createPlaylistModalEl);
-        createModal?.hide();
+            // Chiudi il modale di creazione
+            const createModal = bootstrap.Modal.getInstance(createPlaylistModalEl);
+            createModal?.hide();
 
-        // Se stiamo creando una playlist mentre aggiungiamo un brano
-        const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
-        if (track) {
-            createPlaylistModalEl.addEventListener("hidden.bs.modal", () => {
+            // Se stiamo creando una playlist mentre aggiungiamo un brano
+            const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
+            if (track) {
+                createPlaylistModalEl.addEventListener("hidden.bs.modal", () => {
 
-                const playlistModalEl = document.getElementById("playlistModal");
-                const playlistModal = bootstrap.Modal.getOrCreateInstance(playlistModalEl);
+                    const playlistModalEl = document.getElementById("playlistModal");
+                    const playlistModal = bootstrap.Modal.getOrCreateInstance(playlistModalEl);
 
-                aggiornaDropdownPlaylist();
-                playlistModal.show();
+                    aggiornaDropdownPlaylist();
+                    playlistModal.show();
 
-                setTimeout(() => {
-                    const select = document.getElementById("playlistSelect");
-                    if (select) select.value = newPlaylist.id;
-                }, 150);
+                    setTimeout(() => {
+                        const select = document.getElementById("playlistSelect");
+                        if (select) select.value = newPlaylist.id;
+                    }, 150);
 
-            }, { once: true });
-        }
+                }, { once: true });
+            }
 
-        // Aggiorna dropdown nel modale playlist
-        aggiornaDropdownPlaylist();
+            // Aggiorna dropdown nel modale playlist
+            aggiornaDropdownPlaylist();
 
-        newPlaylistForm.reset();
-    });
-    
+            newPlaylistForm.reset();
+        });
+    }
+    createPlaylist();
+
 });
 
 /* --- AGGIUNGI BRANO ALLA PLAYLIST --- */
-document.addEventListener("click", (e) => {
-    if (e.target && e.target.id === "addToPlaylistBtn") {
+function addTrackToPlaylist() {
+    document.addEventListener("click", (e) => {
+        if (e.target && e.target.id === "addToPlaylistBtn") {
 
-        const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
-        if (!track) {
-            mostraToast("Nessun brano selezionato.", "danger");
-            return;
+            const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
+            if (!track) {
+                showToast("Nessun brano selezionato.", "danger");
+                return;
+            }
+
+            const select = document.getElementById("playlistSelect");
+            const selectedPlaylistId = select?.value;
+
+            if (!selectedPlaylistId) {
+                showToast("Seleziona una playlist.", "danger");
+                return;
+            }
+
+            const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+            const playlist = playlists.find(p => p.id === selectedPlaylistId);
+
+            if (!playlist) {
+                showToast("Playlist non trovata.", "danger");
+                return;
+            }
+
+            const alreadyAdded = playlist.tracks.some(t => t.id === track.id);
+            if (alreadyAdded) {
+                showToast("Brano già presente nella playlist.", "warning");
+                return;
+            }
+
+            playlist.tracks.push(track);
+            localStorage.setItem("playlists", JSON.stringify(playlists));
+
+            showToast(`Brano aggiunto a "${playlist.name}"`, "success");
+
+            const playlistModalEl = document.getElementById("playlistModal");
+            const playlistModal = bootstrap.Modal.getInstance(playlistModalEl);
+            playlistModal?.hide();
         }
-
-        const select = document.getElementById("playlistSelect");
-        const selectedPlaylistId = select?.value;
-
-        if (!selectedPlaylistId) {
-            mostraToast("Seleziona una playlist.", "danger");
-            return;
-        }
-
-        const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-        const playlist = playlists.find(p => p.id === selectedPlaylistId);
-
-        if (!playlist) {
-            mostraToast("Playlist non trovata.", "danger");
-            return;
-        }
-
-        const alreadyAdded = playlist.tracks.some(t => t.id === track.id);
-        if (alreadyAdded) {
-            mostraToast("Brano già presente nella playlist.", "warning");
-            return;
-        }
-
-        playlist.tracks.push(track);
-        localStorage.setItem("playlists", JSON.stringify(playlists));
-
-        mostraToast(`Brano aggiunto a "${playlist.name}"`, "success");
-
-        const playlistModalEl = document.getElementById("playlistModal");
-        const playlistModal = bootstrap.Modal.getInstance(playlistModalEl);
-        playlistModal?.hide();
-    }
-});
+    });
+}
+addTrackToPlaylist();
 
 /* OVERLAY RISULTATI RICERCA */
 function showSearchOverlay(results) {
@@ -235,7 +249,7 @@ function showSearchOverlay(results) {
         div.classList.add("spotify-result");
 
         div.innerHTML = `
-            <img src="${img}" class="spotify-img" data-id"${track.id}" style="cursor:pointer;">
+            <img src="${img}" class="spotify-img" data-id="${track.id}" style="cursor:pointer;">
             <div class="spotify-info">
                 <h4 class="track-link" data-id="${track.id}" style="cursor:pointer; color:#bd93f9;">
                     ${track.name}
@@ -257,7 +271,11 @@ function showSearchOverlay(results) {
     container.querySelectorAll(".track-link, .spotify-img").forEach(el => {
         el.addEventListener("click", () => {
             const id = el.dataset.id;
-            window.location.href = `song.html?id=${id}`;
+
+            if (!id || id === "undefined") {
+                showToast("ID brano non valido", "danger");
+                return;
+            } window.location.href = `song.html?id=${encodeURIComponent(id)}`;
         });
     });
 
@@ -275,12 +293,12 @@ function showSearchOverlay(results) {
                 duration: formatDuration(fullTrack.duration_ms),
                 genre: genre, year: getReleaseYear(fullTrack)
             };
-            
+
             sessionStorage.setItem("trackSelezionato", JSON.stringify(track));
-            
+
             overlay.style.display = "none";
             document.body.classList.remove("overlay-open");
-            
+
             apriModalPlaylist(track);
         });
     });
@@ -288,7 +306,7 @@ function showSearchOverlay(results) {
 }
 
 /*  TOAST */
-export function mostraToast(msg, tipo = "success") {
+export function showToast(msg, tipo = "success") {
     const toastEl = document.getElementById("sn4mToast");
     const toastMessage = document.getElementById("toastMessage");
     if (!toastEl || !toastMessage) return;
