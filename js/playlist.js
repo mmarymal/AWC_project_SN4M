@@ -1,24 +1,22 @@
 // Variabile globale per tracciare il brano da aggiungere a una playlist
 window.trackToAdd = null;
 
-// Event listener che si attiva quando l'header della pagina è stato caricato
 document.addEventListener('headerLoaded', () => {
-    // Recupera i dati dell'utente loggato dalla sessionStorage
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return; // Se non c'è utente loggato, esce dalla funzione
+    if (!user) return; 
 
-    // Mostra il nome utente nell'header della pagina
+    // Mostra nome utente nell'header della pagina
     document.getElementById('welcomeUsername').textContent = user.username;
 
-    // Render iniziale di tutte le playlist dell'utente
+    // Render iniziale
     renderPlaylists();
 
     /* GESTIONE APERTURA MODALE "CREA PLAYLIST" */
-    // Recupera il bottone per aprire la modale di creazione playlist
+    // Recupera bottone per aprire modale di creazione playlist
     const btn = document.getElementById("openCreateOnly");
 
     if (btn) {
-        // Al click, apre la modale Bootstrap per creare una nuova playlist
+        // click -> apre modale per creare nuova playlist
         btn.addEventListener("click", () => {
             const modal = new bootstrap.Modal(document.querySelector("#createPlaylistStandaloneModal"));
             modal.show();
@@ -26,19 +24,19 @@ document.addEventListener('headerLoaded', () => {
     }
 
     /* GESTIONE SUBMIT FORM CREAZIONE PLAYLIST */
-    // Recupera il form per la creazione di una nuova playlist
+    // Recupera form per creazione nuova playlist
     const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
 
-    // Procede solo se il form esiste nella pagina
+    // Procede solo se form esiste nella pagina
     if (standaloneForm) {
         standaloneForm.addEventListener("submit", (e) => {
-            e.preventDefault(); // Previene il reload della pagina
+            e.preventDefault(); 
 
-            // Recupera e valida i campi del form
+            // Recupera e valida campi del form
             const name = document.getElementById("standalonePlaylistName").value.trim();
             const description = document.getElementById("standalonePlaylistDescription").value.trim();
 
-            // Converte la stringa di tag separati da virgola in un array pulito
+            // Converte stringa di tag separati da virgola in un array
             const tags = document.getElementById("standalonePlaylistTags").value
                 .split(",")
                 .map(t => t.trim())
@@ -48,7 +46,7 @@ document.addEventListener('headerLoaded', () => {
             const user = JSON.parse(sessionStorage.getItem("utente"));
             const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
 
-            // Crea l'oggetto della nuova playlist
+            // Crea oggetto della nuova playlist
             const newPlaylist = {
                 id: Date.now().toString(), // ID univoco 
                 name,
@@ -59,11 +57,11 @@ document.addEventListener('headerLoaded', () => {
                 tracks: [] // La playlist parte vuota
             };
 
-            // Aggiunge la nuova playlist all'array e salva in localStorage
+            // Aggiunge nuova playlist all'array e salva 
             playlists.push(newPlaylist);
             localStorage.setItem("playlists", JSON.stringify(playlists));
 
-            // Aggiorna interfaccia se la funzione di render esiste
+            // Aggiorna interfaccia se funzione di render esiste
             if (typeof renderPlaylists === "function") {
                 renderPlaylists();
             }
@@ -76,7 +74,7 @@ document.addEventListener('headerLoaded', () => {
         });
     }
 
-    // Reset del form quando la modale viene chiusa
+    // Reset form quando modale viene chiusa
     document.getElementById('createPlaylistStandaloneModal')
         .addEventListener('hidden.bs.modal', () => {
             const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
@@ -574,7 +572,7 @@ function editPlaylist(id) {
     const playlist = playlists.find(p => p.id === id);
     if (!playlist) return;
 
-    // Precompila i campi del form con i dati della playlist
+    // Precompila campi del form con dati della playlist
     document.getElementById('editPlaylistName').value = playlist.name;
     document.getElementById('editPlaylistDescription').value = playlist.description || '';
     document.getElementById('editPlaylistTags').value = playlist.tags?.join(', ') || '';
@@ -583,13 +581,13 @@ function editPlaylist(id) {
     const trackList = document.getElementById('editPlaylistTracks');
     trackList.innerHTML = '';
 
-    // Se la playlist ha tracce, le mostra
+    // Se playlist ha tracce, le mostra
     if (playlist.tracks?.length) {
         playlist.tracks.forEach(track => {
             const li = document.createElement('li');
             li.className = "list-group-item";
 
-            // Mostra informazioni della traccia con pulsante di rimozione
+            // Mostra info della traccia con pulsante di rimozione
             li.innerHTML = `
                 <div class="track-info">
                     <div class="track-title">${track.title || 'undefined'}</div>
@@ -621,13 +619,13 @@ function editPlaylist(id) {
         button.addEventListener('click', () => {
             const trackId = button.dataset.id;
 
-            // Filtra la traccia da rimuovere
+            // Filtra traccia da rimuovere
             playlist.tracks = playlist.tracks.filter(t => t.id !== trackId);
 
-            // Aggiorna lo storage
+            // Aggiorna storage
             localStorage.setItem('playlists', JSON.stringify(playlists));
 
-            // Riapre la modale per vedere le modifiche
+            // Riapre modale per vedere modifiche
             setTimeout(() => editPlaylist(id), 50);
         });
     });
@@ -637,7 +635,7 @@ function editPlaylist(id) {
     form.onsubmit = function (e) {
         e.preventDefault();
 
-        // Aggiorna i campi della playlist con i nuovi valori
+        // Aggiorna campi della playlist con nuovi valori
         playlist.name = document.getElementById('editPlaylistName').value.trim();
         playlist.description = document.getElementById('editPlaylistDescription').value.trim();
         playlist.tags = document.getElementById('editPlaylistTags').value
@@ -658,14 +656,14 @@ function editPlaylist(id) {
 
 /* FUNZIONE PER CONFERMARE L'ELIMINAZIONE DI UNA PLAYLIST */
 function confirmDelete(id) {
-    // Recupera il pulsante di conferma dalla modale
+    // Recupera pulsante di conferma 
     const btn = document.getElementById('confirmDeleteBtn');
 
     // Associa azione eliminazione al click
     btn.onclick = function () {
         let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
 
-        // Filtra la playlist da eliminare
+        // Filtra playlist da eliminare
         playlists = playlists.filter(p => p.id !== id);
 
         // Aggiorna storage
