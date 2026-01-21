@@ -500,22 +500,30 @@ function openPlaylistDetails(id) {
 
 /* MODIFICA PLAYLIST */
 function editPlaylist(id) {
-    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-    const playlist = playlists.find(p => p.id === id);
-    if (!playlist) return;
 
+    // Recupera tutte playlist salvate
+    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+
+    // Trova playlist da modificare tramite id
+    const playlist = playlists.find(p => p.id === id);
+    if (!playlist) return; //se non esiste, esci
+
+    //precompila i campi del form con dati della playlist
     document.getElementById('editPlaylistName').value = playlist.name;
     document.getElementById('editPlaylistDescription').value = playlist.description || '';
     document.getElementById('editPlaylistTags').value = playlist.tags?.join(', ') || '';
 
+    // sezione lista tracce
     const trackList = document.getElementById('editPlaylistTracks');
     trackList.innerHTML = '';
 
+    // se playlist ha tracce, fa vedere ogni traccia
     if (playlist.tracks?.length) {
         playlist.tracks.forEach(track => {
             const li = document.createElement('li');
             li.className = "list-group-item"; // stile base, il resto lo gestisce il CSS
 
+            // singola traccia
             li.innerHTML = `
                 <div class="track-info">
                     <div class="track-title">${track.title || 'undefined'}</div>
@@ -542,27 +550,37 @@ function editPlaylist(id) {
 
     }
 
+    // gestisce rimozione
     trackList.querySelectorAll(".btn-remove-track").forEach(button => {
         button.addEventListener('click', () => {
             const trackId = button.dataset.id;
+
+            // filtra traccia da rimuovere
             playlist.tracks = playlist.tracks.filter(t => t.id !== trackId);
+
+            // aggiorna storage
             localStorage.setItem('playlists', JSON.stringify(playlists));
             setTimeout(() => editPlaylist(id), 50);
         });
     });
 
+    // gestione submit form
     const form = document.getElementById('editPlaylistForm');
     form.onsubmit = function (e) {
         e.preventDefault();
+
+        //  aggiorna campi playlist
         playlist.name = document.getElementById('editPlaylistName').value.trim();
         playlist.description = document.getElementById('editPlaylistDescription').value.trim();
         playlist.tags = document.getElementById('editPlaylistTags').value.split(',').map(t => t.trim()).filter(Boolean);
 
+        // salva modifiche
         localStorage.setItem('playlists', JSON.stringify(playlists));
 
         showToast("Playlist modificata con successo!");
         bootstrap.Modal.getInstance(document.getElementById('editPlaylistModal')).hide();
-        renderPlaylists();
+
+        renderPlaylists(); //aggiorna UI principale
     };
 
     new bootstrap.Modal(document.getElementById('editPlaylistModal')).show();
@@ -570,14 +588,20 @@ function editPlaylist(id) {
 
 /* ELIMINA PLAYLIST */
 function confirmDelete(id) {
+
+    // recupera pulsante conferma eliminazione da modale
     const btn = document.getElementById('confirmDeleteBtn');
-    btn.onclick = function () {
-        let playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-        playlists = playlists.filter(p => p.id !== id);
-        localStorage.setItem('playlists', JSON.stringify(playlists));
+    btn.onclick = function () { //associa eliminazione a click
+        let playlists = JSON.parse(localStorage.getItem('playlists')) || []; // recupera playlist salvate
+
+        playlists = playlists.filter(p => p.id !== id); // filtra playlist da eliminare
+        
+        localStorage.setItem('playlists', JSON.stringify(playlists)); //aggiorna
+        
         showToast("Playlist eliminata!");
         bootstrap.Modal.getInstance(document.getElementById('confirmDeletePlaylistModal')).hide();
-        renderPlaylists();
+
+        renderPlaylists(); //aggiorna UI principale
     };
 
     new bootstrap.Modal(document.getElementById('confirmDeletePlaylistModal')).show();
