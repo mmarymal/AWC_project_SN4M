@@ -11,76 +11,80 @@ document.addEventListener('headerLoaded', () => {
     // Render iniziale
     renderPlaylists();
 
-    /* GESTIONE APERTURA MODALE "CREA PLAYLIST" */
-    // Recupera bottone per aprire modale di creazione playlist
-    const btn = document.getElementById("openCreateOnly");
+    // FUNZIONE CREAZIONE PLAYLIST
+    function playlistCreation() {
+        /* GESTIONE APERTURA MODALE "CREA PLAYLIST" */
+        // Recupera bottone per aprire modale di creazione playlist
+        const btn = document.getElementById("openCreateOnly");
 
-    if (btn) {
-        // click -> apre modale per creare nuova playlist
-        btn.addEventListener("click", () => {
-            const modal = new bootstrap.Modal(document.querySelector("#createPlaylistStandaloneModal"));
-            modal.show();
-        });
+        if (btn) {
+            // click -> apre modale per creare nuova playlist
+            btn.addEventListener("click", () => {
+                const modal = new bootstrap.Modal(document.querySelector("#createPlaylistStandaloneModal"));
+                modal.show();
+            });
+        }
+
+        /* GESTIONE SUBMIT FORM CREAZIONE PLAYLIST */
+        // Recupera form per creazione nuova playlist
+        const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
+
+        // Procede solo se form esiste nella pagina
+        if (standaloneForm) {
+            standaloneForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                // Recupera e valida campi del form
+                const name = document.getElementById("standalonePlaylistName").value.trim();
+                const description = document.getElementById("standalonePlaylistDescription").value.trim();
+
+                // Converte stringa di tag separati da virgola in un array
+                const tags = document.getElementById("standalonePlaylistTags").value
+                    .split(",")
+                    .map(t => t.trim())
+                    .filter(Boolean); // Rimuove stringhe vuote
+
+                // Recupera dati utente corrente e playlist esistenti
+                const user = JSON.parse(sessionStorage.getItem("utente"));
+                const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
+
+                // Crea oggetto della nuova playlist
+                const newPlaylist = {
+                    id: Date.now().toString(), // ID univoco 
+                    name,
+                    description,
+                    tags,
+                    creator: user.username,
+                    communities: [], // Inizialmente non è condivisa in nessuna community
+                    tracks: [] // La playlist parte vuota
+                };
+
+                // Aggiunge nuova playlist all'array e salva 
+                playlists.push(newPlaylist);
+                localStorage.setItem("playlists", JSON.stringify(playlists));
+
+                // Aggiorna interfaccia se funzione di render esiste
+                if (typeof renderPlaylists === "function") {
+                    renderPlaylists();
+                }
+
+                bootstrap.Modal.getInstance(
+                    document.getElementById("createPlaylistStandaloneModal")
+                ).hide();
+
+                showToast(`Playlist "${name}" creata!`, "success");
+            });
+        }
+
+        // Reset form quando modale viene chiusa
+        document.getElementById('createPlaylistStandaloneModal')
+            .addEventListener('hidden.bs.modal', () => {
+                const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
+                if (standaloneForm) standaloneForm.reset();
+            });
     }
-
-    /* GESTIONE SUBMIT FORM CREAZIONE PLAYLIST */
-    // Recupera form per creazione nuova playlist
-    const standaloneForm = document.getElementById("createPlaylistStandaloneForm");
-
-    // Procede solo se form esiste nella pagina
-    if (standaloneForm) {
-        standaloneForm.addEventListener("submit", (e) => {
-            e.preventDefault(); 
-
-            // Recupera e valida campi del form
-            const name = document.getElementById("standalonePlaylistName").value.trim();
-            const description = document.getElementById("standalonePlaylistDescription").value.trim();
-
-            // Converte stringa di tag separati da virgola in un array
-            const tags = document.getElementById("standalonePlaylistTags").value
-                .split(",")
-                .map(t => t.trim())
-                .filter(Boolean); // Rimuove stringhe vuote
-
-            // Recupera dati utente corrente e playlist esistenti
-            const user = JSON.parse(sessionStorage.getItem("utente"));
-            const playlists = JSON.parse(localStorage.getItem("playlists")) || [];
-
-            // Crea oggetto della nuova playlist
-            const newPlaylist = {
-                id: Date.now().toString(), // ID univoco 
-                name,
-                description,
-                tags,
-                creator: user.username, 
-                communities: [], // Inizialmente non è condivisa in nessuna community
-                tracks: [] // La playlist parte vuota
-            };
-
-            // Aggiunge nuova playlist all'array e salva 
-            playlists.push(newPlaylist);
-            localStorage.setItem("playlists", JSON.stringify(playlists));
-
-            // Aggiorna interfaccia se funzione di render esiste
-            if (typeof renderPlaylists === "function") {
-                renderPlaylists();
-            }
-
-            bootstrap.Modal.getInstance(
-                document.getElementById("createPlaylistStandaloneModal")
-            ).hide();
-
-            showToast(`Playlist "${name}" creata!`, "success");
-        });
-    }
-
-    // Reset form quando modale viene chiusa
-    document.getElementById('createPlaylistStandaloneModal')
-        .addEventListener('hidden.bs.modal', () => {
-            const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
-            if (standaloneForm) standaloneForm.reset();
-        });
-
+    playlistCreation();
+    
     /* FUNZIONALITÀ DI RICERCA PLAYLIST DELLE COMMUNITY */
     function communityPlaylistSearch() {
         const searchInput = document.getElementById('communityPlaylistSearch');
@@ -121,6 +125,7 @@ document.addEventListener('headerLoaded', () => {
             });
         }
     }
+    communityPlaylistSearch();
     
 });
 

@@ -9,80 +9,87 @@ document.addEventListener('headerLoaded', () => {
     renderCommunities();
     renderMyCommunities();
 
-    /* GESTIONE RICERCA COMMUNITY */
-    const searchInput = document.getElementById("communitySearch");
-    if (searchInput) {
-        // Ad ogni input dell'utente, filtra le community
-        searchInput.addEventListener("input", () => {
-            const q = searchInput.value.trim();
+    // FUNZIONE CREAZIONE COMMUNITY
+    function communityCreation() {
+        /* GESTIONE CREAZIONE NUOVA COMMUNITY */
+        document.getElementById('newCommunityForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
             const communities = JSON.parse(localStorage.getItem('communities')) || [];
-            const results = searchCommunities(q, communities);
 
-            // Mostra SOLO community a cui l'utente NON appartiene ancora
-            const user = JSON.parse(sessionStorage.getItem('utente'));
-            const filtered = results.filter(c => !c.members.includes(user.username));
+            // Crea l'oggetto nuova community
+            const newCommunity = {
+                id: Date.now().toString(), // ID univoco 
+                name: document.getElementById('communityName').value.trim(),
+                description: document.getElementById('communityDescription').value.trim(),
 
-            const container = document.getElementById("communityList");
-            container.textContent = "";
+                // Converte stringa di tag separati da virgola in un array pulito
+                tags: document.getElementById('communityTags').value.split(',').map(t => t.trim()).filter(Boolean),
+                creator: user.username,
+                members: [user.username] // Il creatore è automaticamente membro
+            };
 
-            // Se non ci sono risultati, mostra un messaggio
-            if (filtered.length === 0) {
-                const msg = document.createElement("p");
-                msg.textContent = "Nessuna community trovata...";
-                msg.style.color = "#888";
-                msg.style.fontStyle = "italic";
-                msg.style.padding = "10px 0";
-                container.appendChild(msg);
-                return;
-            }
+            // Aggiunge nuova community e salva
+            communities.push(newCommunity);
+            localStorage.setItem('communities', JSON.stringify(communities));
 
-            // Renderizza ogni community filtrata
-            filtered.forEach(c => {
-                container.appendChild(renderCommunityCard(c));
+            // Chiude modale e resetta form
+            bootstrap.Modal.getInstance(document.getElementById('createCommunityModal')).hide();
+            this.reset();
+
+            // Mostra messaggio conferma
+            showToast(`La community "${newCommunity.name}" è stata creata!`, "success");
+
+            // Aggiorna entrambe le sezioni della UI
+            renderCommunities();
+            renderMyCommunities();
+        });
+
+        // Reset form quando modale viene chiuso
+        document.getElementById('createCommunityModal')
+            .addEventListener('hidden.bs.modal', () => {
+                document.getElementById('newCommunityForm').reset();
             });
-        });
     }
+    communityCreation();
 
-    /* GESTIONE CREAZIONE NUOVA COMMUNITY */
-    document.getElementById('newCommunityForm').addEventListener('submit', function (e) {
-        e.preventDefault(); 
+    function CommunitySearch() {
+        /* GESTIONE RICERCA COMMUNITY */
+        const searchInput = document.getElementById("communitySearch");
+        if (searchInput) {
+            // Ad ogni input dell'utente, filtra le community
+            searchInput.addEventListener("input", () => {
+                const q = searchInput.value.trim();
 
-        const communities = JSON.parse(localStorage.getItem('communities')) || [];
+                const communities = JSON.parse(localStorage.getItem('communities')) || [];
+                const results = searchCommunities(q, communities);
 
-        // Crea l'oggetto nuova community
-        const newCommunity = {
-            id: Date.now().toString(), // ID univoco 
-            name: document.getElementById('communityName').value.trim(),
-            description: document.getElementById('communityDescription').value.trim(),
+                // Mostra SOLO community a cui l'utente NON appartiene ancora
+                const user = JSON.parse(sessionStorage.getItem('utente'));
+                const filtered = results.filter(c => !c.members.includes(user.username));
 
-            // Converte stringa di tag separati da virgola in un array pulito
-            tags: document.getElementById('communityTags').value.split(',').map(t => t.trim()).filter(Boolean),
-            creator: user.username,
-            members: [user.username] // Il creatore è automaticamente membro
-        };
+                const container = document.getElementById("communityList");
+                container.textContent = "";
 
-        // Aggiunge nuova community e salva
-        communities.push(newCommunity);
-        localStorage.setItem('communities', JSON.stringify(communities));
+                // Se non ci sono risultati, mostra un messaggio
+                if (filtered.length === 0) {
+                    const msg = document.createElement("p");
+                    msg.textContent = "Nessuna community trovata...";
+                    msg.style.color = "#888";
+                    msg.style.fontStyle = "italic";
+                    msg.style.padding = "10px 0";
+                    container.appendChild(msg);
+                    return;
+                }
 
-        // Chiude modale e resetta form
-        bootstrap.Modal.getInstance(document.getElementById('createCommunityModal')).hide();
-        this.reset();
-
-        // Mostra messaggio conferma
-        showToast(`La community "${newCommunity.name}" è stata creata!`, "success");
-
-        // Aggiorna entrambe le sezioni della UI
-        renderCommunities();
-        renderMyCommunities();
-    });
-
-    // Reset form quando modale viene chiuso
-    document.getElementById('createCommunityModal')
-        .addEventListener('hidden.bs.modal', () => {
-            document.getElementById('newCommunityForm').reset();
-        });
+                // Renderizza ogni community filtrata
+                filtered.forEach(c => {
+                    container.appendChild(renderCommunityCard(c));
+                });
+            });
+        }
+    }
+    CommunitySearch();  
 });
 
 /* FUNZIONE PER MODIFICARE UNA COMMUNITY */
@@ -439,7 +446,7 @@ function attachMemberClickEvents() {
     });
 }
 
-/* FUNZIONE DI RICERCA COMMUNITY */
+/* FUNZIONE FILTRO RICERCA COMMUNITY */
 function searchCommunities(query, allCommunities) {
     query = query.toLowerCase();
 
