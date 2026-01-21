@@ -3,7 +3,7 @@ window.trackToAdd = null;
 
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return;
+    if (!user) return; 
 
     // Mostra nome utente nell'header della pagina
     document.getElementById('welcomeUsername').textContent = user.username;
@@ -30,7 +30,7 @@ document.addEventListener('headerLoaded', () => {
     // Procede solo se form esiste nella pagina
     if (standaloneForm) {
         standaloneForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+            e.preventDefault(); 
 
             // Recupera e valida campi del form
             const name = document.getElementById("standalonePlaylistName").value.trim();
@@ -52,7 +52,7 @@ document.addEventListener('headerLoaded', () => {
                 name,
                 description,
                 tags,
-                creator: user.username,
+                creator: user.username, 
                 communities: [], // Inizialmente non è condivisa in nessuna community
                 tracks: [] // La playlist parte vuota
             };
@@ -80,19 +80,6 @@ document.addEventListener('headerLoaded', () => {
             const standaloneForm = document.getElementById('createPlaylistStandaloneForm');
             if (standaloneForm) standaloneForm.reset();
         });
-
-    /* FUNZIONE FILTRO PLAYLIST */
-    function searchPlaylists(query, playlists) {
-        const q = query.trim().toLowerCase();
-
-        // Filtra le playlist in base a nome, descrizione o tag
-        return playlists.filter(p => {
-            const nameMatch = p.name?.toLowerCase().includes(q);
-            const descMatch = p.description?.toLowerCase().includes(q);
-            const tagMatch = p.tags?.some(tag => tag.toLowerCase().includes(q));
-            return nameMatch || descMatch || tagMatch;
-        });
-    }
 
     /* FUNZIONALITÀ DI RICERCA PLAYLIST DELLE COMMUNITY */
     function communityPlaylistSearch() {
@@ -134,7 +121,7 @@ document.addEventListener('headerLoaded', () => {
             });
         }
     }
-
+    
 });
 
 /* FUNZIONE PER RENDERIZZARE TUTTE LE PLAYLIST */
@@ -310,6 +297,19 @@ function renderPlaylistCard(playlist, isOwner) {
     return clone;
 }
 
+/* FUNZIONE FILTRO RICERCA PLAYLIST */
+function searchPlaylists(query, playlists) {
+    const q = query.trim().toLowerCase();
+
+    // Filtra le playlist in base a nome, descrizione o tag
+    return playlists.filter(p => {
+        const nameMatch = p.name?.toLowerCase().includes(q);
+        const descMatch = p.description?.toLowerCase().includes(q);
+        const tagMatch = p.tags?.some(tag => tag.toLowerCase().includes(q));
+        return nameMatch || descMatch || tagMatch;
+    });
+}
+
 /* FUNZIONE PER CONDIVIDERE UNA PLAYLIST IN UNA COMMUNITY */
 function sharePlaylist(playlistId) {
     // Recupera tutti i dati necessari
@@ -364,7 +364,7 @@ function sharePlaylist(playlistId) {
         showToast(`Playlist condivisa in "${community?.name || 'Community'}"!`, "success");
 
         modal.hide();
-        renderPlaylists();
+        renderPlaylists(); 
     };
 }
 
@@ -431,7 +431,7 @@ function unsharePlaylist(playlistId) {
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
     showToast("Condivisione rimossa da tutte le community!", "primary");
-    renderPlaylists();
+    renderPlaylists(); 
 }
 
 /* FUNZIONE PER IMPORTARE UNA PLAYLIST NEL PROFILO PERSONALE */
