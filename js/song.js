@@ -36,17 +36,23 @@ async function loadTrackDetails() {
     document.getElementById("trackImage").src = track.album.images?.[0]?.url;
 
     // Salva il brano per "Aggiungi a playlist"
-    window.trackSelezionato = {
+    sessionStorage.setItem("trackSelezionato", JSON.stringify( {
         id: track.id,
-        name: track.name,
+        title: track.name,
         artist: track.artists.map(a => a.name).join(", "),
         duration: formatDuration(track.duration_ms),
         genre: genre,
         year: getReleaseYear(track)
-    };
+    }));
 }
 
 loadTrackDetails();
+
+document.getElementById("addToPlaylistFromSong").addEventListener("click", () => {
+    const track = JSON.parse(sessionStorage.getItem("trackSelezionato"));
+    apriModalPlaylist(track);
+});
+
 
 
 

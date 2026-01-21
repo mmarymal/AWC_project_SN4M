@@ -114,86 +114,6 @@ document.addEventListener('headerLoaded', () => {
 
 });
 
-/* NUOVA FUNZIONE: APRI MODALE AGGIUNTA BRANO */
-function openAddTrackModal(track) {
-    window.trackToAdd = track;
-
-    const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-    const user = JSON.parse(sessionStorage.getItem('utente'));
-
-    const myPlaylists = playlists.filter(p => p.creator === user.username);
-
-    // Popola il select con le playlist
-    const playlistSelect = document.getElementById('playlistSelect');
-    playlistSelect.innerHTML = '<option value="">-- Seleziona playlist --</option>';
-
-    myPlaylists.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.id;
-        option.textContent = p.name;
-        playlistSelect.appendChild(option);
-    });
-
-    // Mostra nome brano nel modale
-    document.getElementById('modalTrackName').textContent =
-        `Stai aggiungendo: ${track.title} - ${track.artist}`;
-
-    // Apri il modale
-    const modal = new bootstrap.Modal(document.getElementById('playlistModal'));
-    modal.show();
-
-    // Gestione bottone "Crea nuova playlist"
-    const openCreateBtn = document.getElementById('openCreatePlaylist');
-    openCreateBtn.onclick = () => {
-        // Chiudi modale di selezione
-        bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
-
-        // Apri modale di creazione
-        const createModal = new bootstrap.Modal(document.getElementById('createPlaylistStandaloneModal'));
-        createModal.show();
-    };
-
-    // Gestione bottone "Aggiungi"
-    const confirmBtn = document.getElementById('confirmAddBtn');
-    confirmBtn.onclick = () => {
-        const selectedPlaylistId = playlistSelect.value;
-
-        if (!selectedPlaylistId) {
-            showToast("Seleziona una playlist!", "warning");
-            return;
-        }
-
-        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
-        const playlist = playlists.find(p => p.id === selectedPlaylistId);
-
-        if (!playlist) {
-            showToast("Playlist non trovata!", "danger");
-            return;
-        }
-
-        // Controlla se il brano è già presente
-        if (playlist.tracks.some(t => t.id === track.id)) {
-            showToast("Brano già presente in questa playlist!", "info");
-            bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
-            window.trackToAdd = null;
-            return;
-        }
-
-        // Aggiungi il brano
-        playlist.tracks.push(track);
-        localStorage.setItem('playlists', JSON.stringify(playlists));
-
-        showToast(`Brano aggiunto a "${playlist.name}"!`, "success");
-        bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
-        window.trackToAdd = null;
-
-        if (typeof renderPlaylists === 'function') {
-            renderPlaylists();
-        }
-    };
-
-}
-
 /* RENDER PLAYLIST */
 function renderPlaylists() {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
@@ -444,7 +364,6 @@ function openUnshareModal(playlistId) {
         renderPlaylists();
     };
 }
-
 
 function unsharePlaylist(playlistId) {
     const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
