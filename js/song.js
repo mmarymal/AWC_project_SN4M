@@ -29,7 +29,7 @@ async function loadTrackDetails() {
             headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (!res.ok) {
+        if (!res.ok) { //verifica che risposta ok
             throw new Error(`Errore API Spotify: ${res.status}`);
         }
 
@@ -38,7 +38,7 @@ async function loadTrackDetails() {
         // Recupera genere dall'artista principale
         const genre = await getArtistGenre(track.artists[0].id);
 
-        // Popola la pagina con dati
+        // recupera tutti elementi da popolare
         const elements = {
             trackTitle: document.getElementById("trackTitle"),
             trackArtist: document.getElementById("trackArtist"),
@@ -49,7 +49,7 @@ async function loadTrackDetails() {
             trackImage: document.getElementById("trackImage")
         };
 
-        // Popola gli elementi
+        // controlla che ogni elemento esista prima di popolare
         if (elements.trackTitle) elements.trackTitle.textContent = track.name;
         if (elements.trackArtist) elements.trackArtist.textContent = track.artists.map(a => a.name).join(", ");
         if (elements.trackAlbum) elements.trackAlbum.textContent = track.album.name;
@@ -57,12 +57,13 @@ async function loadTrackDetails() {
         if (elements.trackYear) elements.trackYear.textContent = getReleaseYear(track);
         if (elements.trackGenre) elements.trackGenre.textContent = genre || "Sconosciuto";
 
+        // imposta immagine di copertina se disponibile
         if (elements.trackImage && track.album.images?.[0]?.url) {
             elements.trackImage.src = track.album.images[0].url;
             elements.trackImage.alt = `Cover di ${track.album.name}`;
         }
 
-        // Salva il brano per "Aggiungi a playlist"
+        // crea oggetto con dati del brano da salvare
         const trackData = {
             id: track.id,
             title: track.name,
@@ -74,7 +75,7 @@ async function loadTrackDetails() {
             image: track.album.images?.[0]?.url
         };
 
-        // IMPORTANTE: queste righe devono stare DENTRO il try, dopo aver creato trackData
+        // salva brano selezionato in variabile globale e sessionStorage
         window.trackSelezionato = trackData;
         sessionStorage.setItem("trackSelezionato", JSON.stringify(trackData));
 
@@ -88,7 +89,7 @@ document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
     console.log("Utente loggato:", user);
 
-    if (!user) {
+    if (!user) { //se non c'è utente, messaggio + reindirizza a login
         showToast("Devi effettuare il login per vedere questa pagina", "warning");
         setTimeout(() => {
             window.location.href = 'login.html';
@@ -100,7 +101,6 @@ document.addEventListener('headerLoaded', () => {
     const welcomeUsername = document.getElementById('welcomeUsername');
     if (welcomeUsername) {
         welcomeUsername.textContent = user.username;
-        console.log("Username impostato nell'header");
     }
 
     // Carica i dettagli del brano
@@ -109,15 +109,19 @@ document.addEventListener('headerLoaded', () => {
     // Gestisce il bottone "Aggiungi a playlist"
     const addButton = document.getElementById("addToPlaylistFromSong");
     if (addButton) {
+        // recupera brano selezionato dalla variabile globale o sessionStorage
         addButton.addEventListener("click", () => {
             const track = window.trackSelezionato || JSON.parse(sessionStorage.getItem("trackSelezionato"));
 
+            // verifica che il brano sia selezionato
             if (!track) {
                 showToast("Nessun brano selezionato", "danger");
                 return;
             }
 
+            // verifica che funzone per aprire modale
             if (typeof window.apriModalPlaylist === 'function') {
+                // apre modale per selezionare playlist
                 window.apriModalPlaylist(track);
             } else {
                 showToast("Funzione non disponibile", "danger");
