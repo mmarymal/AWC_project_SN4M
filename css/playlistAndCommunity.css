@@ -680,13 +680,29 @@
 /* Info brano */
 .track-info {
     display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+.edit-track-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    box-shadow: 0 0 4px #bd93f9;
+}
+
+.track-text {
+    display: flex;
     flex-direction: column;
-    gap: 4px;
+    justify-content: center;
+    flex-grow: 1;
 }
 
 .track-title {
     font-weight: 600;
     color: #f8f8f2;
+    margin-bottom: 4px;
 }
 
 .track-meta {
@@ -705,7 +721,7 @@
     font-style: normal;
 }
 
-/* Pulsante rimozione */
+/* Pulsante rimozione brano */
 .btn-remove-track {
     background: transparent;
     border: none;
@@ -713,12 +729,15 @@
     font-size: 1.2rem;
     padding: 4px;
     transition: all 0.2s ease;
+    cursor: pointer;
+    margin-left: auto;
+    margin-left: auto;
 }
 
 .btn-remove-track:hover {
     color: #ff6b6b;
     background-color: #22223b;
-    
+    border-radius: 4px;
 }
 
 /*stile messaggio se non c'è nessun brano nella playlist*/
@@ -862,10 +881,41 @@
 }
 
 /* CARD BASE (playlist + community + track) */
+.track-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    background-color: #1e1e2f;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #2e2e3e;
+}
+
+.track-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    cursor: pointer;
+    box-shadow: 0 0 6px #bd93f9;
+}
+
+.track-link {
+    cursor: pointer;
+    color: #bd93f9;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.track-info {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
 .detail-card,
 .playlist-card,
-.community-card,
-.track-card {
+.community-card {
     background-color: #2a2a4a;
     border: 1px solid #444;
     border-radius: 10px;

@@ -2,7 +2,10 @@
 fetch("global-header.html")
     .then(res => res.text())
     .then(html => {
+        // inserisce html dell'header nel div con id "global-header"
         document.getElementById("global-header").innerHTML = html;
+
+        // evento
         document.dispatchEvent(new Event("headerLoaded"));
     });
 
@@ -291,7 +294,8 @@ function showSearchOverlay(results) {
                 title: fullTrack.name,
                 artist: fullTrack.artists.map(a => a.name).join(", "),
                 duration: formatDuration(fullTrack.duration_ms),
-                genre: genre, year: getReleaseYear(fullTrack)
+                genre: genre, year: getReleaseYear(fullTrack).Boolean,
+                image: fullTrack.album.images?.[0]?.url
             };
 
             sessionStorage.setItem("trackSelezionato", JSON.stringify(track));

@@ -70,14 +70,13 @@ async function loadTrackDetails() {
             artist: track.artists.map(a => a.name).join(", "),
             duration: formatDuration(track.duration_ms),
             genre: genre || "Sconosciuto",
-            year: getReleaseYear(track)
+            year: getReleaseYear(track),
+            image: track.album.images?.[0]?.url
         };
 
         // IMPORTANTE: queste righe devono stare DENTRO il try, dopo aver creato trackData
         window.trackSelezionato = trackData;
         sessionStorage.setItem("trackSelezionato", JSON.stringify(trackData));
-
-        console.log("✅ Dettagli brano caricati con successo");
 
     } catch (error) {
         showToast(`Errore: ${error.message}`, "danger");

@@ -3,7 +3,7 @@ window.trackToAdd = null;
 
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return; 
+    if (!user) return;
 
     // Mostra nome utente nell'header della pagina
     document.getElementById('welcomeUsername').textContent = user.username;
@@ -84,7 +84,7 @@ document.addEventListener('headerLoaded', () => {
             });
     }
     playlistCreation();
-    
+
     /* FUNZIONALITÀ DI RICERCA PLAYLIST DELLE COMMUNITY */
     function communityPlaylistSearch() {
         const searchInput = document.getElementById('communityPlaylistSearch');
@@ -126,7 +126,7 @@ document.addEventListener('headerLoaded', () => {
         }
     }
     communityPlaylistSearch();
-    
+
 });
 
 /* FUNZIONE PER RENDERIZZARE TUTTE LE PLAYLIST */
@@ -369,7 +369,7 @@ function sharePlaylist(playlistId) {
         showToast(`Playlist condivisa in "${community?.name || 'Community'}"!`, "success");
 
         modal.hide();
-        renderPlaylists(); 
+        renderPlaylists();
     };
 }
 
@@ -436,7 +436,7 @@ function unsharePlaylist(playlistId) {
     localStorage.setItem('playlists', JSON.stringify(playlists));
 
     showToast("Condivisione rimossa da tutte le community!", "primary");
-    renderPlaylists(); 
+    renderPlaylists();
 }
 
 /* FUNZIONE PER IMPORTARE UNA PLAYLIST NEL PROFILO PERSONALE */
@@ -543,22 +543,39 @@ function openPlaylistDetails(id) {
             const card = document.createElement('div');
             card.className = 'track-card';
 
-            const trackName = document.createElement('h6');
-            trackName.textContent = track.title;
+            const img = document.createElement('img');
+            img.className = "track-cover";
+            img.src = track.image;
+            img.alt = `Cover di ${track.title}`;
+            img.addEventListener("click", () => {
+                window.location.href = `song.html?id=${track.id}`;
+            });
 
-            const info = document.createElement('p');
-            info.className = 'track-info';
+            const textBlock = document.createElement('div');
+            textBlock.className = 'track-text';
+
+            const trackName = document.createElement('h6');
+            trackName.className = "track-link";
+            trackName.textContent = track.title;
+            // Quando clicchi, vai alla pagina song.html 
+            trackName.addEventListener("click", () => {
+                window.location.href = `song.html?id=${track.id}`;
+            });
+
 
             // Mostra tutte le informazioni del brano
+            const info = document.createElement('p');
+            info.className = 'track-info';
             info.innerHTML = `
                 🎤 ${track.artist} &nbsp; | &nbsp;
-                ⏱ ${track.duration || 'Sconosciuto'} &nbsp; | &nbsp;
-                🎧 ${track.genre || 'Sconosciuto'} &nbsp; | &nbsp;
-                📅 ${track.year || 'Sconosciuto'}
+                ⏱ ${track.duration || 'Sconosciuto'} &nbsp; 
             `;
 
-            card.appendChild(trackName);
-            card.appendChild(info);
+            textBlock.appendChild(trackName);
+            textBlock.appendChild(info);
+
+            card.appendChild(img);
+            card.appendChild(textBlock);
             body.appendChild(card);
         });
     } else {
@@ -598,17 +615,20 @@ function editPlaylist(id) {
             // Mostra info della traccia con pulsante di rimozione
             li.innerHTML = `
                 <div class="track-info">
-                    <div class="track-title">${track.title || 'undefined'}</div>
-                    <div class="track-meta">
-                        <span class="meta-badge">${track.artist || 'Artista: Sconosciuto'}</span>
-                        <span class="meta-badge">${track.duration || 'Durata: Sconosciuto'}</span>
-                        <span class="meta-badge">${track.genre || 'Genere: Sconosciuto'}</span>
-                        <span class="meta-badge">${track.year || 'Anno: Sconosciuto'}</span>
+                    <img src="${track.image || 'assets/placeholder-music.png'}" class="edit-track-cover" alt="Cover brano">
+
+                    <div class="track-text">
+                        <div class="track-title">${track.title || 'undefined'}</div>
+                        <div class="track-meta">
+                            <span class="meta-badge">${track.artist || 'Artista: Sconosciuto'}</span>
+                            <span class="meta-badge">${track.duration || 'Durata: Sconosciuto'}</span>
+                        </div>
                     </div>
+
+                    <button class="btn-remove-track" data-id="${track.id}" title="Rimuovi brano">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
                 </div>
-                <button class="btn-remove-track" data-id="${track.id}" title="Rimuovi brano">
-                    <i class="bi bi-x-circle"></i>
-                </button>
             `;
             trackList.appendChild(li);
         });

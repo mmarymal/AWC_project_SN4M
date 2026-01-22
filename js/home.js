@@ -166,7 +166,8 @@ async function mostraSuggerimentiMusicali(query) {
         artist: fullTrack.artists.map(a => a.name).join(', '),
         duration: formatDuration(fullTrack.duration_ms),
         genre: genre,
-        year: getReleaseYear(fullTrack)
+        year: getReleaseYear(fullTrack),
+        image: fullTrack.album.images?.[0]?.url
       };
 
       // ORA CHIAMIAMO LA FUNZIONE GLOBALE
