@@ -406,7 +406,10 @@ function openCommunityDetails(id) {
         <div class="detail-section">
             <h5 class="detail-title">Playlist condivise</h5>
             <ul class="detail-list playlists">
-                ${sharedPlaylists.length ? sharedPlaylists.map(p => `<li onclick="importSharedPlaylist('${p.id}')"><i class="bi bi-music-note-list"></i> ${p.name}</li>`).join('') : '<li>Nessuna playlist</li>'}
+                ${sharedPlaylists.length ? sharedPlaylists.map(p =>
+                    `<li onclick="importSharedPlaylist('${p.id}')">
+                    <i class="bi bi-music-note-list"></i> ${p.name}
+                    </li>`).join('') : '<li>Nessuna playlist</li>'}
             </ul>
         </div>
     `;
