@@ -9,9 +9,8 @@ document.addEventListener('headerLoaded', () => {
     renderCommunities();
     renderMyCommunities();
 
-    // FUNZIONE CREAZIONE COMMUNITY
+    // FUNZIONE CREAZIONE NUOVA COMMUNITY
     function communityCreation() {
-        /* GESTIONE CREAZIONE NUOVA COMMUNITY */
         document.getElementById('newCommunityForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -53,8 +52,8 @@ document.addEventListener('headerLoaded', () => {
     }
     communityCreation();
 
-    function CommunitySearch() {
-        /* GESTIONE RICERCA COMMUNITY */
+    /* FUNZIONE RICERCA COMMUNITY */
+    function communitySearch() {
         const searchInput = document.getElementById("communitySearch");
         if (searchInput) {
             // Ad ogni input dell'utente, filtra le community
@@ -89,7 +88,7 @@ document.addEventListener('headerLoaded', () => {
             });
         }
     }
-    CommunitySearch();  
+    communitySearch();  
 });
 
 /* FUNZIONE PER MODIFICARE UNA COMMUNITY */
