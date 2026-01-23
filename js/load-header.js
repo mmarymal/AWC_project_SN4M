@@ -14,7 +14,6 @@ import {
     searchSpotify,
     formatDuration,
     getReleaseYear,
-    getSpotifyAccessToken,
     getArtistGenre
 } from "./api.js";
 
@@ -323,7 +322,8 @@ function showSearchOverlay(results) {
                 title: fullTrack.name,
                 artist: fullTrack.artists.map(a => a.name).join(", "),
                 duration: formatDuration(fullTrack.duration_ms),
-                genre: genre, year: getReleaseYear(fullTrack).Boolean,
+                genre: genre,
+                year: getReleaseYear(fullTrack).Boolean,
                 image: fullTrack.album.images?.[0]?.url
             };
 

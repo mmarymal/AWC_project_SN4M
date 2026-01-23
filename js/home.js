@@ -73,7 +73,6 @@ function initCarousel() {
   document.querySelector('.music-right').addEventListener('click', () => updateCarousel(1));
 }
 
-
 /* SUGGERIMENTI MUSICALI */
 async function mostraSuggerimentiMusicali(query) {
   // recupera contenitor x risultati

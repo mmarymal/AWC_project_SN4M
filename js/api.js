@@ -1,30 +1,39 @@
 const SPOTIFY_CLIENT_ID = '0f460e4cafca4fe38cedb64058540320';
 const SPOTIFY_CLIENT_SECRET = 'cc9a7729cae04024814091458d568814';
 
+// OTTINE/RINNOVA IL TOKEN DI ACCESSO
 export async function getSpotifyAccessToken() {
+    // controlla se esiste un token valido in sessionStorage
     let accessToken = sessionStorage.getItem('spotify_access_token');
     const tokenExpiry = sessionStorage.getItem('spotify_token_expiry');
 
+    // se token esiste e ancora valido, lo riutilizza
     if (accessToken && tokenExpiry && Date.now() < parseInt(tokenExpiry)) {
         return accessToken; // Token valido e non scaduto
     }
 
+    // se non c'è token valido, ne chiede un altro
     try {
+        // chiama endpoint di autenticazione Spotify
         const authResponse = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                // autenticazione con client id e secret condificati Base64(btoa)
                 'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET)
             },
+            // otteniamo un token per l'app, non per utente. Solo accesso a risorse pubbliche di Spotify.
             body: 'grant_type=client_credentials'
         });
 
+        // verifica che risposta sia ok
         if (!authResponse.ok) {
             const errorData = await authResponse.json();
             console.error("Errore di autenticazione Spotify:", authResponse.status, errorData);
             throw new Error(`Errore di autenticazione Spotify: ${authResponse.status} - ${errorData.error_description || authResponse.statusText}`);
         }
 
+        // estrae il token dalla risposta
         const authData = await authResponse.json();
         accessToken = authData.access_token;
         const expiresIn = authData.expires_in; // Tempo di validità del token in secondi
@@ -42,14 +51,16 @@ export async function getSpotifyAccessToken() {
     }
 }
 
-
+// RICERCA SPOTIFY
 export async function searchSpotify(query) {
+    // ottiene token accesso
     const accessToken = await getSpotifyAccessToken();
     if (!accessToken) {
         console.error("Nessun token di accesso Spotify disponibile.");
         return null;
     }
 
+    // costruisce URL di ricerca con parametri
     const spotifySearchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track,artist,album&market=IT&limit=20`;
 
     try {
@@ -59,12 +70,14 @@ export async function searchSpotify(query) {
             }
         });
 
+        // gestisce token scaduto
         if (response.status === 401) {
             console.warn("Token Spotify scaduto o non valido durante la ricerca. Tentativo di ri-ottenere.");
+            // rimuove token scaduto
             sessionStorage.removeItem('spotify_access_token');
             sessionStorage.removeItem('spotify_token_expiry');
             // Riprova la ricerca dopo aver ottenuto un nuovo token
-            return await searchSpotify(query); // Ricorsione per riprovare con un nuovo token
+            return await searchSpotify(query);
         }
 
         if (!response.ok) {
@@ -73,6 +86,7 @@ export async function searchSpotify(query) {
             throw new Error(`Errore HTTP! Stato: ${response.status} - ${errorData.error.message || response.statusText}`);
         }
 
+        // ritorna i dati della ricerca
         return await response.json();
 
     } catch (error) {
@@ -81,59 +95,27 @@ export async function searchSpotify(query) {
     }
 }
 
+// TOP TRACKS ARTISTA
 export async function getArtistTopTracks(artistId) {
     const accessToken = await getSpotifyAccessToken();
+    // costruisce URL per top tracks
     const url = `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=IT`;
 
     const response = await fetch(url, {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     });
-    const data = await response.json(); return data.tracks || [];
+    const data = await response.json();
+    // ritorna solo le tracce o nulla se non ci sono
+    return data.tracks || [];
 }
 
-export async function getPlaylistTracks(playlistId = '37i9dQZEVXbMDoHDwVN2tF') { // Global Top 50 di default
-    const accessToken = await getSpotifyAccessToken();
-    if (!accessToken) {
-        console.error("Nessun token di accesso Spotify disponibile per le playlist.");
-        return null;
-    }
-
-    const spotifyApiUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=IT&limit=20`;
-
-    try {
-        const response = await fetch(spotifyApiUrl, {
-            headers: {
-                'Authorization': 'Bearer ' + accessToken
-            }
-        });
-
-        if (response.status === 401) {
-            console.warn("Token Spotify scaduto o non valido per le playlist. Tentativo di ri-ottenere.");
-            sessionStorage.removeItem('spotify_access_token');
-            sessionStorage.removeItem('spotify_token_expiry');
-            return await getPlaylistTracks(playlistId);
-        }
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Errore API Spotify per playlist:", response.status, errorData);
-            throw new Error(`Errore HTTP! Stato: ${response.status} - ${errorData.error.message || response.statusText}`);
-        }
-
-        const data = await response.json();
-        return data.items.map(item => item.track).filter(track => track); // Estrae solo i dati della traccia
-
-    } catch (error) {
-        console.error("Errore durante il recupero delle tracce della playlist:", error);
-        return null;
-    }
-}
-
+// GENERE ARTISTA
 export async function getArtistGenre(artistId) {
     const token = await getSpotifyAccessToken();
     if (!token) return 'N/D';
 
     try {
+        // chiama endpoint artista x avere dettagli
         const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -152,31 +134,37 @@ export async function getArtistGenre(artistId) {
     }
 }
 
+// converte dura brano da millisecondi a mm:ss
 export function formatDuration(ms) {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const minutes = Math.floor(ms / 60000); // millesecondi -> minuti
+    const seconds = Math.floor((ms % 60000) / 1000); //secondi rimanenti
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`; //asseconda che secondi sono 2 cifre
 }
 
+// estrae anno rilasco oggetto track
 export function getReleaseYear(track) {
+    //verifica esistenza campi necessari
     if (track && track.album && track.album.release_date) {
         return track.album.release_date.split('-')[0]; // Prende solo l'anno
     }
     return 'N/A';
 }
 
+// ottiene url img copertina
 export function getImageOrDefault(images) {
     if (images && images.length > 0) {
         // Spotify restituisce in ordine decrescente di dimensione, prendiamo la prima
         return images[0].url;
     }
+    // se non ci sono immagini, ritorna placeholder
     return 'assets/placeholder.png';
 }
 
+// normalizza e mappa genere, converte input in generi riconosciuti
 export function normalizeGenre(input) {
     if (!input) return null;
 
-    let g = input.toLowerCase().trim();
+    let g = input.toLowerCase().trim(); //converte in lowercase e rimuove spazi
 
     //rimuove accenti
     g = g.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -184,7 +172,7 @@ export function normalizeGenre(input) {
     // Rimuove parole inutili 
     g = g.replace(/\b(musica|anni|anno|del|degli|della|italiana|italiano)\b/g, "").trim();
 
-    // Mapping intelligente 
+    // Mapping genere basato su parole chiave 
     const map = [
         { keywords: ["kpop", "k-pop", "k pop"], genre: "k-pop" },
         { keywords: ["rock", "ital"], genre: "italian rock" },
@@ -201,12 +189,14 @@ export function normalizeGenre(input) {
         { keywords: ["sad", "triste"], genre: "sad" }
     ];
 
+    // cerca corrispondenza nelle parole
     for (const rule of map) {
+        // some -> true se almeno una parola chiave è presente
         if (rule.keywords.some(k => g.includes(k))) {
             return rule.genre;
         }
     }
 
-    // fallback: restituisce la parola principale
+    // restituisce la parola principale se nessuna corrispondenza trovata
     return g.split(" ")[0];
 }

@@ -1,5 +1,4 @@
 import {
-    searchSpotify,
     formatDuration,
     getReleaseYear,
     getSpotifyAccessToken,
