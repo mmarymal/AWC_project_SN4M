@@ -415,13 +415,13 @@ function openCommunityDetails(id) {
     `;
 
     // Attacca event listener ai nomi dei membri per renderli cliccabili
-    attachMemberClickEvents()
+    memberClickEvents();
 
     new bootstrap.Modal(document.getElementById('viewCommunityModal')).show();
 }
 
 /* FUNZIONE PER GESTIRE IL CLICK SUI NOMI DEI MEMBRI */
-function attachMemberClickEvents() {
+function memberClickEvents() {
     // Recupera tutti elementi cliccabili dei membri
     const memberItems = document.querySelectorAll('.member-item');
 
