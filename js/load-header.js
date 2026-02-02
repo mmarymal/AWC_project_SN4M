@@ -313,7 +313,7 @@ function showSearchOverlay(results) {
             const id = btn.dataset.id;
             // trova brano completo nei risultati
             const fullTrack = results.find(t => t.id === id);
-            const genre = await getArtistGenre(fullTrack.artists[0].id);
+            const genres = await getArtistGenre(fullTrack.artists[0].id);
 
             // crea oggetto track con info
             const track = {
@@ -322,8 +322,8 @@ function showSearchOverlay(results) {
                 title: fullTrack.name,
                 artist: fullTrack.artists.map(a => a.name).join(", "),
                 duration: formatDuration(fullTrack.duration_ms),
-                genre: genre,
-                year: getReleaseYear(fullTrack).Boolean,
+                genre: genres.length ? genres.join(", ") : "Genere non disponibile", //camviata
+                year: getReleaseYear(fullTrack),
                 image: fullTrack.album.images?.[0]?.url
             };
 

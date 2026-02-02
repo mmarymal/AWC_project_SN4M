@@ -5,7 +5,6 @@ import {
   getImageOrDefault,
   getArtistTopTracks,
   normalizeGenre,
-  getSpotifyAccessToken,
   getArtistGenre
 } from './api.js';
 
@@ -171,7 +170,7 @@ async function mostraSuggerimentiMusicali(query) {
       const fullTrack = uniqueTracks.find(t => t.id === button.dataset.id);
 
       // recupera genere
-      const genre = await getArtistGenre(fullTrack.artists[0].id);
+      const genres = await getArtistGenre(fullTrack.artists[0].id);
 
       // crea oggetto track con info necessarie
       const track = {
@@ -180,7 +179,7 @@ async function mostraSuggerimentiMusicali(query) {
         title: fullTrack.name,
         artist: fullTrack.artists.map(a => a.name).join(', '),
         duration: formatDuration(fullTrack.duration_ms),
-        genre: genre,
+        genre: genres.length ? genres.join(", ") : "Genere non disponibile", //cambiata
         year: getReleaseYear(fullTrack),
         image: fullTrack.album.images?.[0]?.url
       };

@@ -109,29 +109,58 @@ export async function getArtistTopTracks(artistId) {
     return data.tracks || [];
 }
 
-// GENERE ARTISTA
+// GENERE ARTISTA (CAMBIATA)
 export async function getArtistGenre(artistId) {
     const token = await getSpotifyAccessToken();
-    if (!token) return 'N/D';
+    if (!token) return [];
 
     try {
-        // chiama endpoint artista x avere dettagli
         const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
         if (!res.ok) {
             console.error('Errore nel recupero artista:', res.status);
-            return 'N/D';
+            return [];
         }
 
         const data = await res.json();
 
-        return data.genres?.[0] || 'N/D';
+        // ritorna TUTTI i generi, non solo il primo
+        console.log('Generi artista recuperati:', data.genres, 'per artista ID:', artistId);
+        return data.genres || [];
     } catch (error) {
         console.error('Errore nel recupero del genere dell\'artista:', error);
-        return 'N/D';
+        return [];
     }
+}
+
+// GENERE TRACCIA (NUOVA)
+export async function getTrackGenres(trackId) {
+    const token = await getSpotifyAccessToken();
+    if (!token) return [];
+
+    // prendi la traccia
+    const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!trackRes.ok) return [];
+
+    const track = await trackRes.json();
+
+    // estrai gli ID degli artisti
+    const artistIds = track.artists.map(a => a.id);
+
+    // prendi i generi di tutti gli artisti in parallelo
+    const genresArrays = await Promise.all(
+        artistIds.map(id => getArtistGenre(id))
+    );
+
+    // unisci e rimuovi duplicati
+    const allGenres = genresArrays.flat();
+    return [...new Set(allGenres)];
+
 }
 
 // converte dura brano da millisecondi a mm:ss
@@ -200,3 +229,5 @@ export function normalizeGenre(input) {
     // restituisce la parola principale se nessuna corrispondenza trovata
     return g.split(" ")[0];
 }
+
+window.getSpotifyAccessToken = getSpotifyAccessToken;

@@ -2,7 +2,7 @@ import {
     formatDuration,
     getReleaseYear,
     getSpotifyAccessToken,
-    getArtistGenre
+    getTrackGenres //aggiunta
 } from "./api.js";
 
 import { showToast } from "./load-header.js";
@@ -34,8 +34,8 @@ async function loadTrackDetails() {
 
         const track = await res.json(); //converte in JSON
 
-        // Recupera genere dall'artista principale
-        const genre = await getArtistGenre(track.artists[0].id);
+        // Recupera genere dall'artista principale (cambiata)
+        const genres = await getTrackGenres(track.id);
 
         // recupera tutti elementi da popolare
         const elements = {
@@ -54,7 +54,7 @@ async function loadTrackDetails() {
         if (elements.trackAlbum) elements.trackAlbum.textContent = track.album.name;
         if (elements.trackDuration) elements.trackDuration.textContent = formatDuration(track.duration_ms);
         if (elements.trackYear) elements.trackYear.textContent = getReleaseYear(track);
-        if (elements.trackGenre) elements.trackGenre.textContent = genre || "Sconosciuto";
+        if (elements.trackGenre) elements.trackGenre.textContent = genres.join(", ") || "Sconosciuto";
 
         // imposta immagine di copertina se disponibile
         if (elements.trackImage && track.album.images?.[0]?.url) {
@@ -69,7 +69,7 @@ async function loadTrackDetails() {
             name: track.name,
             artist: track.artists.map(a => a.name).join(", "),
             duration: formatDuration(track.duration_ms),
-            genre: genre || "Sconosciuto",
+            genre: genres.join(", ") || "Sconosciuto",
             year: getReleaseYear(track),
             image: track.album.images?.[0]?.url
         };
