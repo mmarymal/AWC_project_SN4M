@@ -183,23 +183,6 @@ function renderPlaylists() {
     localStorage.setItem('playlists', JSON.stringify(playlists));
 }
 
-/* EVENT LISTENER CUSTOM PER NUOVE PLAYLIST CREATE */
-document.addEventListener("playlistCreated", (e) => {
-    const playlist = e.detail.playlist;
-
-    // Aggiorna tutta la UI della pagina playlist
-    if (typeof renderPlaylists === "function") {
-        renderPlaylists();
-        return;
-    }
-
-    // Oppure aggiorna solo la sezione "myPlaylists"
-    const container = document.getElementById("myPlaylists");
-    if (container && typeof renderPlaylistCard === "function") {
-        container.appendChild(renderPlaylistCard(playlist, true));
-    }
-});
-
 /* FUNZIONE PER CREARE UNA CARD DI UNA PLAYLIST */
 function renderPlaylistCard(playlist, isOwner) {
     // Clona template HTML della card
