@@ -60,7 +60,7 @@ function initCarousel() {
   const visibleCards = 6; //num card visibili
 
   function updateCarousel(direction) {
-    // calcolare indice max (x non scorrettare oltre)
+    // calcolare indice max (x non scorrere oltre)
     const maxIndex = Math.max(0, track.children.length - visibleCards);
     // aggiorna indice e che resti nei limiti
     scrollIndex = Math.min(Math.max(scrollIndex + direction, 0), maxIndex);
