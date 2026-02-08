@@ -174,47 +174,6 @@ function renderCommunities() {
     const container = document.getElementById('communityList');
     container.textContent = '';
 
-    // Filtra solo community a cui l'utente NON appartiene
-    const others = communities.filter(c => !c.members.includes(user.username));
-
-    others.forEach(c => {
-        // Clona template della card
-        const template = document.getElementById('communityCardTemplate');
-        const clone = template.content.cloneNode(true);
-
-        // click titolo per aprire i dettagli
-        const title = clone.querySelector('.community-title');
-        title.textContent = c.name;
-        title.addEventListener('click', () => openCommunityDetails(c.id));
-
-        // Svuota menu dropdown (nessuna azione per chi non è membro)
-        const dropdownMenu = clone.querySelector('.dropdown-menu');
-        dropdownMenu.textContent = '';
-
-        // Aggiunge il bottone "Unisciti"
-        const joinBtn = document.createElement('button');
-        joinBtn.className = 'btn btn-outline-light btn-sm mt-2';
-        joinBtn.textContent = 'Unisciti';
-        joinBtn.addEventListener('click', () => joinCommunity(c.id));
-        clone.querySelector('.community-card').appendChild(joinBtn);
-
-        container.appendChild(clone);
-    });
-}
-
-/* FUNZIONE PER RENDERIZZARE LE COMMUNITY DELL'UTENTE */
-function renderMyCommunities() {
-    const user = JSON.parse(sessionStorage.getItem('utente'));
-    const communities = JSON.parse(localStorage.getItem('communities')) || [];
-    const container = document.getElementById('myCommunities');
-    container.textContent = '';
-
-    // mie community (quelle a cui l'utente appartiene)
-    const mine = communities.filter(c => c.members.includes(user.username));
-    mine.forEach(c => {
-        container.appendChild(renderCommunityCard(c));
-    });
-
     // community disponibili (a cui l'utente NON appartiene)
     const otherContainer = document.getElementById('communityList');
     otherContainer.textContent = '';
@@ -233,6 +192,21 @@ function renderMyCommunities() {
 
     // Altrimenti renderizza le card delle community disponibili
     others.forEach(c => otherContainer.appendChild(renderCommunityCard(c)));
+}
+
+/* FUNZIONE PER RENDERIZZARE LE COMMUNITY DELL'UTENTE */
+function renderMyCommunities() {
+    const user = JSON.parse(sessionStorage.getItem('utente'));
+    const communities = JSON.parse(localStorage.getItem('communities')) || [];
+    const container = document.getElementById('myCommunities');
+    container.textContent = '';
+
+    // mie community (quelle a cui l'utente appartiene)
+    const mine = communities.filter(c => c.members.includes(user.username));
+    mine.forEach(c => {
+        container.appendChild(renderCommunityCard(c));
+    });
+
 }
 
 /* FUNZIONE PER UNIRSI A UNA COMMUNITY */
