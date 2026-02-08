@@ -58,7 +58,7 @@ document.addEventListener('headerLoaded', function () {
 
       // Aggiorna utente nel localStorage
       let utenti = JSON.parse(localStorage.getItem('utenti')) || [];
-      const index = utenti.findIndex(u => u.email === user.email && u.password === user.password);
+      const index = utenti.findIndex(u => u.email === user.email);
 
       if (index !== -1) {
         utenti[index] = updatedUser;
