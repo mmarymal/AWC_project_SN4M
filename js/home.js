@@ -161,6 +161,7 @@ async function mostraSuggerimentiMusicali(query) {
       });
     });
 
+    //creata card e aggiunge al carosello
     carouselContainer.appendChild(card);
   });
 
