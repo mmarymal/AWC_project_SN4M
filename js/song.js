@@ -118,7 +118,7 @@ document.addEventListener('headerLoaded', () => {
                 return;
             }
 
-            // verifica che funzone per aprire modale
+            // verifica che sia funzione per aprire modale
             if (typeof window.apriModalPlaylist === 'function') {
                 // apre modale per selezionare playlist
                 window.apriModalPlaylist(track);
@@ -128,15 +128,4 @@ document.addEventListener('headerLoaded', () => {
         });
     }
 
-    // Gestisce il logout
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            sessionStorage.removeItem("utente");
-            showToast("Logout effettuato", "info");
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 1000);
-        });
-    }
 });

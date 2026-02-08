@@ -68,8 +68,11 @@ document.addEventListener("headerLoaded", () => {
             logoutBtn.addEventListener("click", () => {
                 // rimuove utente da sessione
                 sessionStorage.removeItem("utente");
+                showToast("Logout effettuato", "success");
                 // riporta a login
-                window.location.href = "login.html";
+                setTimeout(() => {
+                    window.location.href = "login.html"
+                }, 1000);
             });
         }
     }
