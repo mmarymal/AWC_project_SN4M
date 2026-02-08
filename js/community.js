@@ -3,6 +3,12 @@ document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
     if (!user) return; 
 
+    if (!user) {
+        showToast("Devi effettuare il login", "warning");
+        setTimeout(() => window.location.href = "login.html", 1500);
+        return;
+    }
+
     document.getElementById('welcomeUsername').textContent = user.username;
 
     // Render iniziale: visualizza tutte le community disponibili e quelle dell'utente
