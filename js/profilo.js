@@ -4,7 +4,7 @@ document.addEventListener('headerLoaded', function () {
 
   // se non loggato, reindirizza al login
   if (!userDataString) {
-    showTost("Non sei loggato. Effettua il login.");
+    showToast("Non sei loggato. Effettua il login.");
     setTimeout(() => window.location.href = "login.html", 1500);
     return;
   }
@@ -15,7 +15,7 @@ document.addEventListener('headerLoaded', function () {
     user = JSON.parse(userDataString);
   } catch (error) {
     // se JSON è corrotto, fa logout
-    showTost("Dati sbagliati. Riprova il login.");
+    showToast("Dati sbagliati. Riprova il login.");
     setTimeout(() => window.location.href = "login.html", 1500);
     return;
   }
@@ -42,7 +42,7 @@ document.addEventListener('headerLoaded', function () {
       //se l'utente vuole cambiare password, verifica che coincidono
       if (newPassword || confirmNewPassword) {
         if (newPassword !== confirmNewPassword) {
-          showTost("Le nuove password non corrispondono.", "danger");
+          showToast("Le nuove password non corrispondono.", "danger");
           return;
         }
       }
@@ -68,7 +68,7 @@ document.addEventListener('headerLoaded', function () {
       // Aggiorna anche sessionStorage
       sessionStorage.setItem('utente', JSON.stringify(updatedUser));
 
-      showTost("Profilo aggiornato con successo!");
+      showToast("Profilo aggiornato con successo!");
       setTimeout(() => window.location.href = "profilo.html", 2000);
     });
   }
@@ -124,7 +124,7 @@ document.addEventListener('headerLoaded', function () {
         sessionStorage.removeItem('utente');
 
         // Notifica e redirect
-        showTost("Account eliminato con successo.");
+        showToast("Account eliminato con successo.");
         setTimeout(() => window.location.href = "login.html", 1500);
       });
     }
@@ -133,7 +133,7 @@ document.addEventListener('headerLoaded', function () {
 
 });
 
-function showTost(message) {
+function showToast(message) {
   const toastEl = document.getElementById('sn4mToast');
   const toastMessage = document.getElementById('toastMessage');
   if (!toastEl || !toastMessage) return;
