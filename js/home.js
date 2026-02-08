@@ -153,6 +153,7 @@ async function mostraSuggerimentiMusicali(query) {
       </button>
     `;
 
+    // aggiunge click su immagine e titolo per andare ai dettagli del brano
     document.querySelectorAll(".track-title, .track-image").forEach(el => {
       el.addEventListener("click", () => {
         const id = el.dataset.id;
