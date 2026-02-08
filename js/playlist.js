@@ -3,7 +3,11 @@ window.trackToAdd = null;
 
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return;
+    if (!user) {
+        showToast("Devi effettuare il login", "warning");
+        setTimeout(() => window.location.href = "login.html", 1500);
+        return;
+    }
 
     // Mostra nome utente nell'header della pagina
     document.getElementById('welcomeUsername').textContent = user.username;
