@@ -1,7 +1,6 @@
 // Event listener che si attiva quando l'header della pagina è stato caricato
 document.addEventListener('headerLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('utente'));
-    if (!user) return; 
 
     if (!user) {
         showToast("Devi effettuare il login", "warning");
