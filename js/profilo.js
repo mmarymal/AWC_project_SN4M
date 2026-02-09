@@ -129,7 +129,7 @@ document.addEventListener('headerLoaded', function () {
       });
     }
   }
-  deleteAccount();
+  deleteAccount(user);
 
 });
 
